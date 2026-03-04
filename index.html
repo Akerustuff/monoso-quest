@@ -3,23 +3,23 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>QuestLog — Mono & Oso</title>
+<title>Cacos Quest</title>
 
 <!-- PWA META TAGS -->
-<meta name="application-name" content="QuestLog">
+<meta name="application-name" content="Cacos Quest">
 <meta name="description" content="Gestor de tareas gamificado para Mono y Oso">
 <meta name="theme-color" content="#080b10">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="QuestLog">
+<meta name="apple-mobile-web-app-title" content="Cacos Quest">
 
 <!-- PWA ICONS (inline SVG as data URL) -->
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='100' fill='%23080b10'/%3E%3Ctext x='50%25' y='54%25' dominant-baseline='middle' text-anchor='middle' font-size='300' fill='%23c9943a'%3E%F0%9F%8F%AF%3C/text%3E%3C/svg%3E">
 <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='100' fill='%23080b10'/%3E%3Ctext x='50%25' y='54%25' dominant-baseline='middle' text-anchor='middle' font-size='300'%3E%F0%9F%8F%AF%3C/text%3E%3C/svg%3E">
 
 <!-- PWA MANIFEST (inline) -->
-<link rel="manifest" href="data:application/manifest+json,%7B%22name%22%3A%22QuestLog%20%E2%80%94%20Mono%20%26%20Oso%22%2C%22short_name%22%3A%22QuestLog%22%2C%22description%22%3A%22Gestor%20de%20tareas%20gamificado%22%2C%22start_url%22%3A%22.%22%2C%22display%22%3A%22standalone%22%2C%22background_color%22%3A%22%23080b10%22%2C%22theme_color%22%3A%22%23080b10%22%2C%22orientation%22%3A%22portrait%22%2C%22icons%22%3A%5B%7B%22src%22%3A%22data%3Aimage%2Fsvg%2Bxml%2C%253Csvg%2520xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%2520viewBox%3D'0%25200%2520512%2520512'%253E%253Crect%2520width%3D'512'%2520height%3D'512'%2520rx%3D'100'%2520fill%3D'%2523080b10'%2F%253E%253Ctext%2520x%3D'50%2525'%2520y%3D'54%2525'%2520dominant-baseline%3D'middle'%2520text-anchor%3D'middle'%2520font-size%3D'300'%253E%25F0%259F%258F%25AF%253C%2Ftext%253E%253C%2Fsvg%253E%22%2C%22sizes%22%3A%22512x512%22%2C%22type%22%3A%22image%2Fsvg%2Bxml%22%2C%22purpose%22%3A%22any%20maskable%22%7D%5D%7D">
+<link rel="manifest" href="data:application/manifest+json,%7B%22name%22%3A%22Cacos%20Quest%22%2C%22short_name%22%3A%22Cacos%20Quest%22%2C%22description%22%3A%22Gestor%20de%20tareas%20gamificado%22%2C%22start_url%22%3A%22.%22%2C%22display%22%3A%22standalone%22%2C%22background_color%22%3A%22%23080b10%22%2C%22theme_color%22%3A%22%23080b10%22%2C%22orientation%22%3A%22portrait%22%2C%22icons%22%3A%5B%7B%22src%22%3A%22data%3Aimage%2Fsvg%2Bxml%2C%253Csvg%2520xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%2520viewBox%3D'0%25200%2520512%2520512'%253E%253Crect%2520width%3D'512'%2520height%3D'512'%2520rx%3D'100'%2520fill%3D'%2523080b10'%2F%253E%253Ctext%2520x%3D'50%2525'%2520y%3D'54%2525'%2520dominant-baseline%3D'middle'%2520text-anchor%3D'middle'%2520font-size%3D'300'%253E%25F0%259F%258F%25AF%253C%2Ftext%253E%253C%2Fsvg%253E%22%2C%22sizes%22%3A%22512x512%22%2C%22type%22%3A%22image%2Fsvg%2Bxml%22%2C%22purpose%22%3A%22any%20maskable%22%7D%5D%7D">
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Rajdhani:wght@400;500;600;700&family=Crimson+Pro:ital,wght@0,300;0,400;0,600;1,300&display=swap" rel="stylesheet">
 <style>
 /* PWA safe areas for iPhone notch/home bar */
@@ -219,7 +219,7 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 <!-- PLAYER SELECT -->
 <div class="ps-screen" id="psScreen">
   <div style="font-size:2.4rem">🏯</div>
-  <div class="ps-title">QuestLog</div>
+  <div class="ps-title">Cacos Quest</div>
   <div class="ps-sub">¿Quién eres hoy?</div>
   <div class="ps-btns">
     <div class="ps-btn mono-btn" id="btnMono">
@@ -252,7 +252,7 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 
   <div class="header">
     <div class="hdr-icon">🏯</div>
-    <div class="hdr-title">QuestLog</div>
+    <div class="hdr-title">Cacos Quest</div>
     <div class="hdr-players">
       <span class="pbadge mono" id="badgeMono">🐒 Mono</span>
       <span class="pbadge oso"  id="badgeOso">🐻 Oso</span>
