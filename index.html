@@ -279,17 +279,17 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 
   <div class="score-panel">
     <div class="score-grid">
-      <div class="score-block">
+      <div class="score-block" id="monoBtn" style="cursor:pointer;-webkit-tap-highlight-color:transparent" title="Ver misiones de Mono">
         <span class="s-label">🐒 Mono</span>
         <div class="s-num mono" id="sMono">0</div>
       </div>
       <div class="s-div"></div>
-      <div class="score-block" id="nenuriosBtn" style="cursor:pointer;-webkit-tap-highlight-color:transparent" title="Ver historial de misiones">
+      <div class="score-block" id="nenuriosBtn" style="cursor:pointer;-webkit-tap-highlight-color:transparent" title="Ver todas las misiones">
         <span class="s-label">⭐ Nenurios</span>
         <div class="s-num" id="sTotal">0</div>
       </div>
       <div class="s-div"></div>
-      <div class="score-block">
+      <div class="score-block" id="osoBtn" style="cursor:pointer;-webkit-tap-highlight-color:transparent" title="Ver misiones de Oso">
         <span class="s-label">🐻 Oso</span>
         <div class="s-num oso" id="sOso">0</div>
       </div>
@@ -686,6 +686,8 @@ document.getElementById('tabW').addEventListener('click', () => switchTab('weekl
 document.getElementById('tabM').addEventListener('click', () => switchTab('monthly'));
 document.getElementById('tabR').addEventListener('click', () => switchTab('registro'));
 document.getElementById('nenuriosBtn').addEventListener('click', () => switchTab('registro', 'earned'));
+document.getElementById('monoBtn').addEventListener('click', () => switchTab('registro', 'earned-mono'));
+document.getElementById('osoBtn').addEventListener('click', () => switchTab('registro', 'earned-oso'));
 function switchTab(t, sub) {
   curTab = t;
   curTabSub = sub || null;
@@ -766,17 +768,28 @@ function buildDaily() {
       <div class="task-pts" style="pointer-events:none">${done?'✓':'+'}${t.pts}</div></div>`;
   }
   h += `<div class="sec-hdr" style="margin-top:16px">🏠 Misiones del Hogar ${countdownBadge}</div><div class="task-list">`;
-  for (const t of DH) {
-    const done = isDHogar(t.id);
-    const who  = whoDidHogar(t.id);
-    const whoIc = who==='mono' ? 'var(--mono)' : who==='oso' ? 'var(--oso)' : 'var(--gold)';
-    const whoTag = who ? `<span class="ptag ${who}" style="pointer-events:none">${who==='mono'?'🐒 Mono':'🐻 Oso'}</span>` : '';
-    h += `<div class="task-item${done?' done':''}" style="--ic:${whoIc};cursor:default" data-id="${t.id}" data-type="hogar">
-      <div class="task-chk daily-chk" data-id="${t.id}" data-type="hogar" style="cursor:pointer;pointer-events:all">${done?'✓':''}</div>
+  const hogarPendientes = DH.filter(t => !isDHogar(t.id));
+  const hogarCompletadas = DH.filter(t => isDHogar(t.id));
+  for (const t of hogarPendientes) {
+    h += `<div class="task-item" style="--ic:var(--gold);cursor:default" data-id="${t.id}" data-type="hogar">
+      <div class="task-chk daily-chk" data-id="${t.id}" data-type="hogar" style="cursor:pointer;pointer-events:all"></div>
       <div class="task-body" style="pointer-events:none"><div class="task-name">${t.name}</div><div class="task-desc">${t.desc}</div></div>
-      ${whoTag}
-      <div class="task-pts" style="pointer-events:none">${done?'✓':'+'}${t.pts}</div></div>`;
+      <div class="task-pts" style="pointer-events:none">+${t.pts}</div></div>`;
   }
+  if (hogarCompletadas.length) {
+    for (const t of hogarCompletadas) {
+      const who  = whoDidHogar(t.id);
+      const whoIc = who==='mono' ? 'var(--mono)' : 'var(--oso)';
+      const whoTag = `<span class="ptag ${who}" style="pointer-events:none">${who==='mono'?'🐒 Mono':'🐻 Oso'}</span>`;
+      h += `<div class="task-item done" style="--ic:${whoIc};cursor:default;opacity:.5">
+        <div class="task-chk daily-chk" data-id="${t.id}" data-type="hogar" style="cursor:pointer;pointer-events:all">✓</div>
+        <div class="task-body" style="pointer-events:none"><div class="task-name">${t.name}</div><div class="task-desc">${t.desc}</div></div>
+        ${whoTag}
+        <div class="task-pts" style="pointer-events:none">✓${t.pts}</div></div>`;
+    }
+  }
+  if (!hogarPendientes.length && !hogarCompletadas.length)
+    h += '<div style="font-family:var(--fb);font-size:.82rem;color:var(--text3);padding:8px 0;font-style:italic">¡Todas las misiones del hogar completadas! 🏠</div>';
   return h + '</div>';
 }
 function bindDaily() {
@@ -1023,94 +1036,140 @@ function newCycle() {
 
 // ── REGISTRO ───────────────────────────────────
 // ── EARNED (detalle de nenurios) ───────────────
-function buildEarned() {
+function buildEarned(filterPlayer) {
+  // filterPlayer: null = todos, 'mono' | 'oso' = solo ese jugador
   const ic = p => p==='mono' ? 'var(--mono)' : p==='oso' ? 'var(--oso)' : 'var(--gold)';
-  const pTag = p => p ? `<span class="reg-player ${p}">${p==='mono'?'🐒 Mono':'🐻 Oso'}</span>` : '';
   const fmtDay = key => {
     const [y,m,d] = key.split('-');
     return new Date(+y,+m-1,+d).toLocaleDateString('es-ES',{weekday:'short',day:'numeric',month:'short'});
   };
+  const catColor = {diaria:'var(--mono)', hogar:'var(--oso)', semanal:'var(--weekly)', buff:'var(--gold)', mensual:'var(--gold-l)'};
+  const catLabel = {diaria:'Diaria', hogar:'Hogar', semanal:'Semanal', buff:'⚡ Buff', mensual:'🌕 Ciclo'};
 
-  let rows = [];
+  // ── Recolectar filas ──
+  const personal = {mono:[], oso:[]};  // misiones personales separadas por jugador
+  const shared = [];                    // hogar, semanal, buff, mensual
 
-  // Diarias personales — agrupadas por día
+  // Diarias personales
   for (const [dk, tasks] of Object.entries(ST.dailyDone||{})) {
     for (const [k, v] of Object.entries(tasks||{})) {
       if (!v) continue;
       const parts = k.split('_'); const p = parts.pop(); const tid = parts.join('_');
       const t = byId(DP, tid); if(!t) continue;
-      rows.push({label: t.name, desc: fmtDay(dk), pts: t.pts, p, cat:'diaria'});
+      personal[p]?.push({label: t.name, desc: fmtDay(dk), pts: t.pts, p, cat:'diaria'});
     }
   }
-  // Hogar — agrupadas por día
+  // Hogar
   for (const [dk, tasks] of Object.entries(ST.dailyHogarDone||{})) {
     for (const [tid, p] of Object.entries(tasks||{})) {
       if (!p) continue;
       const t = byId(DH, tid); if(!t) continue;
-      rows.push({label: t.name, desc: fmtDay(dk), pts: t.pts, p, cat:'hogar'});
+      if (!filterPlayer || filterPlayer === p)
+        shared.push({label: t.name, desc: fmtDay(dk), pts: t.pts, p, cat:'hogar'});
     }
   }
   // Semanales
-  for (const [wk, tasks] of Object.entries(ST.weeklyDone||{})) {
-    for (const [tid, v] of Object.entries(tasks||{})) {
-      if (!v) continue;
-      let found = false;
-      for (const grp of WG) {
-        const m = byId(grp.minors, tid);
-        if (m) { rows.push({label: m.name, desc: `Semana — ${grp.name}`, pts: m.pts, p:null, cat:'semanal'}); found=true; break; }
-      }
-      if (!found) {
-        const ws = byId(WS, tid);
-        if (ws) rows.push({label: ws.name, desc: 'Misión individual', pts: ws.pts, p:null, cat:'semanal'});
+  if (!filterPlayer) {
+    for (const [wk, tasks] of Object.entries(ST.weeklyDone||{})) {
+      for (const [tid, v] of Object.entries(tasks||{})) {
+        if (!v) continue;
+        let found = false;
+        for (const grp of WG) {
+          const m = byId(grp.minors, tid);
+          if (m) { shared.push({label: m.name, desc: `Semana — ${grp.name}`, pts: m.pts, p:null, cat:'semanal'}); found=true; break; }
+        }
+        if (!found) { const ws = byId(WS, tid); if (ws) shared.push({label: ws.name, desc: 'Misión individual', pts: ws.pts, p:null, cat:'semanal'}); }
       }
     }
-  }
-  // Buffs
-  for (const [bid, v] of Object.entries(ST.buffClaimed||{})) {
-    if (!v) continue;
-    const grpId = bid.replace('_buff','');
-    const grp = byId(WG, grpId);
-    if (grp?.buffPts) rows.push({label: `Buff: ${grp.buff}`, desc: grp.name, pts: grp.buffPts, p:null, cat:'buff'});
+    // Buffs
+    for (const [bid, v] of Object.entries(ST.buffClaimed||{})) {
+      if (!v) continue;
+      const grp = byId(WG, bid.replace('_buff',''));
+      if (grp?.buffPts) shared.push({label:`Buff: ${grp.buff}`, desc:grp.name, pts:grp.buffPts, p:null, cat:'buff'});
+    }
   }
   // Mensuales
   for (const [tid, v] of Object.entries(ST.monthlyDone||{})) {
     if (!v) continue;
-    const t = byId(MM, tid);
-    if (t) rows.push({label: t.name, desc: 'Misión del gran ciclo', pts: t.pts, p:null, cat:'mensual'});
+    const t = byId(MM, tid); if(!t) continue;
+    const belongsTo = t.player || null;
+    if (!filterPlayer || !belongsTo || filterPlayer === belongsTo)
+      shared.push({label: t.name, desc: 'Misión del gran ciclo', pts: t.pts, p: belongsTo, cat:'mensual'});
+  }
+  shared.sort((a,b) => b.pts - a.pts);
+
+  // ── Calcular total mostrado ──
+  const monoPersonal = personal.mono.reduce((s,r)=>s+r.pts,0);
+  const osoPersonal  = personal.oso.reduce((s,r)=>s+r.pts,0);
+  const sharedTotal  = shared.reduce((s,r)=>s+r.pts,0);
+  let displayTotal, displayPts, displayLabel, displayColor;
+  if (filterPlayer === 'mono') {
+    displayTotal = ST.monoXP; displayLabel = '🐒 Mono'; displayColor = 'var(--mono)';
+  } else if (filterPlayer === 'oso') {
+    displayTotal = ST.osoXP; displayLabel = '🐻 Oso'; displayColor = 'var(--oso)';
+  } else {
+    displayTotal = ST.totalXP; displayLabel = '⭐ Nenurios'; displayColor = 'var(--gold-l)';
   }
 
-  // Ordenar: mayor puntuación primero
-  rows.sort((a,b) => b.pts - a.pts);
-
-  const total = rows.reduce((s,r) => s+r.pts, 0);
-
-  let h = `<div style="display:flex;align-items:center;gap:10px;margin-bottom:4px">
+  // ── Header ──
+  let h = `<div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
     <button id="earnedBack" style="background:rgba(201,148,58,.1);border:1px solid rgba(201,148,58,.3);color:var(--gold);font-family:var(--fu);font-size:.78rem;padding:4px 12px;border-radius:8px;cursor:pointer">← Volver</button>
-    <div class="sec-hdr" style="margin:0">⭐ Detalle de Nenurios</div>
+    <div class="sec-hdr" style="margin:0">${displayLabel}</div>
   </div>`;
-  h += `<div style="font-family:var(--ft);font-size:1.6rem;color:var(--gold-l);text-shadow:0 0 16px var(--gold-g);margin-bottom:2px">${total} ★</div>`;
-  h += `<div style="font-family:var(--fu);font-size:.72rem;color:var(--text3);margin-bottom:14px;letter-spacing:1px">${rows.length} misiones completadas</div>`;
+  h += `<div style="font-family:var(--ft);font-size:1.6rem;color:${displayColor};text-shadow:0 0 16px var(--gold-g);margin-bottom:14px">${displayTotal} ★</div>`;
 
-  if (!rows.length) {
-    h += '<div class="reg-empty">Aún no hay misiones completadas en este ciclo.</div>';
-    return h;
-  }
-
-  // Categorías con colores
-  const catColor = {diaria:'var(--mono)', hogar:'var(--oso)', semanal:'var(--weekly)', buff:'var(--gold)', mensual:'var(--gold-l)'};
-  const catLabel = {diaria:'Diaria', hogar:'Hogar', semanal:'Semanal', buff:'⚡ Buff', mensual:'🌕 Ciclo'};
-
-  for (const r of rows) {
+  const renderRow = r => {
     const color = r.p ? ic(r.p) : catColor[r.cat];
-    h += `<div class="reg-item" style="--ic:${color}">
+    const pTag  = r.p ? `<span class="reg-player ${r.p}" style="pointer-events:none">${r.p==='mono'?'🐒':'🐻'} ${r.p==='mono'?'Mono':'Oso'}</span>` : '';
+    return `<div class="reg-item" style="--ic:${color}">
       <div class="reg-body">
         <div class="reg-name">${r.label}</div>
         <div class="reg-meta">${r.desc} · <span style="color:${catColor[r.cat]};font-weight:700">${catLabel[r.cat]}</span></div>
       </div>
-      ${pTag(r.p)}
+      ${pTag}
       <div class="reg-pts">+${r.pts}</div>
     </div>`;
+  };
+
+  // ── Sección misiones personales (colapsable) ──
+  const renderPersonalSection = (p, rows) => {
+    if (!rows.length) return '';
+    const pLabel = p==='mono' ? '🐒 Misiones Personales de Mono' : '🐻 Misiones Personales de Oso';
+    const pColor = p==='mono' ? 'var(--mono)' : 'var(--oso)';
+    const total  = rows.reduce((s,r)=>s+r.pts,0);
+    const secId  = `personal_${p}`;
+    return `
+      <div class="earned-group" id="${secId}" style="margin-bottom:8px">
+        <div class="earned-group-hdr" data-sec="${secId}" style="display:flex;align-items:center;gap:8px;padding:10px 12px;background:var(--surface);border:1px solid var(--border);border-radius:10px;cursor:pointer;user-select:none">
+          <div style="flex:1;font-family:var(--fu);font-weight:700;font-size:.88rem;color:${pColor}">${pLabel}</div>
+          <div style="font-family:var(--ft);font-size:.9rem;color:${pColor}">${total} ★</div>
+          <div class="earned-chevron" style="color:var(--text3);transition:transform .2s">›</div>
+        </div>
+        <div class="earned-group-body" style="display:none;margin-top:4px">
+          ${rows.map(renderRow).join('')}
+        </div>
+      </div>`;
+  };
+
+  if (!filterPlayer) {
+    // Vista total: secciones colapsables para personales de cada jugador
+    h += renderPersonalSection('mono', personal.mono);
+    h += renderPersonalSection('oso',  personal.oso);
+  } else {
+    // Vista filtrada: personales del jugador directo, sin anidar
+    personal[filterPlayer].forEach(r => { h += renderRow(r); });
   }
+
+  // Misiones compartidas
+  if (shared.length) {
+    if (!filterPlayer)
+      h += `<div class="sec-hdr" style="margin:12px 0 8px">🌐 Compartidas</div>`;
+    shared.forEach(r => { h += renderRow(r); });
+  }
+
+  if (!personal.mono.length && !personal.oso.length && !shared.length)
+    h += '<div class="reg-empty">Aún no hay misiones completadas en este ciclo.</div>';
+
   return h;
 }
 
@@ -1118,10 +1177,10 @@ function buildRegistro() {
   const dk  = todayKey();
   const yk  = yesterdayKey();
 
-  // ── VISTA NENURIOS: listado completo de misiones que suman al total ──
-  if (curTabSub === 'earned') {
-    return buildEarned();
-  }
+  // ── VISTAS DE DETALLE ──
+  if (curTabSub === 'earned')      return buildEarned(null);
+  if (curTabSub === 'earned-mono') return buildEarned('mono');
+  if (curTabSub === 'earned-oso')  return buildEarned('oso');
 
   // Fechas formateadas
   const fmtDate = key => {
@@ -1206,6 +1265,17 @@ function bindRegistro() {
   // Botón volver desde vista de nenurios
   const backBtn = document.getElementById('earnedBack');
   if (backBtn) backBtn.addEventListener('click', () => { curTabSub = null; renderTab(); });
+
+  // Toggle secciones colapsables de misiones personales
+  document.querySelectorAll('.earned-group-hdr').forEach(hdr => {
+    hdr.addEventListener('click', () => {
+      const body = hdr.nextElementSibling;
+      const chevron = hdr.querySelector('.earned-chevron');
+      const open = body.style.display !== 'none';
+      body.style.display = open ? 'none' : 'block';
+      chevron.style.transform = open ? '' : 'rotate(90deg)';
+    });
+  });
 
   document.querySelectorAll('.reg-item.expired').forEach(el => {
     el.addEventListener('click', () => {
