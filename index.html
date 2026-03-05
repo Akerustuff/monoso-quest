@@ -442,12 +442,14 @@ const WS = [
   {id:'ws20',name:'Rastreo del Sendero Brillante III',desc:'Pasar trapeador 3ra vez',pts:20}
 ];
 const MM = [
-  {id:'mm0',name:'Cacería de la Escarcha Ancestral',desc:'Limpieza profunda del refrigerador',pts:200},
-  {id:'mm1',name:'Excavación en las Bóvedas de Suministros',desc:'Limpieza profunda de las alacenas',pts:200},
-  {id:'mm2',name:'Purificación del Crisol del Fuego',desc:'Limpieza del horno',pts:200},
-  {id:'mm3',name:'Bendición de la Criatura Creadora del Bosque',desc:'Mantenimiento de Bambi',pts:250},
-  {id:'mm4',name:'El Tesoro del Dragón',desc:'Ahorrar según el monto acordado',pts:300},
-  {id:'mm5',name:'Aniquilación de la Sombra de la Deuda',desc:'Pagar el monto mensual de las TDCs',pts:300}
+  {id:'mm0',name:'Cacería de la Escarcha Ancestral',desc:'Limpieza profunda del refrigerador',pts:200,player:null},
+  {id:'mm1',name:'Excavación en las Bóvedas de Suministros',desc:'Limpieza profunda de las alacenas',pts:200,player:null},
+  {id:'mm2',name:'Purificación del Crisol del Fuego',desc:'Limpieza del horno',pts:200,player:null},
+  {id:'mm3',name:'Bendición de la Criatura Creadora del Bosque',desc:'Mantenimiento de Bambi',pts:250,player:null},
+  {id:'mm4_mono',name:'El Tesoro del Dragón',desc:'Ahorrar según el monto acordado',pts:150,player:'mono'},
+  {id:'mm4_oso', name:'El Tesoro del Dragón',desc:'Ahorrar según el monto acordado',pts:150,player:'oso'},
+  {id:'mm5_mono',name:'Aniquilación de la Sombra de la Deuda',desc:'Pagar el monto mensual de las TDCs',pts:150,player:'mono'},
+  {id:'mm5_oso', name:'Aniquilación de la Sombra de la Deuda',desc:'Pagar el monto mensual de las TDCs',pts:150,player:'oso'}
 ];
 const BP = [
   {lv:1,xp:50,ico:'🌿',name:'Aprendiz'},{lv:2,xp:150,ico:'🗡️',name:'Guerrero'},
@@ -567,7 +569,7 @@ const isBuff    = id => !!ST.buffClaimed[id];
 function recalcXP() {
   let total=0, mono=0, oso=0;
 
-  // Daily personal — tiene jugador asignado (key = "tid_player")
+  // Daily personal — jugador asignado en la clave (tid_player)
   for (const tasks of Object.values(ST.dailyDone||{})) {
     for (const [k, v] of Object.entries(tasks||{})) {
       if (!v) continue;
@@ -577,7 +579,7 @@ function recalcXP() {
       if(p==='mono') mono+=t.pts; else oso+=t.pts;
     }
   }
-  // Daily hogar — clave es tid, valor es el jugador que la completó
+  // Daily hogar — valor es el jugador que la completó
   for (const tasks of Object.values(ST.dailyHogarDone||{})) {
     for (const [tid, p] of Object.entries(tasks||{})) {
       if (!p) continue;
@@ -586,37 +588,38 @@ function recalcXP() {
       if(p==='mono') mono+=t.pts; else if(p==='oso') oso+=t.pts;
     }
   }
-  // Weekly — buscar en minors PRIMERO, si no encuentra busca en solo (nunca ambos)
+  // Weekly — compartidas, se dividen 50/50
   for (const tasks of Object.values(ST.weeklyDone||{})) {
     for (const [tid, v] of Object.entries(tasks||{})) {
       if (!v) continue;
-      let found = false;
+      let pts = 0, found = false;
       for (const grp of WG) {
         const m = byId(grp.minors, tid);
-        if (m) { total+=m.pts; found=true; break; }
+        if (m) { pts = m.pts; found = true; break; }
       }
-      if (!found) {
-        const ws = byId(WS, tid);
-        if (ws) total+=ws.pts;
-      }
+      if (!found) { const ws = byId(WS, tid); if (ws) pts = ws.pts; }
+      if (pts) { total+=pts; mono+=pts/2; oso+=pts/2; }
     }
   }
-  // Buffs
+  // Buffs — compartidos, 50/50
   for (const [bid, v] of Object.entries(ST.buffClaimed||{})) {
     if (!v) continue;
-    const grpId = bid.replace('_buff','');
-    const grp = byId(WG, grpId);
-    if (grp?.buffPts) total+=grp.buffPts;
+    const grp = byId(WG, bid.replace('_buff',''));
+    if (grp?.buffPts) { total+=grp.buffPts; mono+=grp.buffPts/2; oso+=grp.buffPts/2; }
   }
-  // Monthly
+  // Monthly — si tiene player asignado va a ese jugador, si no 50/50
   for (const [tid, v] of Object.entries(ST.monthlyDone||{})) {
     if (!v) continue;
-    const t = byId(MM, tid); if(t) total+=t.pts;
+    const t = byId(MM, tid); if(!t) continue;
+    total+=t.pts;
+    if (t.player==='mono') mono+=t.pts;
+    else if (t.player==='oso') oso+=t.pts;
+    else { mono+=t.pts/2; oso+=t.pts/2; }
   }
 
   ST.totalXP = total;
-  ST.monoXP  = mono;
-  ST.osoXP   = oso;
+  ST.monoXP  = Math.round(mono);
+  ST.osoXP   = Math.round(oso);
 }
 
 // XP se recalcula siempre desde cero con recalcXP() — no se acumula incrementalmente
@@ -757,29 +760,30 @@ function buildDaily() {
   let h = `<div class="sec-hdr">⚔ Misiones Personales ${countdownBadge}</div><div class="task-list">`;
   for (const t of DP) {
     const done = isDDaily(t.id, p);
-    h += `<div class="task-item${done?' done':''}" style="--ic:${ic}" data-id="${t.id}" data-p="${p}" data-type="personal">
-      <div class="task-chk">${done?'✓':''}</div>
-      <div class="task-body"><div class="task-name">${t.name}</div><div class="task-desc">${t.desc}</div></div>
-      <div class="task-pts">${done?'✓':'+'}${t.pts}</div></div>`;
+    h += `<div class="task-item${done?' done':''}" style="--ic:${ic};cursor:default" data-id="${t.id}" data-p="${p}" data-type="personal">
+      <div class="task-chk daily-chk" data-id="${t.id}" data-p="${p}" data-type="personal" style="cursor:pointer;pointer-events:all">${done?'✓':''}</div>
+      <div class="task-body" style="pointer-events:none"><div class="task-name">${t.name}</div><div class="task-desc">${t.desc}</div></div>
+      <div class="task-pts" style="pointer-events:none">${done?'✓':'+'}${t.pts}</div></div>`;
   }
   h += `<div class="sec-hdr" style="margin-top:16px">🏠 Misiones del Hogar ${countdownBadge}</div><div class="task-list">`;
   for (const t of DH) {
     const done = isDHogar(t.id);
-    const who  = whoDidHogar(t.id); // 'mono' | 'oso' | null
+    const who  = whoDidHogar(t.id);
     const whoIc = who==='mono' ? 'var(--mono)' : who==='oso' ? 'var(--oso)' : 'var(--gold)';
-    const whoTag = who ? `<span class="ptag ${who}">${who==='mono'?'🐒 Mono':'🐻 Oso'}</span>` : '';
-    h += `<div class="task-item${done?' done':''}" style="--ic:${whoIc}" data-id="${t.id}" data-type="hogar">
-      <div class="task-chk">${done?'✓':''}</div>
-      <div class="task-body"><div class="task-name">${t.name}</div><div class="task-desc">${t.desc}</div></div>
+    const whoTag = who ? `<span class="ptag ${who}" style="pointer-events:none">${who==='mono'?'🐒 Mono':'🐻 Oso'}</span>` : '';
+    h += `<div class="task-item${done?' done':''}" style="--ic:${whoIc};cursor:default" data-id="${t.id}" data-type="hogar">
+      <div class="task-chk daily-chk" data-id="${t.id}" data-type="hogar" style="cursor:pointer;pointer-events:all">${done?'✓':''}</div>
+      <div class="task-body" style="pointer-events:none"><div class="task-name">${t.name}</div><div class="task-desc">${t.desc}</div></div>
       ${whoTag}
-      <div class="task-pts">${done?'✓':'+'}${t.pts}</div></div>`;
+      <div class="task-pts" style="pointer-events:none">${done?'✓':'+'}${t.pts}</div></div>`;
   }
   return h + '</div>';
 }
 function bindDaily() {
-  document.querySelectorAll('.task-item[data-type]').forEach(el => {
-    el.addEventListener('click', () => {
-      const {id:tid, p, type} = el.dataset;
+  document.querySelectorAll('.daily-chk').forEach(chk => {
+    chk.addEventListener('click', e => {
+      e.stopPropagation();
+      const {id:tid, p, type} = chk.dataset;
       const dk=todayKey(), prev=curLv();
       if (type==='personal') {
         const k=`${tid}_${p}`;
@@ -788,14 +792,10 @@ function bindDaily() {
         if (ST.dailyDone[dk][k]) { delete ST.dailyDone[dk][k]; toast(`-${pts} ★`); }
         else { ST.dailyDone[dk][k]=true; toast(`+${pts} ★`); }
       } else {
-        // Hogar: clave es solo tid, valor es el jugador que la completó
         const pts = byId(DH,tid).pts;
         if (!ST.dailyHogarDone[dk]) ST.dailyHogarDone[dk]={};
-        if (ST.dailyHogarDone[dk][tid]) {
-          delete ST.dailyHogarDone[dk][tid]; toast(`-${pts} ★`);
-        } else {
-          ST.dailyHogarDone[dk][tid] = currentPlayer; toast(`+${pts} ★`);
-        }
+        if (ST.dailyHogarDone[dk][tid]) { delete ST.dailyHogarDone[dk][tid]; toast(`-${pts} ★`); }
+        else { ST.dailyHogarDone[dk][tid] = currentPlayer; toast(`+${pts} ★`); }
       }
       checkLv(prev); save(); renderAll();
     });
@@ -835,10 +835,10 @@ function buildWeekly() {
       <div class="minor-list">`;
     for (const m of grp.minors) {
       const md = isWMinor(m.id);
-      h += `<div class="minor-item${md?' done':''}" data-mid="${m.id}" data-grp="${grp.id}">
-        <div class="minor-chk">${md?'✓':''}</div>
-        <div class="minor-body"><div class="minor-name">${m.name}</div><div class="minor-desc">${m.desc}</div></div>
-        <div class="minor-pts">${md?'✓':'+'}${m.pts}</div></div>`;
+      h += `<div class="minor-item${md?' done':''}" data-mid="${m.id}" data-grp="${m.id}" style="cursor:default">
+        <div class="minor-chk weekly-chk" data-mid="${m.id}" data-grp="${grp.id}" style="cursor:pointer;pointer-events:all">${md?'✓':''}</div>
+        <div class="minor-body" style="pointer-events:none"><div class="minor-name">${m.name}</div><div class="minor-desc">${m.desc}</div></div>
+        <div class="minor-pts" style="pointer-events:none">${md?'✓':'+'}${m.pts}</div></div>`;
     }
     if (grp.buff) {
       h += `<div class="buff-zone${showBuff?' show':''}${buffCl?' claimed':''}" id="buff_${grp.id}">
@@ -854,10 +854,10 @@ function buildWeekly() {
     h += '<div style="font-family:var(--fb);font-size:.82rem;color:var(--text3);padding:10px 0;font-style:italic">¡Todas las misiones individuales completadas! 🎉</div>';
   }
   for (const t of activeSolo) {
-    h += `<div class="solo-item" data-sid="${t.id}">
-      <div class="solo-chk"></div>
-      <div class="solo-body"><div class="solo-name">${t.name}</div><div class="solo-desc">${t.desc}</div></div>
-      <div class="solo-pts">+${t.pts}</div></div>`;
+    h += `<div class="solo-item" data-sid="${t.id}" style="cursor:default">
+      <div class="solo-chk solo-chk-btn" data-sid="${t.id}" style="cursor:pointer;pointer-events:all"></div>
+      <div class="solo-body" style="pointer-events:none"><div class="solo-name">${t.name}</div><div class="solo-desc">${t.desc}</div></div>
+      <div class="solo-pts" style="pointer-events:none">+${t.pts}</div></div>`;
   }
 
   // ── SECCIÓN COMPLETADAS ──
@@ -904,10 +904,10 @@ function bindWeekly() {
   document.querySelectorAll('.mission-major').forEach(el => {
     el.addEventListener('click', () => document.getElementById('grp_'+el.dataset.grp).classList.toggle('open'));
   });
-  document.querySelectorAll('.minor-item').forEach(el => {
-    el.addEventListener('click', e => {
+  document.querySelectorAll('.weekly-chk').forEach(chk => {
+    chk.addEventListener('click', e => {
       e.stopPropagation();
-      const {mid, grp:grpId} = el.dataset;
+      const {mid, grp:grpId} = chk.dataset;
       const grp = byId(WG,grpId), m = byId(grp.minors,mid);
       const wk=weekKey(); if(!ST.weeklyDone[wk]) ST.weeklyDone[wk]={};
       const prev=curLv();
@@ -935,9 +935,10 @@ function bindWeekly() {
       checkLv(prev); save(); renderAll();
     });
   });
-  document.querySelectorAll('.solo-item').forEach(el => {
-    el.addEventListener('click', () => {
-      const task = byId(WS,el.dataset.sid); if(!task) return;
+  document.querySelectorAll('.solo-chk-btn').forEach(chk => {
+    chk.addEventListener('click', e => {
+      e.stopPropagation();
+      const task = byId(WS,chk.dataset.sid); if(!task) return;
       const wk=weekKey(); if(!ST.weeklyDone[wk]) ST.weeklyDone[wk]={};
       const prev=curLv();
       if (ST.weeklyDone[wk][task.id]) { delete ST.weeklyDone[wk][task.id]; toast(`-${task.pts} ★`); }
@@ -951,6 +952,7 @@ function bindWeekly() {
 function buildMonthly() {
   const active = MM.filter(t => !isMthly(t.id));
   const done   = MM.filter(t =>  isMthly(t.id));
+  const pTag = p => p ? `<span class="ptag ${p}" style="pointer-events:none">${p==='mono'?'🐒 Mono':'🐻 Oso'}</span>` : '';
 
   let h = '<div class="sec-hdr">🌕 Misiones del Gran Ciclo</div>';
   h += '<p style="font-family:var(--fb);font-size:.74rem;color:var(--text3);margin-bottom:12px;font-style:italic">Solo una vez por ciclo. ¡Cada misión sube un nivel completo!</p>';
@@ -959,20 +961,22 @@ function buildMonthly() {
     h += '<div style="font-family:var(--fb);font-size:.82rem;color:var(--text3);padding:10px 0;font-style:italic">¡Todas las misiones del ciclo completadas! 👑</div>';
   }
   for (const t of active) {
-    h += `<div class="monthly-item" data-mid="${t.id}">
-      <div class="m-chk">🔮</div>
-      <div class="m-body"><div class="m-name">${t.name}</div><div class="m-desc">${t.desc}</div></div>
-      <div class="m-right"><span class="m-pn">+${t.pts}</span><span class="m-ps">+1 NIVEL</span></div>
+    h += `<div class="monthly-item" data-mid="${t.id}" style="cursor:default">
+      <div class="m-chk monthly-chk" data-mid="${t.id}" style="cursor:pointer;pointer-events:all">🔮</div>
+      <div class="m-body" style="pointer-events:none"><div class="m-name">${t.name}</div><div class="m-desc">${t.desc}</div></div>
+      ${pTag(t.player)}
+      <div class="m-right" style="pointer-events:none"><span class="m-pn">+${t.pts}</span><span class="m-ps">+1 NIVEL</span></div>
     </div>`;
   }
 
   if (done.length) {
     h += `<div class="sec-hdr" style="margin-top:20px">✅ Completadas este ciclo <span style="font-size:.68rem;background:rgba(61,214,140,.1);color:#3dd68c;padding:1px 8px;border-radius:8px;border:1px solid rgba(61,214,140,.2);margin-left:4px">${done.length}</span></div>`;
     for (const t of done) {
-      h += `<div class="monthly-item done" data-mid="${t.id}" style="opacity:.55">
-        <div class="m-chk">✓</div>
-        <div class="m-body"><div class="m-name">${t.name}</div><div class="m-desc">${t.desc}</div></div>
-        <div class="m-right"><span class="m-pn">✓</span><span class="m-ps">completada</span></div>
+      h += `<div class="monthly-item done" data-mid="${t.id}" style="opacity:.55;cursor:default">
+        <div class="m-chk monthly-chk" data-mid="${t.id}" style="cursor:pointer;pointer-events:all">✓</div>
+        <div class="m-body" style="pointer-events:none"><div class="m-name">${t.name}</div><div class="m-desc">${t.desc}</div></div>
+        ${pTag(t.player)}
+        <div class="m-right" style="pointer-events:none"><span class="m-pn">✓</span><span class="m-ps">completada</span></div>
       </div>`;
     }
   }
@@ -980,10 +984,12 @@ function buildMonthly() {
   return h;
 }
 function bindMonthly() {
-  document.querySelectorAll('.monthly-item').forEach(el => {
-    el.addEventListener('click', () => {
-      const task = byId(MM,el.dataset.mid); if(!task) return;
-      const prev=curLv();
+  document.querySelectorAll('.monthly-chk').forEach(chk => {
+    chk.addEventListener('click', e => {
+      e.stopPropagation();
+      const mid = chk.dataset.mid;
+      const task = byId(MM, mid); if(!task) return;
+      const prev = curLv();
       if (ST.monthlyDone[task.id]) { delete ST.monthlyDone[task.id]; toast(`-${task.pts} ★`); }
       else { ST.monthlyDone[task.id]=true; toast(`+${task.pts} ★ 🌕`); }
       checkLv(prev); save(); renderAll();
