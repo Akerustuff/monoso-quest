@@ -556,7 +556,8 @@ const curLv     = () => { for(let i=BP.length-1;i>=0;i--) if(ST.totalXP>=BP[i].x
 const wkSuffix  = () => ROMAN[Math.min(weekNum(),4)];
 const byId      = (arr,id) => arr.find(x=>x.id===id) || null;
 const isDDaily  = (tid,p) => { const k=`${tid}_${p}`,dk=todayKey(); return !!(ST.dailyDone[dk]&&ST.dailyDone[dk][k]); };
-const isDHogar  = (tid,p) => { const k=`${tid}_${p}`,dk=todayKey(); return !!(ST.dailyHogarDone[dk]&&ST.dailyHogarDone[dk][k]); };
+const isDHogar  = (tid) => { const dk=todayKey(); return !!(ST.dailyHogarDone[dk]&&ST.dailyHogarDone[dk][tid]); };
+const whoDidHogar = (tid) => { const dk=todayKey(); return ST.dailyHogarDone[dk]?.[tid] || null; }; // returns 'mono'|'oso'|null
 const isWMinor  = id => { const wk=weekKey(); return !!(ST.weeklyDone[wk]&&ST.weeklyDone[wk][id]); };
 const isWSolo   = id => { const wk=weekKey(); return !!(ST.weeklyDone[wk]&&ST.weeklyDone[wk][id]); };
 const isMthly   = id => !!ST.monthlyDone[id];
@@ -575,14 +576,13 @@ function recalcXP() {
       if(p==='mono') mono+=t.pts; else oso+=t.pts;
     }
   }
-  // Daily hogar — tiene jugador asignado
+  // Daily hogar — clave es tid, valor es el jugador que la completó
   for (const tasks of Object.values(ST.dailyHogarDone||{})) {
-    for (const [k, v] of Object.entries(tasks||{})) {
-      if (!v) continue;
-      const parts = k.split('_'); const p = parts.pop(); const tid = parts.join('_');
+    for (const [tid, p] of Object.entries(tasks||{})) {
+      if (!p) continue;
       const t = byId(DH, tid); if(!t) continue;
       total+=t.pts;
-      if(p==='mono') mono+=t.pts; else oso+=t.pts;
+      if(p==='mono') mono+=t.pts; else if(p==='oso') oso+=t.pts;
     }
   }
   // Weekly — buscar en minors PRIMERO, si no encuentra busca en solo (nunca ambos)
@@ -756,10 +756,14 @@ function buildDaily() {
   }
   h += `<div class="sec-hdr" style="margin-top:16px">🏠 Misiones del Hogar ${countdownBadge}</div><div class="task-list">`;
   for (const t of DH) {
-    const done = isDHogar(t.id, p);
-    h += `<div class="task-item${done?' done':''}" style="--ic:${ic}" data-id="${t.id}" data-p="${p}" data-type="hogar">
+    const done = isDHogar(t.id);
+    const who  = whoDidHogar(t.id); // 'mono' | 'oso' | null
+    const whoIc = who==='mono' ? 'var(--mono)' : who==='oso' ? 'var(--oso)' : 'var(--gold)';
+    const whoTag = who ? `<span class="ptag ${who}">${who==='mono'?'🐒 Mono':'🐻 Oso'}</span>` : '';
+    h += `<div class="task-item${done?' done':''}" style="--ic:${whoIc}" data-id="${t.id}" data-type="hogar">
       <div class="task-chk">${done?'✓':''}</div>
       <div class="task-body"><div class="task-name">${t.name}</div><div class="task-desc">${t.desc}</div></div>
+      ${whoTag}
       <div class="task-pts">${done?'✓':'+'}${t.pts}</div></div>`;
   }
   return h + '</div>';
@@ -768,17 +772,22 @@ function bindDaily() {
   document.querySelectorAll('.task-item[data-type]').forEach(el => {
     el.addEventListener('click', () => {
       const {id:tid, p, type} = el.dataset;
-      const dk=todayKey(), k=`${tid}_${p}`, prev=curLv();
+      const dk=todayKey(), prev=curLv();
       if (type==='personal') {
+        const k=`${tid}_${p}`;
         const pts = byId(DP,tid).pts;
         if (!ST.dailyDone[dk]) ST.dailyDone[dk]={};
         if (ST.dailyDone[dk][k]) { delete ST.dailyDone[dk][k]; toast(`-${pts} ★`); }
         else { ST.dailyDone[dk][k]=true; toast(`+${pts} ★`); }
       } else {
+        // Hogar: clave es solo tid, valor es el jugador que la completó
         const pts = byId(DH,tid).pts;
         if (!ST.dailyHogarDone[dk]) ST.dailyHogarDone[dk]={};
-        if (ST.dailyHogarDone[dk][k]) { delete ST.dailyHogarDone[dk][k]; toast(`-${pts} ★`); }
-        else { ST.dailyHogarDone[dk][k]=true; toast(`+${pts} ★`); }
+        if (ST.dailyHogarDone[dk][tid]) {
+          delete ST.dailyHogarDone[dk][tid]; toast(`-${pts} ★`);
+        } else {
+          ST.dailyHogarDone[dk][tid] = currentPlayer; toast(`+${pts} ★`);
+        }
       }
       checkLv(prev); save(); renderAll();
     });
@@ -946,13 +955,11 @@ function buildRegistro() {
       if (!doneYest && !doneToday) expired.push({t, p, type:'personal', pts:t.pts});
     }
   }
+  // Hogar: una sola entrada por tarea (compartida)
   for (const t of DH) {
-    for (const p of ['mono','oso']) {
-      const k = `${t.id}_${p}`;
-      const doneYest  = !!(ST.dailyHogarDone[yk] && ST.dailyHogarDone[yk][k]);
-      const doneToday = !!(ST.dailyHogarDone[dk] && ST.dailyHogarDone[dk][k]);
-      if (!doneYest && !doneToday) expired.push({t, p, type:'hogar', pts:t.pts});
-    }
+    const doneYest  = !!(ST.dailyHogarDone[yk]?.[t.id]);
+    const doneToday = !!(ST.dailyHogarDone[dk]?.[t.id]);
+    if (!doneYest && !doneToday) expired.push({t, p:null, type:'hogar', pts:t.pts});
   }
 
   // ── COMPLETADAS HOY: ambos jugadores ──
@@ -963,11 +970,10 @@ function buildRegistro() {
       if (ST.dailyDone[dk]?.[k]) completed.push({t, p, type:'personal', pts:t.pts});
     }
   }
+  // Hogar: una sola entrada, mostrar quién la completó
   for (const t of DH) {
-    for (const p of ['mono','oso']) {
-      const k = `${t.id}_${p}`;
-      if (ST.dailyHogarDone[dk]?.[k]) completed.push({t, p, type:'hogar', pts:t.pts});
-    }
+    const who = ST.dailyHogarDone[dk]?.[t.id];
+    if (who) completed.push({t, p:who, type:'hogar', pts:t.pts});
   }
 
   const ic = p => p==='mono' ? 'var(--mono)' : 'var(--oso)';
@@ -1014,24 +1020,19 @@ function bindRegistro() {
   document.querySelectorAll('.reg-item.expired').forEach(el => {
     el.addEventListener('click', () => {
       const {id:tid, p, type} = el.dataset;
-      // Mark as done for yesterday's key so XP is awarded
-      const yk = yesterdayKey(), k = `${tid}_${p}`, prev = curLv();
+      const yk = yesterdayKey(), prev = curLv();
       if (type === 'personal') {
+        const k = `${tid}_${p}`;
         const pts = byId(DP, tid).pts;
         if (!ST.dailyDone[yk]) ST.dailyDone[yk] = {};
-        if (ST.dailyDone[yk][k]) {
-          delete ST.dailyDone[yk][k]; toast(`-${pts} ★`);
-        } else {
-          ST.dailyDone[yk][k] = true; toast(`+${pts} ★ ⏰`);
-        }
+        if (ST.dailyDone[yk][k]) { delete ST.dailyDone[yk][k]; toast(`-${pts} ★`); }
+        else { ST.dailyDone[yk][k] = true; toast(`+${pts} ★ ⏰`); }
       } else {
+        // Hogar compartida: clave es tid, valor es currentPlayer
         const pts = byId(DH, tid).pts;
         if (!ST.dailyHogarDone[yk]) ST.dailyHogarDone[yk] = {};
-        if (ST.dailyHogarDone[yk][k]) {
-          delete ST.dailyHogarDone[yk][k]; toast(`-${pts} ★`);
-        } else {
-          ST.dailyHogarDone[yk][k] = true; toast(`+${pts} ★ ⏰`);
-        }
+        if (ST.dailyHogarDone[yk][tid]) { delete ST.dailyHogarDone[yk][tid]; toast(`-${pts} ★`); }
+        else { ST.dailyHogarDone[yk][tid] = currentPlayer; toast(`+${pts} ★ ⏰`); }
       }
       checkLv(prev); save(); renderTab();
     });
