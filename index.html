@@ -296,7 +296,7 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
     </div>
     <div class="cycle-wrap">
       <div class="cycle-meta">
-        <span>Ciclo — Día <strong id="cDay">1</strong>/30</span>
+        <span>Ciclo — Día <strong id="cDay">1</strong>/<span id="cTotal">30</span></span>
         <span>Termina: <strong id="cEnd">—</strong></span>
       </div>
       <div class="bar-track"><div class="bar-fill" id="cBar" style="width:0%"></div></div>
@@ -497,7 +497,11 @@ function save() {
 // ── REAL-TIME LISTENER ─────────────────────────
 onSnapshot(ST_DOC, snap => {
   if (!snap.exists()) { syncStatus('online', 'Sincronizado ✓'); return; }
-  ST = Object.assign(blank(), snap.data());
+  const data = snap.data();
+  // Firestore puede devolver cycleStart como Timestamp — convertir a número Unix
+  if (data.cycleStart?.toMillis) data.cycleStart = data.cycleStart.toMillis();
+  else if (data.cycleStart?.seconds) data.cycleStart = data.cycleStart.seconds * 1000;
+  ST = Object.assign(blank(), data);
   recalcXP();
   syncStatus('online', 'Sincronizado ✓');
   if (currentPlayer) renderAll();
@@ -521,10 +525,33 @@ const yesterdayKey = () => {
   else d.setDate(d.getDate() - 1);
   return `${d.getFullYear()}-${d.getMonth()+1}-${d.getDate()}`;
 };
-const weekKey   = () => 'w' + Math.floor((Date.now()-ST.cycleStart)/(7*86400000));
-const weekNum   = () => Math.floor((Date.now()-ST.cycleStart)/(7*86400000));
-const cycleDay  = () => Math.min(Math.floor((Date.now()-ST.cycleStart)/86400000)+1,30);
-const cycleEnd  = () => new Date(ST.cycleStart+30*86400000).toLocaleDateString('es-ES',{day:'numeric',month:'short'});
+// Conversión segura de cycleStart (puede llegar como Timestamp de Firestore)
+const getCycleStart = () => {
+  const cs = ST.cycleStart;
+  if (cs?.toMillis) return cs.toMillis();
+  if (cs?.seconds)  return cs.seconds * 1000;
+  return Number(cs) || Date.now();
+};
+const weekKey   = () => 'w' + Math.floor((Date.now()-getCycleStart())/(7*86400000));
+const weekNum   = () => Math.floor((Date.now()-getCycleStart())/(7*86400000));
+// Fin del ciclo = último día del mes en que comenzó, a las 6AM
+const cycleEndDate = () => {
+  const start = new Date(getCycleStart());
+  return new Date(start.getFullYear(), start.getMonth()+1, 0, 6, 0, 0);
+};
+const cycleDay  = () => {
+  const cs  = getCycleStart();
+  const end = cycleEndDate();
+  const total   = Math.round((end - cs) / 86400000);
+  const elapsed = Math.floor((Date.now() - cs) / 86400000);
+  return Math.min(elapsed + 1, total);
+};
+const cycleTotalDays = () => {
+  const cs  = getCycleStart();
+  const end = cycleEndDate();
+  return Math.round((end - cs) / 86400000);
+};
+const cycleEnd  = () => cycleEndDate().toLocaleDateString('es-ES',{day:'numeric',month:'short'});
 const curLv     = () => { for(let i=BP.length-1;i>=0;i--) if(ST.totalXP>=BP[i].xp) return BP[i].lv; return 0; };
 const wkSuffix  = () => ROMAN[Math.min(weekNum(),4)];
 const byId      = (arr,id) => arr.find(x=>x.id===id) || null;
@@ -538,18 +565,18 @@ const isBuff    = id => !!ST.buffClaimed[id];
 function recalcXP() {
   let total=0, mono=0, oso=0;
 
-  // Daily personal
-  for (const [dk, tasks] of Object.entries(ST.dailyDone||{})) {
+  // Daily personal — tiene jugador asignado (key = "tid_player")
+  for (const tasks of Object.values(ST.dailyDone||{})) {
     for (const [k, v] of Object.entries(tasks||{})) {
       if (!v) continue;
-      const [tid, p] = k.split('_').reduce((a,c,i,arr)=>i===arr.length-1?[arr.slice(0,-1).join('_'),c]:a,[]);
+      const parts = k.split('_'); const p = parts.pop(); const tid = parts.join('_');
       const t = byId(DP, tid); if(!t) continue;
       total+=t.pts;
       if(p==='mono') mono+=t.pts; else oso+=t.pts;
     }
   }
-  // Daily hogar
-  for (const [dk, tasks] of Object.entries(ST.dailyHogarDone||{})) {
+  // Daily hogar — tiene jugador asignado
+  for (const tasks of Object.values(ST.dailyHogarDone||{})) {
     for (const [k, v] of Object.entries(tasks||{})) {
       if (!v) continue;
       const parts = k.split('_'); const p = parts.pop(); const tid = parts.join('_');
@@ -558,16 +585,19 @@ function recalcXP() {
       if(p==='mono') mono+=t.pts; else oso+=t.pts;
     }
   }
-  // Weekly minors
-  for (const [wk, tasks] of Object.entries(ST.weeklyDone||{})) {
+  // Weekly — buscar en minors PRIMERO, si no encuentra busca en solo (nunca ambos)
+  for (const tasks of Object.values(ST.weeklyDone||{})) {
     for (const [tid, v] of Object.entries(tasks||{})) {
       if (!v) continue;
+      let found = false;
       for (const grp of WG) {
         const m = byId(grp.minors, tid);
-        if (m) { total+=m.pts; break; }
+        if (m) { total+=m.pts; found=true; break; }
       }
-      const ws = byId(WS, tid);
-      if (ws) total+=ws.pts;
+      if (!found) {
+        const ws = byId(WS, tid);
+        if (ws) total+=ws.pts;
+      }
     }
   }
   // Buffs
@@ -575,7 +605,7 @@ function recalcXP() {
     if (!v) continue;
     const grpId = bid.replace('_buff','');
     const grp = byId(WG, grpId);
-    if (grp && grp.buffPts) total+=grp.buffPts;
+    if (grp?.buffPts) total+=grp.buffPts;
   }
   // Monthly
   for (const [tid, v] of Object.entries(ST.monthlyDone||{})) {
@@ -584,13 +614,11 @@ function recalcXP() {
   }
 
   ST.totalXP = total;
-  // Mono/Oso individual: solo diarias (las únicas asignadas a jugador)
-  ST.monoXP = mono;
-  ST.osoXP  = oso;
+  ST.monoXP  = mono;
+  ST.osoXP   = oso;
 }
 
-function addXP(n,p){ST.totalXP+=n;if(p==='mono')ST.monoXP+=n;else if(p==='oso')ST.osoXP+=n;}
-function subXP(n,p){ST.totalXP=Math.max(0,ST.totalXP-n);if(p==='mono')ST.monoXP=Math.max(0,ST.monoXP-n);else if(p==='oso')ST.osoXP=Math.max(0,ST.osoXP-n);}
+// XP se recalcula siempre desde cero con recalcXP() — no se acumula incrementalmente
 
 // ── TOAST ──────────────────────────────────────
 function toast(txt) {
@@ -671,10 +699,11 @@ function renderScores() {
   document.getElementById('sMono').textContent  = ST.monoXP;
   document.getElementById('sOso').textContent   = ST.osoXP;
   document.getElementById('sTotal').textContent = ST.totalXP;
-  const d = cycleDay();
+  const d = cycleDay(), total = cycleTotalDays();
   document.getElementById('cDay').textContent = d;
+  document.getElementById('cTotal').textContent = total;
   document.getElementById('cEnd').textContent = cycleEnd();
-  document.getElementById('cBar').style.width = (d/30*100)+'%';
+  document.getElementById('cBar').style.width = (d/total*100)+'%';
 }
 
 function renderBP() {
@@ -699,13 +728,25 @@ function renderTab() {
   if (curTab==='registro') { c.innerHTML = buildRegistro(); bindRegistro(); }
 }
 
-// ── DAILY ──────────────────────────────────────
+// Horas hasta las 6AM del día siguiente
+const hoursUntilReset = () => {
+  const now = new Date();
+  const next = new Date(now);
+  if (now.getHours() >= 6) next.setDate(next.getDate() + 1);
+  next.setHours(6, 0, 0, 0);
+  const diff = next - now;
+  const h = Math.floor(diff / 3600000);
+  const m = Math.floor((diff % 3600000) / 60000);
+  return `${h}h ${m}m`;
+};
 function buildDaily() {
   const p = currentPlayer;
   const ic = p==='mono' ? 'var(--mono)' : 'var(--oso)';
   const pn = p==='mono' ? '🐒 Mono' : '🐻 Oso';
+  const hrs = hoursUntilReset();
+  const countdownBadge = `<span style="margin-left:6px;font-size:.68rem;color:var(--gold);font-family:var(--fu);font-weight:700;letter-spacing:1px;background:rgba(201,148,58,.1);padding:1px 7px;border-radius:8px;border:1px solid rgba(201,148,58,.2)">⏱ ${hrs}</span>`;
 
-  let h = '<div class="sec-hdr">⚔ Misiones Personales</div><div class="task-list">';
+  let h = `<div class="sec-hdr">⚔ Misiones Personales ${countdownBadge}</div><div class="task-list">`;
   for (const t of DP) {
     const done = isDDaily(t.id, p);
     h += `<div class="task-item${done?' done':''}" style="--ic:${ic}" data-id="${t.id}" data-p="${p}" data-type="personal">
@@ -713,7 +754,7 @@ function buildDaily() {
       <div class="task-body"><div class="task-name">${t.name}</div><div class="task-desc">${t.desc}</div></div>
       <div class="task-pts">${done?'✓':'+'}${t.pts}</div></div>`;
   }
-  h += '</div><div class="sec-hdr" style="margin-top:16px">🏠 Misiones del Hogar</div><div class="task-list">';
+  h += `<div class="sec-hdr" style="margin-top:16px">🏠 Misiones del Hogar ${countdownBadge}</div><div class="task-list">`;
   for (const t of DH) {
     const done = isDHogar(t.id, p);
     h += `<div class="task-item${done?' done':''}" style="--ic:${ic}" data-id="${t.id}" data-p="${p}" data-type="hogar">
@@ -731,13 +772,13 @@ function bindDaily() {
       if (type==='personal') {
         const pts = byId(DP,tid).pts;
         if (!ST.dailyDone[dk]) ST.dailyDone[dk]={};
-        if (ST.dailyDone[dk][k]) { delete ST.dailyDone[dk][k]; subXP(pts,p); toast(`-${pts} ★`); }
-        else { ST.dailyDone[dk][k]=true; addXP(pts,p); toast(`+${pts} ★`); }
+        if (ST.dailyDone[dk][k]) { delete ST.dailyDone[dk][k]; toast(`-${pts} ★`); }
+        else { ST.dailyDone[dk][k]=true; toast(`+${pts} ★`); }
       } else {
         const pts = byId(DH,tid).pts;
         if (!ST.dailyHogarDone[dk]) ST.dailyHogarDone[dk]={};
-        if (ST.dailyHogarDone[dk][k]) { delete ST.dailyHogarDone[dk][k]; subXP(pts,p); toast(`-${pts} ★`); }
-        else { ST.dailyHogarDone[dk][k]=true; addXP(pts,p); toast(`+${pts} ★`); }
+        if (ST.dailyHogarDone[dk][k]) { delete ST.dailyHogarDone[dk][k]; toast(`-${pts} ★`); }
+        else { ST.dailyHogarDone[dk][k]=true; toast(`+${pts} ★`); }
       }
       checkLv(prev); save(); renderAll();
     });
@@ -797,11 +838,11 @@ function bindWeekly() {
       const wk=weekKey(); if(!ST.weeklyDone[wk]) ST.weeklyDone[wk]={};
       const prev=curLv();
       if (ST.weeklyDone[wk][mid]) {
-        delete ST.weeklyDone[wk][mid]; subXP(m.pts,currentPlayer); toast(`-${m.pts} ★`);
+        delete ST.weeklyDone[wk][mid]; toast(`-${m.pts} ★`);
         const bk=`${grpId}_buff`;
-        if (grp.buff && ST.buffClaimed[bk]) { delete ST.buffClaimed[bk]; subXP(grp.buffPts,currentPlayer); }
+        if (grp.buff && ST.buffClaimed[bk]) { delete ST.buffClaimed[bk]; }
       } else {
-        ST.weeklyDone[wk][mid]=true; addXP(m.pts,currentPlayer); toast(`+${m.pts} ★`);
+        ST.weeklyDone[wk][mid]=true; toast(`+${m.pts} ★`);
       }
       checkLv(prev); save(); renderAll();
     });
@@ -816,7 +857,7 @@ function bindWeekly() {
       if (!grp.minors.every(m=>isWMinor(m.id))) { toast('⚠ Completa todas las misiones menores'); return; }
       const bk=`${grpId}_buff`; if(ST.buffClaimed[bk]) return;
       const prev=curLv();
-      ST.buffClaimed[bk]=true; addXP(grp.buffPts,currentPlayer); toast(`⚡ Buff +${grp.buffPts} ★`);
+      ST.buffClaimed[bk]=true; toast(`⚡ Buff +${grp.buffPts} ★`);
       checkLv(prev); save(); renderAll();
     });
   });
@@ -825,8 +866,8 @@ function bindWeekly() {
       const task = byId(WS,el.dataset.sid); if(!task) return;
       const wk=weekKey(); if(!ST.weeklyDone[wk]) ST.weeklyDone[wk]={};
       const prev=curLv();
-      if (ST.weeklyDone[wk][task.id]) { delete ST.weeklyDone[wk][task.id]; subXP(task.pts,currentPlayer); toast(`-${task.pts} ★`); }
-      else { ST.weeklyDone[wk][task.id]=true; addXP(task.pts,currentPlayer); toast(`+${task.pts} ★`); }
+      if (ST.weeklyDone[wk][task.id]) { delete ST.weeklyDone[wk][task.id]; toast(`-${task.pts} ★`); }
+      else { ST.weeklyDone[wk][task.id]=true; toast(`+${task.pts} ★`); }
       checkLv(prev); save(); renderAll();
     });
   });
@@ -851,8 +892,8 @@ function bindMonthly() {
     el.addEventListener('click', () => {
       const task = byId(MM,el.dataset.mid); if(!task) return;
       const prev=curLv();
-      if (ST.monthlyDone[task.id]) { delete ST.monthlyDone[task.id]; subXP(task.pts,currentPlayer); toast(`-${task.pts} ★`); }
-      else { ST.monthlyDone[task.id]=true; addXP(task.pts,currentPlayer); toast(`+${task.pts} ★ 🌕`); }
+      if (ST.monthlyDone[task.id]) { delete ST.monthlyDone[task.id]; toast(`-${task.pts} ★`); }
+      else { ST.monthlyDone[task.id]=true; toast(`+${task.pts} ★ 🌕`); }
       checkLv(prev); save(); renderAll();
     });
   });
@@ -979,17 +1020,17 @@ function bindRegistro() {
         const pts = byId(DP, tid).pts;
         if (!ST.dailyDone[yk]) ST.dailyDone[yk] = {};
         if (ST.dailyDone[yk][k]) {
-          delete ST.dailyDone[yk][k]; subXP(pts, p); toast(`-${pts} ★`);
+          delete ST.dailyDone[yk][k]; toast(`-${pts} ★`);
         } else {
-          ST.dailyDone[yk][k] = true; addXP(pts, p); toast(`+${pts} ★ ⏰`);
+          ST.dailyDone[yk][k] = true; toast(`+${pts} ★ ⏰`);
         }
       } else {
         const pts = byId(DH, tid).pts;
         if (!ST.dailyHogarDone[yk]) ST.dailyHogarDone[yk] = {};
         if (ST.dailyHogarDone[yk][k]) {
-          delete ST.dailyHogarDone[yk][k]; subXP(pts, p); toast(`-${pts} ★`);
+          delete ST.dailyHogarDone[yk][k]; toast(`-${pts} ★`);
         } else {
-          ST.dailyHogarDone[yk][k] = true; addXP(pts, p); toast(`+${pts} ★ ⏰`);
+          ST.dailyHogarDone[yk][k] = true; toast(`+${pts} ★ ⏰`);
         }
       }
       checkLv(prev); save(); renderTab();
@@ -997,7 +1038,12 @@ function bindRegistro() {
   });
 }
 
-setInterval(() => { if(currentPlayer) document.getElementById('cDay').textContent=cycleDay(); }, 60000);
+setInterval(() => {
+  if (!currentPlayer) return;
+  document.getElementById('cDay').textContent = cycleDay();
+  // Refresh daily tab countdown if active
+  if (curTab === 'daily') renderTab();
+}, 60000);
 </script>
 </body>
 </html>
