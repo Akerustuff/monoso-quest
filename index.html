@@ -253,14 +253,22 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 .prov-header-title{font-family:var(--ft);font-size:1.1rem;color:var(--gold-l);letter-spacing:2px;flex:1}
 .prov-back{font-size:1.3rem;cursor:pointer;color:var(--text2);-webkit-tap-highlight-color:transparent;padding:4px 8px}
 .prov-body{flex:1;overflow-y:auto;padding:12px 14px 80px}
-.prov-cat-hdr{font-family:var(--fu);font-size:.78rem;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--gold);padding:10px 0 6px;margin-top:8px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px}
+.prov-cat-hdr{font-family:var(--fu);font-size:.78rem;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--gold);padding:10px 0 6px;margin-top:8px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px;cursor:pointer;user-select:none;-webkit-tap-highlight-color:transparent}
 .prov-cat-hdr::before{content:'⚔';font-size:.7rem}
+.prov-cat-chevron{margin-left:auto;font-size:.75rem;color:var(--text3);transition:transform .22s}
+.prov-cat-hdr.collapsed .prov-cat-chevron{transform:rotate(-90deg)}
+.prov-cat-body{overflow:hidden;transition:max-height .25s ease}
+.prov-cat-body.collapsed{max-height:0!important}
 .prov-table{width:100%;border-collapse:collapse;margin-bottom:4px}
 .prov-table th{font-family:var(--fu);font-size:.62rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--text3);padding:5px 8px 5px 4px;text-align:left;border-bottom:1px solid var(--border)}
 .prov-table th.th-hay{text-align:center;width:40px}
 .prov-table th.th-qty{text-align:center;width:60px}
 .prov-row{border-bottom:1px solid rgba(30,45,61,.6);transition:background .15s}
 .prov-row:active{background:var(--surface2)}
+.prov-row.row-warn{background:rgba(180,130,20,.13);border-bottom-color:rgba(180,130,20,.2)}
+.prov-row.row-warn:active{background:rgba(180,130,20,.22)}
+.prov-row.row-danger{background:rgba(160,40,40,.18);border-bottom-color:rgba(160,40,40,.25)}
+.prov-row.row-danger:active{background:rgba(160,40,40,.28)}
 .prov-cell{padding:8px 8px 8px 4px;font-family:var(--fb);font-size:.88rem;color:var(--text)}
 .prov-cell-hay{text-align:center;padding:6px 4px}
 .prov-cell-qty{text-align:center;padding:6px 4px}
@@ -1602,6 +1610,9 @@ async function saveProv() {
 }
 
 // ── RENDER ────────────────────────────────────
+// Track which categories are collapsed (persists across renders)
+const collapsedCats = new Set();
+
 function renderProvisions() {
   const body = document.getElementById('provBody');
   if (!body) return;
@@ -1609,15 +1620,21 @@ function renderProvisions() {
   for (const cat of PV.categories) {
     const items = PV.items.filter(i => i.cat === cat.id);
     if (!items.length) continue;
-    h += `<div class="prov-cat-hdr">${cat.name}</div>`;
+    const isCollapsed = collapsedCats.has(cat.id);
+    const colCls = isCollapsed ? ' collapsed' : '';
+    h += `<div class="prov-cat-hdr${colCls}" data-catid="${cat.id}">
+      ${cat.name}<span class="prov-cat-chevron">▾</span>
+    </div>`;
+    h += `<div class="prov-cat-body${colCls}" data-catbody="${cat.id}">`;
     h += `<table class="prov-table"><thead><tr>
       <th>Provisión</th>
       <th class="th-hay">Hay</th>
       <th class="th-qty">Cantidad</th>
     </tr></thead><tbody>`;
     for (const item of items) {
-      const qCls = item.qty === 0 ? 'danger' : item.qty === 1 ? 'warn' : '';
-      h += `<tr class="prov-row" data-id="${item.id}">
+      const rowCls = item.qty === 0 ? ' row-danger' : item.qty === 1 ? ' row-warn' : '';
+      const numCls = item.qty === 0 ? ' danger' : item.qty === 1 ? ' warn' : '';
+      h += `<tr class="prov-row${rowCls}" data-id="${item.id}">
         <td class="prov-cell">${item.name}</td>
         <td class="prov-cell-hay">
           <div class="prov-chk${item.hay?' yes':''}" data-action="hay" data-id="${item.id}"></div>
@@ -1625,19 +1642,43 @@ function renderProvisions() {
         <td class="prov-cell-qty">
           <div class="prov-qty-wrap">
             <div class="prov-qty-btn" data-action="dec" data-id="${item.id}">−</div>
-            <div class="prov-qty-val${qCls?' '+qCls:''}">${item.qty}</div>
+            <div class="prov-qty-val${numCls}">${item.qty}</div>
             <div class="prov-qty-btn" data-action="inc" data-id="${item.id}">＋</div>
           </div>
         </td>
       </tr>`;
     }
-    h += '</tbody></table>';
+    h += '</tbody></table></div>';
   }
   body.innerHTML = h;
+  // Set actual heights for smooth transition
+  body.querySelectorAll('.prov-cat-body').forEach(el => {
+    el.style.maxHeight = el.classList.contains('collapsed') ? '0px' : el.scrollHeight + 'px';
+  });
   bindProvisions();
 }
 
 function bindProvisions() {
+  // Category collapse toggle
+  document.querySelectorAll('.prov-cat-hdr').forEach(hdr => {
+    hdr.addEventListener('click', e => {
+      if (e.target.closest('[data-action]')) return;
+      const catId = hdr.dataset.catid;
+      const bodyEl = document.querySelector(`[data-catbody="${catId}"]`);
+      if (collapsedCats.has(catId)) {
+        collapsedCats.delete(catId);
+        hdr.classList.remove('collapsed');
+        bodyEl.classList.remove('collapsed');
+        bodyEl.style.maxHeight = bodyEl.scrollHeight + 'px';
+      } else {
+        collapsedCats.add(catId);
+        hdr.classList.add('collapsed');
+        bodyEl.style.maxHeight = bodyEl.scrollHeight + 'px';
+        requestAnimationFrame(() => { bodyEl.classList.add('collapsed'); bodyEl.style.maxHeight = '0px'; });
+      }
+    });
+  });
+  // Item actions
   document.querySelectorAll('[data-action]').forEach(el => {
     el.addEventListener('click', e => {
       e.stopPropagation();
