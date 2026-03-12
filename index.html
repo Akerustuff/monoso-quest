@@ -227,6 +227,69 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 .reg-player{font-family:var(--fu);font-size:.62rem;font-weight:700;letter-spacing:2px;padding:1px 6px;border-radius:10px;text-transform:uppercase;flex-shrink:0}
 .reg-player.mono{color:var(--mono);background:rgba(126,184,232,.12)}
 .reg-player.oso{color:var(--oso);background:rgba(232,168,126,.12)}
+/* ── MENU PRINCIPAL ─────────────────────────── */
+.menu-screen{position:fixed;inset:0;background:var(--bg);z-index:800;display:none;flex-direction:column;align-items:center;justify-content:center;gap:0;padding:24px}
+.menu-screen.show{display:flex}
+.menu-title{font-family:var(--ft);font-size:1.4rem;color:var(--gold-l);letter-spacing:3px;margin-bottom:6px;text-align:center;text-shadow:0 0 24px rgba(232,185,106,.4)}
+.menu-player{font-family:var(--fu);font-size:.78rem;color:var(--text3);letter-spacing:3px;text-transform:uppercase;margin-bottom:32px}
+.menu-cards{display:flex;flex-direction:column;gap:14px;width:100%;max-width:320px}
+.menu-card{background:var(--surface);border:1px solid var(--border2);border-radius:16px;padding:20px 22px;display:flex;align-items:center;gap:16px;cursor:pointer;transition:all .22s;position:relative;overflow:hidden;-webkit-tap-highlight-color:transparent}
+.menu-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent);opacity:.5}
+.menu-card:active{transform:scale(.97)}
+.menu-card-ico{font-size:2rem;flex-shrink:0}
+.menu-card-body{flex:1}
+.menu-card-name{font-family:var(--ft);font-size:1rem;color:var(--gold-l);letter-spacing:1px;margin-bottom:3px}
+.menu-card-desc{font-family:var(--fb);font-size:.78rem;color:var(--text3)}
+.menu-card-arr{color:var(--text3);font-size:1.2rem}
+.menu-card:hover,.menu-card:active{border-color:var(--gold);box-shadow:0 0 16px rgba(201,148,58,.12)}
+.menu-back{font-family:var(--fu);font-size:.72rem;color:var(--text3);letter-spacing:2px;text-transform:uppercase;margin-top:24px;cursor:pointer;-webkit-tap-highlight-color:transparent;padding:6px 16px;border:1px solid var(--border);border-radius:8px}
+
+/* ── PROVISIONES ────────────────────────────── */
+.prov-screen{position:fixed;inset:0;background:var(--bg);z-index:700;display:none;flex-direction:column}
+.prov-screen.show{display:flex}
+.prov-header{padding:calc(var(--safe-top) + 12px) 16px 12px;background:var(--surface);border-bottom:1px solid var(--border2);display:flex;align-items:center;gap:12px;flex-shrink:0}
+.prov-header-title{font-family:var(--ft);font-size:1.1rem;color:var(--gold-l);letter-spacing:2px;flex:1}
+.prov-back{font-size:1.3rem;cursor:pointer;color:var(--text2);-webkit-tap-highlight-color:transparent;padding:4px 8px}
+.prov-body{flex:1;overflow-y:auto;padding:12px 14px 80px}
+.prov-cat-hdr{font-family:var(--fu);font-size:.78rem;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--gold);padding:10px 0 6px;margin-top:8px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px}
+.prov-cat-hdr::before{content:'⚔';font-size:.7rem}
+.prov-table{width:100%;border-collapse:collapse;margin-bottom:4px}
+.prov-table th{font-family:var(--fu);font-size:.62rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--text3);padding:5px 8px 5px 4px;text-align:left;border-bottom:1px solid var(--border)}
+.prov-table th.th-hay{text-align:center;width:40px}
+.prov-table th.th-qty{text-align:center;width:60px}
+.prov-row{border-bottom:1px solid rgba(30,45,61,.6);transition:background .15s}
+.prov-row:active{background:var(--surface2)}
+.prov-cell{padding:8px 8px 8px 4px;font-family:var(--fb);font-size:.88rem;color:var(--text)}
+.prov-cell-hay{text-align:center;padding:6px 4px}
+.prov-cell-qty{text-align:center;padding:6px 4px}
+.prov-chk{width:20px;height:20px;border:2px solid var(--border2);border-radius:5px;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;transition:all .18s;-webkit-tap-highlight-color:transparent;background:transparent}
+.prov-chk.yes{background:rgba(61,214,140,.15);border-color:#3dd68c}
+.prov-chk.yes::after{content:'✓';font-size:.72rem;color:#3dd68c}
+.prov-qty-wrap{display:flex;align-items:center;justify-content:center;gap:4px}
+.prov-qty-val{font-family:var(--fu);font-weight:700;font-size:.95rem;min-width:22px;text-align:center;color:var(--text)}
+.prov-qty-val.warn{color:#f0c040}
+.prov-qty-val.danger{color:#e05555}
+.prov-qty-btn{width:22px;height:22px;border-radius:6px;border:1px solid var(--border2);background:var(--surface2);color:var(--text2);font-size:.9rem;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:all .15s;line-height:1}
+.prov-qty-btn:active{background:var(--border)}
+.prov-add-btn{position:fixed;bottom:calc(var(--safe-bot) + 18px);right:18px;width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,var(--gold),#a0722a);border:none;color:#000;font-size:1.5rem;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 4px 16px rgba(201,148,58,.4);-webkit-tap-highlight-color:transparent;transition:transform .15s}
+.prov-add-btn:active{transform:scale(.92)}
+/* Modal agregar */
+.prov-modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:900;display:none;align-items:flex-end;justify-content:center}
+.prov-modal-bg.show{display:flex}
+.prov-modal{background:var(--surface);border:1px solid var(--border2);border-radius:20px 20px 0 0;padding:20px 18px calc(var(--safe-bot)+20px);width:100%;max-width:480px}
+.prov-modal-title{font-family:var(--ft);font-size:1rem;color:var(--gold-l);letter-spacing:2px;margin-bottom:16px;text-align:center}
+.prov-field{margin-bottom:12px}
+.prov-field label{font-family:var(--fu);font-size:.72rem;letter-spacing:2px;text-transform:uppercase;color:var(--text3);display:block;margin-bottom:4px}
+.prov-field input,.prov-field select{width:100%;background:var(--surface2);border:1px solid var(--border2);border-radius:8px;padding:10px 12px;color:var(--text);font-family:var(--fb);font-size:.95rem;outline:none;-webkit-appearance:none}
+.prov-field input:focus,.prov-field select:focus{border-color:var(--gold);box-shadow:0 0 0 2px rgba(201,148,58,.15)}
+.prov-field select option{background:var(--surface2)}
+.prov-modal-btns{display:flex;gap:10px;margin-top:16px}
+.prov-modal-btn{flex:1;padding:12px;border-radius:10px;border:none;font-family:var(--fu);font-size:.88rem;font-weight:700;letter-spacing:1px;cursor:pointer;transition:all .18s}
+.prov-modal-btn.cancel{background:var(--surface2);color:var(--text2);border:1px solid var(--border)}
+.prov-modal-btn.confirm{background:linear-gradient(135deg,var(--gold),#a0722a);color:#000}
+.prov-new-cat-row{display:flex;gap:8px;align-items:flex-end}
+.prov-new-cat-row .prov-field{flex:1;margin:0}
+.prov-new-cat-toggle{font-family:var(--fu);font-size:.68rem;color:var(--gold);letter-spacing:1px;cursor:pointer;white-space:nowrap;padding:10px 0 0;text-decoration:underline}
 .reg-empty{text-align:center;color:var(--text3);font-size:.82rem;padding:20px 0;font-style:italic}
 </style>
 </head>
@@ -247,6 +310,70 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
     <div class="ps-btn oso-btn" id="btnOso">
       <span class="ps-ico">🐻</span>
       <span class="ps-name">Oso</span>
+    </div>
+  </div>
+</div>
+
+<!-- MENU PRINCIPAL -->
+<div class="menu-screen" id="menuScreen">
+  <div style="font-size:2rem">🏯</div>
+  <div class="menu-title">Cacos Quest</div>
+  <div class="menu-player" id="menuPlayerLabel">Bienvenido</div>
+  <div class="menu-cards">
+    <div class="menu-card" id="menuMisiones">
+      <div class="menu-card-ico">⚔️</div>
+      <div class="menu-card-body">
+        <div class="menu-card-name">Lista de Misiones</div>
+        <div class="menu-card-desc">Diarias, semanales y mensuales del reino</div>
+      </div>
+      <div class="menu-card-arr">›</div>
+    </div>
+    <div class="menu-card" id="menuProvisiones">
+      <div class="menu-card-ico">📦</div>
+      <div class="menu-card-body">
+        <div class="menu-card-name">Lista de Provisiones</div>
+        <div class="menu-card-desc">Inventario y suministros del hogar</div>
+      </div>
+      <div class="menu-card-arr">›</div>
+    </div>
+  </div>
+  <div class="menu-back" id="menuBack">← Cambiar jugador</div>
+</div>
+
+<!-- PROVISIONES -->
+<div class="prov-screen" id="provScreen">
+  <div class="prov-header">
+    <div class="prov-back" id="provBack">‹</div>
+    <div class="prov-header-title">📦 Lista de Provisiones</div>
+  </div>
+  <div class="prov-body" id="provBody"></div>
+  <button class="prov-add-btn" id="provAddBtn">＋</button>
+</div>
+
+<!-- MODAL AGREGAR PROVISIÓN -->
+<div class="prov-modal-bg" id="provModalBg">
+  <div class="prov-modal">
+    <div class="prov-modal-title">Nueva Provisión</div>
+    <div class="prov-field">
+      <label>Categoría</label>
+      <select id="provCatSelect"></select>
+    </div>
+    <div id="provNewCatWrap" style="display:none">
+      <div class="prov-field">
+        <label>Nueva categoría</label>
+        <input type="text" id="provNewCatInput" placeholder="Nombre de la categoría...">
+      </div>
+    </div>
+    <div style="text-align:right;margin-bottom:10px">
+      <span class="prov-new-cat-toggle" id="provNewCatToggle">+ Nueva categoría</span>
+    </div>
+    <div class="prov-field">
+      <label>Provisión</label>
+      <input type="text" id="provItemInput" placeholder="Nombre del ítem...">
+    </div>
+    <div class="prov-modal-btns">
+      <button class="prov-modal-btn cancel" id="provModalCancel">Cancelar</button>
+      <button class="prov-modal-btn confirm" id="provModalConfirm">Agregar</button>
     </div>
   </div>
 </div>
@@ -350,17 +477,35 @@ if ('serviceWorker' in navigator) {
 <!-- NON-MODULE BOOTSTRAP: attaches player select before Firebase loads -->
 <script>
 // Player selection works immediately, no Firebase needed
-document.getElementById('btnMono').addEventListener('click', function() {
-  window.__selectedPlayer = 'mono';
+function showMenu(player) {
+  window.__selectedPlayer = player;
   document.getElementById('psScreen').style.display = 'none';
-  document.getElementById('mainApp').style.display = 'block';
-  if (window.__appReady) window.__appReady('mono');
+  document.getElementById('menuPlayerLabel').textContent =
+    player === 'mono' ? '🐒 Jugando como Mono' : '🐻 Jugando como Oso';
+  document.getElementById('menuScreen').classList.add('show');
+}
+document.getElementById('btnMono').addEventListener('click', function() { showMenu('mono'); });
+document.getElementById('btnOso').addEventListener('click',  function() { showMenu('oso'); });
+
+document.getElementById('menuBack').addEventListener('click', function() {
+  document.getElementById('menuScreen').classList.remove('show');
+  document.getElementById('psScreen').style.display = 'flex';
+  window.__selectedPlayer = null;
 });
-document.getElementById('btnOso').addEventListener('click', function() {
-  window.__selectedPlayer = 'oso';
-  document.getElementById('psScreen').style.display = 'none';
+
+document.getElementById('menuMisiones').addEventListener('click', function() {
+  const p = window.__selectedPlayer; if (!p) return;
+  document.getElementById('menuScreen').classList.remove('show');
   document.getElementById('mainApp').style.display = 'block';
-  if (window.__appReady) window.__appReady('oso');
+  if (window.__appReady) window.__appReady(p);
+  // If __appReady not set yet (Firebase not loaded), store for later
+  else window.__selectedPlayer = p;
+});
+
+document.getElementById('menuProvisiones').addEventListener('click', function() {
+  document.getElementById('menuScreen').classList.remove('show');
+  document.getElementById('provScreen').classList.add('show');
+  if (window.__provReady) window.__provReady();
 });
 document.getElementById('mCloseBtn').addEventListener('click', function() {
   document.getElementById('lvlModal').classList.remove('show');
@@ -1338,9 +1483,220 @@ function bindRegistro() {
 setInterval(() => {
   if (!currentPlayer) return;
   document.getElementById('cDay').textContent = cycleDay();
-  // Refresh daily tab countdown if active
   if (curTab === 'daily') renderTab();
 }, 60000);
 </script>
-</body>
-</html>
+
+<!-- PROVISIONES MODULE -->
+<script type="module">
+import { initializeApp }    from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
+import { getFirestore, doc, onSnapshot, setDoc } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
+
+const firebaseConfig = {
+  apiKey: "AIzaSyAbGHJHmiS8FswN3jZzrGibzZqCnytl1e4",
+  authDomain: "queslog-monoso.firebaseapp.com",
+  projectId: "queslog-monoso",
+  storageBucket: "queslog-monoso.firebasestorage.app",
+  messagingSenderId: "916048511765",
+  appId: "1:916048511765:web:8a7acfd5d70c48ea8e8e34"
+};
+const app2 = initializeApp(firebaseConfig, 'prov-app');
+const db2  = getFirestore(app2);
+const PROV_DOC = doc(db2, 'questlog', 'provisiones');
+
+// ── DATOS INICIALES ────────────────────────────
+const DEFAULT_PROVS = {
+  categories: [
+    {id:'c0', name:'Limpieza de Cuevarbol'},
+    {id:'c1', name:'Aseo del Jugador'},
+    {id:'c2', name:'Provisiones de Cocina'},
+    {id:'c3', name:'Lácteos y Embutidos'},
+    {id:'c4', name:'Carnes y Huevos'},
+    {id:'c5', name:'Alacena'},
+    {id:'c6', name:'Frutas, Vegetales y Hortalizas'}
+  ],
+  items: [
+    {id:'p000',cat:'c0',name:'Lysoform',qty:0,hay:false},
+    {id:'p001',cat:'c0',name:'Papel absorbente',qty:0,hay:false},
+    {id:'p002',cat:'c0',name:'Desinfectante para pisos',qty:0,hay:false},
+    {id:'p003',cat:'c0',name:'Limpiador de madera',qty:0,hay:false},
+    {id:'p004',cat:'c0',name:'Limpiador de superficies',qty:0,hay:false},
+    {id:'p005',cat:'c0',name:'Limpiador de baño',qty:0,hay:false},
+    {id:'p006',cat:'c0',name:'Limpiador de inodoro',qty:0,hay:false},
+    {id:'p007',cat:'c0',name:'Bolsas medianas',qty:0,hay:false},
+    {id:'p008',cat:'c0',name:'Bolsas pequeñas',qty:0,hay:false},
+    {id:'p009',cat:'c0',name:'Esponjas',qty:0,hay:false},
+    {id:'p010',cat:'c0',name:'Jabón lavaplatos',qty:0,hay:false},
+    {id:'p011',cat:'c0',name:'Jabón para lavar',qty:0,hay:false},
+    {id:'p100',cat:'c1',name:'Papel higiénico',qty:0,hay:false},
+    {id:'p101',cat:'c1',name:'Pasta dental',qty:0,hay:false},
+    {id:'p102',cat:'c1',name:'Jabón líquido',qty:0,hay:false},
+    {id:'p103',cat:'c1',name:'Jabón de mano',qty:0,hay:false},
+    {id:'p104',cat:'c1',name:'Desodorante',qty:0,hay:false},
+    {id:'p105',cat:'c1',name:'Talco para pies',qty:0,hay:false},
+    {id:'p200',cat:'c2',name:'Bolsas Ziploc',qty:0,hay:false},
+    {id:'p201',cat:'c2',name:'Papel mantequilla',qty:0,hay:false},
+    {id:'p202',cat:'c2',name:'Papel aluminio',qty:0,hay:false},
+    {id:'p203',cat:'c2',name:'Papel plástico',qty:0,hay:false},
+    {id:'p300',cat:'c3',name:'Queso laminado',qty:0,hay:false},
+    {id:'p301',cat:'c3',name:'Jamón de pavo',qty:0,hay:false},
+    {id:'p302',cat:'c3',name:'Leche',qty:0,hay:false},
+    {id:'p303',cat:'c3',name:'Bebida vegetal',qty:0,hay:false},
+    {id:'p304',cat:'c3',name:'Mantequilla',qty:0,hay:false},
+    {id:'p305',cat:'c3',name:'Queso Parmesano',qty:0,hay:false},
+    {id:'p400',cat:'c4',name:'Pollo',qty:0,hay:false},
+    {id:'p401',cat:'c4',name:'Carne molida',qty:0,hay:false},
+    {id:'p402',cat:'c4',name:'Bistec de carne',qty:0,hay:false},
+    {id:'p403',cat:'c4',name:'Huevos',qty:0,hay:false},
+    {id:'p404',cat:'c4',name:'Chorizos',qty:0,hay:false},
+    {id:'p500',cat:'c5',name:'Harina de trigo',qty:0,hay:false},
+    {id:'p501',cat:'c5',name:'Spaghetti',qty:0,hay:false},
+    {id:'p502',cat:'c5',name:'Rigati',qty:0,hay:false},
+    {id:'p503',cat:'c5',name:'Arroz',qty:0,hay:false},
+    {id:'p504',cat:'c5',name:'Harina de repostería',qty:0,hay:false},
+    {id:'p505',cat:'c5',name:'Harina de fuerza',qty:0,hay:false},
+    {id:'p506',cat:'c5',name:'Azúcar',qty:0,hay:false},
+    {id:'p507',cat:'c5',name:'Sal',qty:0,hay:false},
+    {id:'p508',cat:'c5',name:'Tortillas',qty:0,hay:false},
+    {id:'p509',cat:'c5',name:'Cereal Oso',qty:0,hay:false},
+    {id:'p510',cat:'c5',name:'Cereal Mono',qty:0,hay:false},
+    {id:'p600',cat:'c6',name:'Tomates triturados',qty:0,hay:false},
+    {id:'p601',cat:'c6',name:'Ajo triturado',qty:0,hay:false},
+    {id:'p602',cat:'c6',name:'Pimentón',qty:0,hay:false},
+    {id:'p603',cat:'c6',name:'Zanahorias',qty:0,hay:false},
+    {id:'p604',cat:'c6',name:'Tomates',qty:0,hay:false},
+    {id:'p605',cat:'c6',name:'Tomates cherry',qty:0,hay:false}
+  ]
+};
+
+let PV = { categories: [...DEFAULT_PROVS.categories], items: [...DEFAULT_PROVS.items] };
+let pvSaving = false;
+
+// ── FIREBASE SYNC ─────────────────────────────
+onSnapshot(PROV_DOC, snap => {
+  if (snap.exists()) {
+    const d = snap.data();
+    PV.categories = d.categories || DEFAULT_PROVS.categories;
+    PV.items = d.items || DEFAULT_PROVS.items;
+  } else {
+    // Primera vez: guardar defaults
+    setDoc(PROV_DOC, PV);
+  }
+  renderProvisions();
+});
+
+async function saveProv() {
+  if (pvSaving) return;
+  pvSaving = true;
+  try { await setDoc(PROV_DOC, { categories: PV.categories, items: PV.items }); }
+  catch(e) { console.error('Prov save error:', e); }
+  finally { pvSaving = false; }
+}
+
+// ── RENDER ────────────────────────────────────
+function renderProvisions() {
+  const body = document.getElementById('provBody');
+  if (!body) return;
+  let h = '';
+  for (const cat of PV.categories) {
+    const items = PV.items.filter(i => i.cat === cat.id);
+    if (!items.length) continue;
+    h += `<div class="prov-cat-hdr">${cat.name}</div>`;
+    h += `<table class="prov-table"><thead><tr>
+      <th>Provisión</th>
+      <th class="th-hay">Hay</th>
+      <th class="th-qty">Cantidad</th>
+    </tr></thead><tbody>`;
+    for (const item of items) {
+      const qCls = item.qty === 0 ? 'danger' : item.qty === 1 ? 'warn' : '';
+      h += `<tr class="prov-row" data-id="${item.id}">
+        <td class="prov-cell">${item.name}</td>
+        <td class="prov-cell-hay">
+          <div class="prov-chk${item.hay?' yes':''}" data-action="hay" data-id="${item.id}"></div>
+        </td>
+        <td class="prov-cell-qty">
+          <div class="prov-qty-wrap">
+            <div class="prov-qty-btn" data-action="dec" data-id="${item.id}">−</div>
+            <div class="prov-qty-val${qCls?' '+qCls:''}">${item.qty}</div>
+            <div class="prov-qty-btn" data-action="inc" data-id="${item.id}">＋</div>
+          </div>
+        </td>
+      </tr>`;
+    }
+    h += '</tbody></table>';
+  }
+  body.innerHTML = h;
+  bindProvisions();
+}
+
+function bindProvisions() {
+  document.querySelectorAll('[data-action]').forEach(el => {
+    el.addEventListener('click', e => {
+      e.stopPropagation();
+      const {action, id} = el.dataset;
+      const item = PV.items.find(i => i.id === id);
+      if (!item) return;
+      if (action === 'hay') { item.hay = !item.hay; }
+      else if (action === 'inc') { item.qty++; }
+      else if (action === 'dec') { item.qty = Math.max(0, item.qty - 1); }
+      saveProv(); renderProvisions();
+    });
+  });
+}
+
+// ── MODAL AGREGAR ─────────────────────────────
+function openProvModal() {
+  const sel = document.getElementById('provCatSelect');
+  sel.innerHTML = PV.categories.map(c => `<option value="${c.id}">${c.name}</option>`).join('');
+  document.getElementById('provItemInput').value = '';
+  document.getElementById('provNewCatInput').value = '';
+  document.getElementById('provNewCatWrap').style.display = 'none';
+  document.getElementById('provNewCatToggle').textContent = '+ Nueva categoría';
+  document.getElementById('provModalBg').classList.add('show');
+}
+function closeProvModal() {
+  document.getElementById('provModalBg').classList.remove('show');
+}
+
+document.getElementById('provAddBtn').addEventListener('click', openProvModal);
+document.getElementById('provModalCancel').addEventListener('click', closeProvModal);
+document.getElementById('provModalBg').addEventListener('click', e => {
+  if (e.target === document.getElementById('provModalBg')) closeProvModal();
+});
+
+let newCatMode = false;
+document.getElementById('provNewCatToggle').addEventListener('click', () => {
+  newCatMode = !newCatMode;
+  document.getElementById('provNewCatWrap').style.display = newCatMode ? 'block' : 'none';
+  document.getElementById('provNewCatToggle').textContent = newCatMode ? '← Usar categoría existente' : '+ Nueva categoría';
+});
+
+document.getElementById('provModalConfirm').addEventListener('click', () => {
+  const itemName = document.getElementById('provItemInput').value.trim();
+  if (!itemName) { document.getElementById('provItemInput').focus(); return; }
+
+  let catId;
+  if (newCatMode) {
+    const catName = document.getElementById('provNewCatInput').value.trim();
+    if (!catName) { document.getElementById('provNewCatInput').focus(); return; }
+    catId = 'c' + Date.now();
+    PV.categories.push({id: catId, name: catName});
+  } else {
+    catId = document.getElementById('provCatSelect').value;
+  }
+
+  const id = 'p' + Date.now();
+  PV.items.push({id, cat: catId, name: itemName, qty: 0, hay: false});
+  saveProv();
+  closeProvModal();
+  renderProvisions();
+});
+
+// ── NAVEGACIÓN ────────────────────────────────
+document.getElementById('provBack').addEventListener('click', () => {
+  document.getElementById('provScreen').classList.remove('show');
+  document.getElementById('menuScreen').classList.add('show');
+});
+
+window.__provReady = renderProvisions;
+</script>
