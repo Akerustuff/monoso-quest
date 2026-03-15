@@ -603,7 +603,8 @@ const DH = [
   {id:'dh1',name:'Purificación de Cristal',desc:'Lavar platos',pts:2},
   {id:'dh2',name:'Almacenamiento de Cristal',desc:'Secar platos',pts:2},
   {id:'dh3',name:'El Sereno del Cristal',desc:'Dejar todos los vasos en desuso en la alacena',pts:2},
-  {id:'dh4',name:'Restauración de los Mesones',desc:'Limpiar los mesones de la cocina',pts:5}
+  {id:'dh4',name:'Restauración de los Mesones',desc:'Limpiar los mesones de la cocina',pts:5},
+  {id:'dh5',name:'El Suelo es Lava',desc:'No dejar ropa en el suelo al final del día',pts:2}
 ];
 const WG = [
   {id:'wg0',name:'Orden del Portal del Sueño',desc:'Limpiar habitación',buff:'Descanso del Guerrero',buffPts:20,
@@ -632,9 +633,12 @@ const WS = [
   {id:'ws7',name:'Gran Alquimia del Banquete Fase II',desc:'Cocinar almuerzo 2',pts:25},
   {id:'ws8',name:'Gran Alquimia del Banquete Fase III',desc:'Cocinar almuerzo 3',pts:25},
   {id:'ws9',name:'Gran Alquimia del Banquete Fase IV',desc:'Cocinar almuerzo 4',pts:25},
-  {id:'ws10',name:'Forja del Guerrero de Bronce',desc:'Hacer ejercicios de fuerza 1',pts:30},
-  {id:'ws11',name:'Forja del Guerrero de Plata',desc:'Hacer ejercicios de fuerza 2',pts:30},
-  {id:'ws12',name:'Forja del Guerrero de Oro',desc:'Hacer ejercicios de fuerza 3',pts:30},
+  {id:'ws10_mono',name:'Forja del Guerrero de Bronce 🐒',desc:'Hacer ejercicios de fuerza 1',pts:15,player:'mono'},
+  {id:'ws10_oso', name:'Forja del Guerrero de Bronce 🐻',desc:'Hacer ejercicios de fuerza 1',pts:15,player:'oso'},
+  {id:'ws11_mono',name:'Forja del Guerrero de Plata 🐒', desc:'Hacer ejercicios de fuerza 2',pts:15,player:'mono'},
+  {id:'ws11_oso', name:'Forja del Guerrero de Plata 🐻', desc:'Hacer ejercicios de fuerza 2',pts:15,player:'oso'},
+  {id:'ws12_mono',name:'Forja del Guerrero de Oro 🐒',   desc:'Hacer ejercicios de fuerza 3',pts:15,player:'mono'},
+  {id:'ws12_oso', name:'Forja del Guerrero de Oro 🐻',   desc:'Hacer ejercicios de fuerza 3',pts:15,player:'oso'},
   {id:'ws13',name:'Ritual de la Hebra Limpia (Lavado)',desc:'Lavar la ropa',pts:25},
   {id:'ws14',name:'Ritual de la Hebra Limpia (Armadura)',desc:'Doblar la ropa',pts:25},
   {id:'ws15',name:'Torbellino Erradicador de Polvo I',desc:'Aspirar 1ra vez',pts:20},
@@ -834,7 +838,14 @@ function recalcXP() {
         const m = byId(grp.minors, tid);
         if (m) { pts = m.pts; found = true; break; }
       }
-      if (!found) { const ws = byId(WS, tid); if (ws) pts = ws.pts; }
+      if (!found) {
+        const ws = byId(WS, tid);
+        if (ws) {
+          pts = ws.pts;
+          if (ws.player === 'mono') { total+=pts; mono+=pts; continue; }
+          if (ws.player === 'oso')  { total+=pts; oso+=pts;  continue; }
+        }
+      }
       if (pts) { total+=pts; mono+=pts/2; oso+=pts/2; }
     }
   }
@@ -1063,8 +1074,8 @@ function buildWeekly() {
     if (doneCnt === grp.minors.length) doneGrps.push({grp, doneCnt});
     else activeGrps.push({grp, doneCnt});
   }
-  const activeSolo = WS.filter(t => !isWSolo(t.id));
-  const doneSolo   = WS.filter(t =>  isWSolo(t.id));
+  const activeSolo = WS.filter(t => !isWSolo(t.id) && (!t.player || t.player === currentPlayer));
+  const doneSolo   = WS.filter(t =>  isWSolo(t.id) && (!t.player || t.player === currentPlayer));
 
   let h = `<div class="sec-hdr">🏰 Misiones Mayores — Semana ${suf}</div>`;
 
