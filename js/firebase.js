@@ -117,11 +117,15 @@ async function inicializarFirebase() {
       }
     }
 
-    if (!snapProvisiones.exists) {
+    if (!snapProvisiones.exists || !snapProvisiones.data().categorias) {
       const provisiones = Storage.load('provisiones');
-      if (provisiones) {
-        await docProvisiones.set(provisiones);
-      }
+      const datosASubir = (provisiones && provisiones.categorias && provisiones.categorias.length > 0)
+        ? provisiones
+        : {
+            categorias: [...PROVISIONES_DEFAULT.categorias],
+            items:      [...PROVISIONES_DEFAULT.items]
+          };
+      await docProvisiones.set(datosASubir);
     }
   } catch (err) {
     console.warn('[Firebase] Error en inicialización:', err);
