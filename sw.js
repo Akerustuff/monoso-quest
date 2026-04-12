@@ -3,20 +3,20 @@
 const NOMBRE_CACHE = 'cacos-quest-v1';
 
 const ARCHIVOS_A_CACHEAR = [
-  '/',
-  '/index.html',
-  '/css/styles.css',
-  '/js/data.js',
-  '/js/storage.js',
-  '/js/players.js',
-  '/js/app.js',
-  '/js/missions.js',
-  '/js/cycles.js',
-  '/js/provisions.js',
-  '/js/battlepass.js',
-  '/js/firebase.js',
-  '/icons/icon.svg',
-  '/manifest.json'
+  './',
+  './index.html',
+  './css/styles.css',
+  './js/data.js',
+  './js/storage.js',
+  './js/players.js',
+  './js/app.js',
+  './js/missions.js',
+  './js/cycles.js',
+  './js/provisions.js',
+  './js/battlepass.js',
+  './js/firebase.js',
+  './icons/icon.svg',
+  './manifest.json'
 ];
 
 // Al instalar: guardar todos los archivos en caché
