@@ -39,16 +39,8 @@
   }
 
   // Arranque: se ejecuta cuando carga la app
+  // La navegación inicial la maneja auth.js después de verificar el login
   window.onload = function () {
     verificarCambioMes();
-
-    const hasSession = Players.loadSession();
-
-    if (hasSession) {
-      updatePlayerName();
-      navigate('menu');
-    } else {
-      navigate('player');
-    }
   };
 

@@ -14,6 +14,15 @@
 </head>
 <body>
 
+  <!-- PANTALLA: Login -->
+  <div id="screen-login" class="screen hidden">
+    <div class="login-titulo">Cacos Quest</div>
+    <div class="login-subtitulo">Inicia sesión para continuar</div>
+    <button class="login-btn-google" onclick="loginConGoogle()">
+      <span>🔑</span> Entrar con Google
+    </button>
+  </div>
+
   <!-- PANTALLA: Selección de jugador -->
   <div id="screen-player" class="screen">
     <div class="player-select-title">Cacos Quest</div>
@@ -35,6 +44,7 @@
     <div class="menu-header">
       <span id="player-name"></span>
       <button onclick="changePlayer()">Cambiar jugador</button>
+      <button onclick="cerrarSesion()">Cerrar sesión</button>
     </div>
     <div class="menu-options">
       <button onclick="navigate('missions')">⚔️ Misiones</button>
@@ -136,6 +146,7 @@
   <!-- Firebase -->
   <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-auth-compat.js"></script>
 
   <!-- App -->
   <script src="js/data.js"></script>
@@ -147,6 +158,7 @@
   <script src="js/provisions.js"></script>
   <script src="js/battlepass.js"></script>
   <script src="js/firebase.js"></script>
+  <script src="js/auth.js"></script>
   <script>
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('sw.js');

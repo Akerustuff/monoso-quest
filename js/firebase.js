@@ -161,4 +161,4 @@ async function inicializarFirebase() {
   configurarListenerFirebase();
 }
 
-inicializarFirebase();
+// inicializarFirebase() es llamada desde auth.js cuando el usuario está autenticado

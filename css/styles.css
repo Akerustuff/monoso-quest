@@ -44,6 +44,47 @@ body {
     margin: 0 auto;
 }
 
+/* ── Pantalla de Login ── */
+.login-titulo {
+    font-family: var(--font-title);
+    font-size: 2.4rem;
+    color: var(--gold);
+    text-align: center;
+    margin-top: 30vh;
+    margin-bottom: 0.5rem;
+    letter-spacing: 0.1em;
+}
+
+.login-subtitulo {
+    font-family: var(--font-ui);
+    color: var(--text2);
+    text-align: center;
+    margin-bottom: 2.5rem;
+    font-size: 1rem;
+}
+
+.login-btn-google {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    margin: 0 auto;
+    padding: 0.9rem 2rem;
+    background: var(--surface2);
+    border: 1px solid var(--gold);
+    color: var(--gold);
+    font-family: var(--font-ui);
+    font-size: 1.1rem;
+    font-weight: 600;
+    border-radius: 8px;
+    cursor: pointer;
+    letter-spacing: 0.05em;
+    transition: background 0.2s;
+}
+
+.login-btn-google:hover {
+    background: var(--gold-glow);
+}
+
 /* ── Componentes Globales ── */
 
 .back-btn {                                                                                                                                                                                                              
