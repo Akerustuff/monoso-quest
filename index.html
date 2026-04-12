@@ -1,1896 +1,277 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>Cacos Quest</title>
-
-<!-- PWA META TAGS -->
-<meta name="application-name" content="Cacos Quest">
-<meta name="description" content="Gestor de tareas gamificado para Mono y Oso">
-<meta name="theme-color" content="#080b10">
-<meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Cacos Quest">
-
-<!-- PWA ICONS (inline SVG as data URL) -->
-<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='100' fill='%23080b10'/%3E%3Ctext x='50%25' y='54%25' dominant-baseline='middle' text-anchor='middle' font-size='300' fill='%23c9943a'%3E%F0%9F%8F%AF%3C/text%3E%3C/svg%3E">
-<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='100' fill='%23080b10'/%3E%3Ctext x='50%25' y='54%25' dominant-baseline='middle' text-anchor='middle' font-size='300'%3E%F0%9F%8F%AF%3C/text%3E%3C/svg%3E">
-
-<!-- PWA MANIFEST (inline) -->
-<link rel="manifest" href="data:application/manifest+json,%7B%22name%22%3A%22Cacos%20Quest%22%2C%22short_name%22%3A%22Cacos%20Quest%22%2C%22description%22%3A%22Gestor%20de%20tareas%20gamificado%22%2C%22start_url%22%3A%22.%22%2C%22display%22%3A%22standalone%22%2C%22background_color%22%3A%22%23080b10%22%2C%22theme_color%22%3A%22%23080b10%22%2C%22orientation%22%3A%22portrait%22%2C%22icons%22%3A%5B%7B%22src%22%3A%22data%3Aimage%2Fsvg%2Bxml%2C%253Csvg%2520xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%2520viewBox%3D'0%25200%2520512%2520512'%253E%253Crect%2520width%3D'512'%2520height%3D'512'%2520rx%3D'100'%2520fill%3D'%2523080b10'%2F%253E%253Ctext%2520x%3D'50%2525'%2520y%3D'54%2525'%2520dominant-baseline%3D'middle'%2520text-anchor%3D'middle'%2520font-size%3D'300'%253E%25F0%259F%258F%25AF%253C%2Ftext%253E%253C%2Fsvg%253E%22%2C%22sizes%22%3A%22512x512%22%2C%22type%22%3A%22image%2Fsvg%2Bxml%22%2C%22purpose%22%3A%22any%20maskable%22%7D%5D%7D">
-<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Rajdhani:wght@400;500;600;700&family=Crimson+Pro:ital,wght@0,300;0,400;0,600;1,300&display=swap" rel="stylesheet">
-<style>
-/* PWA safe areas for iPhone notch/home bar */
-html{background:#080b10;font-size:17px}
-:root{--safe-top:env(safe-area-inset-top,0px);--safe-bot:env(safe-area-inset-bottom,0px)}
-:root{--bg:#080b10;--surface:#0d1219;--surface2:#111820;--border:#1e2d3d;--border2:#243444;--gold:#c9943a;--gold-l:#e8b96a;--gold-g:rgba(201,148,58,0.22);--text:#d4c9b8;--text2:#8a9aaa;--text3:#4a5a6a;--mono:#7eb8e8;--oso:#e8a87e;--weekly:#b89ee8;--ft:'Cinzel',serif;--fu:'Rajdhani',sans-serif;--fb:'Crimson Pro',serif}
-*{margin:0;padding:0;box-sizing:border-box}
-body{background:var(--bg);color:var(--text);font-family:var(--fb);min-height:100vh;overflow-x:hidden}
-body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 80% 50% at 50% -10%,rgba(201,148,58,.05) 0%,transparent 60%),radial-gradient(ellipse 40% 60% at 0% 60%,rgba(46,184,160,.04) 0%,transparent 50%);pointer-events:none;z-index:0}
-::-webkit-scrollbar{width:4px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
-.app{position:relative;z-index:1;max-width:520px;margin:0 auto;padding:calc(12px + var(--safe-top)) 14px calc(60px + var(--safe-bot))}
-
-/* SYNC STATUS */
-.sync-bar{display:flex;align-items:center;justify-content:center;gap:6px;padding:5px 0 2px;font-family:var(--fu);font-size:.6rem;letter-spacing:2px;color:var(--text3);text-transform:uppercase;transition:all .3s}
-.sync-dot{width:6px;height:6px;border-radius:50%;background:var(--text3);transition:all .3s;flex-shrink:0}
-.sync-bar.online .sync-dot{background:#3dd68c;box-shadow:0 0 6px rgba(61,214,140,.5)}
-.sync-bar.online{color:#3dd68c}
-.sync-bar.syncing .sync-dot{background:var(--gold);animation:blink .8s infinite}
-.sync-bar.syncing{color:var(--gold)}
-.sync-bar.error .sync-dot{background:#e05c3a}
-.sync-bar.error{color:#e05c3a}
-@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
-
-/* PLAYER SELECT */
-.ps-screen{position:fixed;inset:0;background:var(--bg);z-index:900;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:24px;padding:24px}
-.ps-title{font-family:var(--ft);font-size:1.8rem;color:var(--gold-l);letter-spacing:3px;text-align:center;text-shadow:0 0 24px rgba(232,185,106,.4)}
-.ps-sub{font-family:var(--fu);font-size:.85rem;color:var(--text3);letter-spacing:3px;text-transform:uppercase;text-align:center}
-.ps-btns{display:flex;gap:20px}
-.ps-btn{width:150px;height:150px;border-radius:20px;border:2px solid var(--border2);background:var(--surface);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;cursor:pointer;transition:all .25s;-webkit-tap-highlight-color:transparent;user-select:none}
-.ps-btn:active{transform:scale(.94)}
-.ps-ico{font-size:3.4rem;pointer-events:none}
-.ps-name{font-family:var(--ft);font-size:1.1rem;letter-spacing:2px;pointer-events:none}
-.ps-btn.mono-btn{border-color:rgba(126,184,232,.3);color:var(--mono)}
-.ps-btn.oso-btn{border-color:rgba(232,168,126,.3);color:var(--oso)}
-
-/* HEADER */
-.header{text-align:center;padding:calc(var(--safe-top) + 10px) 16px 12px;position:relative}
-.hdr-back{position:absolute;left:16px;top:50%;transform:translateY(-50%);font-size:1.3rem;color:var(--text2);cursor:pointer;-webkit-tap-highlight-color:transparent;padding:4px 8px;line-height:1}
-.hdr-sub{font-family:var(--fu);font-size:.65rem;letter-spacing:3px;text-transform:uppercase;color:var(--text3);margin-top:2px}
-.hdr-icon{font-size:2.2rem}
-.hdr-title{font-family:var(--ft);font-size:1.7rem;font-weight:900;color:var(--gold-l);letter-spacing:3px;text-shadow:0 0 28px rgba(232,185,106,.4)}
-.hdr-players{display:flex;justify-content:center;gap:14px;margin-top:10px}
-.pbadge{font-family:var(--fu);font-size:.8rem;font-weight:700;letter-spacing:3px;text-transform:uppercase;padding:5px 14px;border-radius:20px;border:1px solid;cursor:pointer;transition:all .2s;user-select:none}
-.pbadge.mono{color:var(--mono);border-color:rgba(126,184,232,.3);background:rgba(126,184,232,.06)}
-.pbadge.oso{color:var(--oso);border-color:rgba(232,168,126,.3);background:rgba(232,168,126,.06)}
-.pbadge.active-player.mono{border-color:var(--mono);border-width:2px;box-shadow:0 0 8px rgba(126,184,232,.3)}
-.pbadge.active-player.oso{border-color:var(--oso);border-width:2px;box-shadow:0 0 8px rgba(232,168,126,.3)}
-
-/* SCORE */
-.score-panel{background:var(--surface);border:1px solid var(--border2);border-radius:16px;padding:16px;margin:8px 0;position:relative;overflow:hidden}
-.score-panel::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent)}
-.score-grid{display:flex;align-items:center}
-.score-block{flex:1;text-align:center}
-.s-label{font-family:var(--fu);font-size:.72rem;letter-spacing:3px;color:var(--text3);text-transform:uppercase;display:block;margin-bottom:3px}
-.s-num{font-family:var(--ft);font-size:1.9rem;color:var(--gold-l);line-height:1;text-shadow:0 0 16px var(--gold-g)}
-.s-num.mono{color:var(--mono);text-shadow:0 0 16px rgba(126,184,232,.3)}
-.s-num.oso{color:var(--oso);text-shadow:0 0 16px rgba(232,168,126,.3)}
-.s-div{width:1px;height:44px;background:var(--border2);flex-shrink:0}
-.cycle-wrap{margin-top:12px}
-.cycle-meta{display:flex;justify-content:space-between;font-family:var(--fu);font-size:.76rem;color:var(--text3);margin-bottom:5px;letter-spacing:1px}
-.cycle-meta strong{color:var(--gold)}
-.bar-track{background:rgba(255,255,255,.04);border-radius:4px;height:5px;overflow:hidden}
-.bar-fill{height:100%;border-radius:4px;background:linear-gradient(90deg,var(--gold),var(--gold-l));transition:width .8s ease}
-
-/* BATTLE PASS */
-.battle-pass{background:var(--surface);border:1px solid var(--border2);border-radius:16px;padding:14px;margin:8px 0}
-.panel-hdr{font-family:var(--fu);font-size:.76rem;letter-spacing:4px;color:var(--text3);text-transform:uppercase;margin-bottom:12px;display:flex;justify-content:space-between;align-items:center}
-.panel-badge{background:rgba(201,148,58,.1);color:var(--gold);padding:3px 12px;border-radius:20px;font-size:.72rem;letter-spacing:2px;border:1px solid rgba(201,148,58,.2)}
-.bp-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin-bottom:10px}
-.bp-node{aspect-ratio:1;border-radius:10px;border:1.5px solid var(--border);background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px}
-.bp-node.unlocked{border-color:var(--gold);background:rgba(201,148,58,.06);box-shadow:0 0 8px rgba(201,148,58,.15)}
-.bp-node.nextup{border-color:var(--gold);background:rgba(201,148,58,.1);animation:npulse 2.5s ease-in-out infinite}
-@keyframes npulse{0%,100%{box-shadow:0 0 8px rgba(201,148,58,.2)}50%{box-shadow:0 0 18px rgba(201,148,58,.5)}}
-.bp-lv{font-family:var(--fu);font-size:.64rem;color:var(--text3);letter-spacing:1px}
-.bp-ico{font-size:1.2rem;line-height:1}
-.bp-rew{font-size:.54rem;color:var(--text3);text-align:center;padding:0 2px;line-height:1.2}
-.bp-node.unlocked .bp-lv,.bp-node.nextup .bp-lv{color:var(--gold)}
-.bp-prog{display:flex;justify-content:space-between;font-family:var(--fu);font-size:.72rem;color:var(--text3);margin-top:5px}
-
-/* TABS */
-.tabs{display:flex;gap:4px;margin:14px 0 10px;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:4px}
-.tab-btn{flex:1;padding:10px 4px;border-radius:8px;border:none;background:transparent;color:var(--text3);font-family:var(--fu);font-size:.82rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;cursor:pointer;transition:all .2s}
-.tab-btn.active{background:rgba(201,148,58,.1);color:var(--gold)}
-
-/* SECTION HDR */
-.sec-hdr{font-family:var(--fu);font-size:.72rem;letter-spacing:4px;text-transform:uppercase;color:var(--text3);margin:16px 0 8px;display:flex;align-items:center;gap:8px}
-.sec-hdr::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,var(--border2),transparent)}
-
-/* TASK */
-.task-list{display:flex;flex-direction:column;gap:5px}
-.task-item{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:10px 12px;display:flex;align-items:center;gap:9px;cursor:pointer;transition:all .18s;position:relative;overflow:hidden;user-select:none;-webkit-tap-highlight-color:transparent}
-.task-item::before{content:'';position:absolute;left:0;top:0;bottom:0;width:2.5px;background:var(--ic,var(--border))}
-.task-item:active{transform:scale(.97)}
-.task-item.done{opacity:.42}
-.task-item.done .task-name{text-decoration:line-through}
-.task-chk{width:22px;height:22px;flex-shrink:0;border-radius:6px;border:1.5px solid var(--ic,var(--border));display:flex;align-items:center;justify-content:center;font-size:.72rem;background:transparent;transition:all .18s}
-.task-item.done .task-chk{background:var(--ic,var(--text3));border-color:var(--ic)}
-.task-body{flex:1;min-width:0}
-.task-name{font-family:var(--fu);font-weight:700;font-size:1rem;color:var(--text);line-height:1.3}
-.task-desc{font-size:.8rem;color:var(--text3);font-style:italic;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.task-pts{font-family:var(--ft);font-size:1rem;color:var(--gold);flex-shrink:0;white-space:nowrap}
-.ptag{font-family:var(--fu);font-size:.54rem;font-weight:700;letter-spacing:2px;padding:1px 6px;border-radius:10px;text-transform:uppercase;flex-shrink:0}
-.ptag.mono{color:var(--mono);background:rgba(126,184,232,.12)}
-.ptag.oso{color:var(--oso);background:rgba(232,168,126,.12)}
-
-/* WEEKLY */
-.mission-group{background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:6px}
-.mission-major{padding:11px 12px;display:flex;align-items:center;gap:8px;cursor:pointer;transition:background .18s;position:relative;user-select:none}
-.mission-major::before{content:'';position:absolute;left:0;top:0;bottom:0;width:2.5px;background:var(--weekly)}
-.maj-icon{font-size:.95rem;flex-shrink:0;pointer-events:none}
-.maj-body{flex:1;min-width:0;pointer-events:none}
-.maj-name{font-family:var(--fu);font-weight:700;font-size:1rem;color:var(--text)}
-.maj-desc{font-size:.78rem;color:var(--text3);font-style:italic}
-.maj-prog{font-family:var(--fu);font-size:.78rem;color:var(--text3);flex-shrink:0;white-space:nowrap;pointer-events:none}
-.maj-prog.complete{color:var(--gold)}
-.chevron{font-size:.82rem;color:var(--text3);transition:transform .22s;flex-shrink:0;pointer-events:none}
-.mission-group.open .chevron{transform:rotate(90deg)}
-.minor-list{display:none;flex-direction:column;border-top:1px solid var(--border);background:rgba(0,0,0,.18)}
-.mission-group.open .minor-list{display:flex}
-.minor-item{padding:9px 12px 9px 28px;display:flex;align-items:center;gap:8px;cursor:pointer;transition:all .18s;border-bottom:1px solid rgba(255,255,255,.03);user-select:none}
-.minor-item:last-child{border-bottom:none}
-.minor-item.done{opacity:.42}
-.minor-item.done .minor-name{text-decoration:line-through}
-.minor-chk{width:18px;height:18px;flex-shrink:0;border-radius:5px;border:1.5px solid var(--border2);display:flex;align-items:center;justify-content:center;font-size:.62rem;pointer-events:none}
-.minor-item.done .minor-chk{background:var(--weekly);border-color:var(--weekly)}
-.minor-body{flex:1;min-width:0;pointer-events:none}
-.minor-name{font-family:var(--fu);font-size:.92rem;color:var(--text);font-weight:600}
-.minor-desc{font-size:.76rem;color:var(--text3);font-style:italic}
-.minor-pts{font-family:var(--ft);font-size:.9rem;color:var(--weekly);flex-shrink:0;pointer-events:none}
-.buff-zone{margin:0 12px 10px;padding:7px 10px;border-radius:8px;background:rgba(201,148,58,.08);border:1px solid rgba(201,148,58,.2);align-items:center;gap:8px;cursor:pointer;display:none}
-.buff-zone.show{display:flex}
-.buff-zone.claimed{opacity:.5;cursor:default}
-.buff-txt{font-family:var(--fu);font-size:.66rem;color:var(--gold);line-height:1.4;flex:1;pointer-events:none}
-.buff-pts{font-family:var(--ft);font-size:.8rem;color:var(--gold);flex-shrink:0;pointer-events:none}
-
-/* SOLO */
-.solo-item{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:10px 12px;display:flex;align-items:center;gap:8px;cursor:pointer;transition:all .18s;position:relative;overflow:hidden;margin-bottom:5px;user-select:none}
-.solo-item::before{content:'';position:absolute;left:0;top:0;bottom:0;width:2.5px;background:var(--weekly)}
-.solo-item.done{opacity:.42}
-.solo-item.done .solo-name{text-decoration:line-through}
-.solo-chk{width:22px;height:22px;flex-shrink:0;border-radius:6px;border:1.5px solid var(--weekly);display:flex;align-items:center;justify-content:center;font-size:.72rem;pointer-events:none}
-.solo-item.done .solo-chk{background:var(--weekly)}
-.solo-body{flex:1;min-width:0;pointer-events:none}
-.solo-name{font-family:var(--fu);font-weight:700;font-size:1rem;color:var(--text)}
-.solo-desc{font-size:.78rem;color:var(--text3);font-style:italic}
-.solo-pts{font-family:var(--ft);font-size:1rem;color:var(--weekly);flex-shrink:0;pointer-events:none}
-
-/* MONTHLY */
-.monthly-item{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:12px 14px;display:flex;align-items:center;gap:10px;cursor:pointer;transition:all .18s;position:relative;overflow:hidden;margin-bottom:5px;user-select:none}
-.monthly-item::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:linear-gradient(180deg,var(--gold),#e8c87e)}
-.monthly-item.done{opacity:.42}
-.monthly-item.done .m-name{text-decoration:line-through}
-.m-chk{width:26px;height:26px;flex-shrink:0;border-radius:8px;border:2px solid var(--gold);display:flex;align-items:center;justify-content:center;font-size:.9rem;pointer-events:none}
-.monthly-item.done .m-chk{background:var(--gold)}
-.m-body{flex:1;min-width:0;pointer-events:none}
-.m-name{font-family:var(--fu);font-weight:700;font-size:1rem;color:var(--text)}
-.m-desc{font-size:.78rem;color:var(--text3);font-style:italic;margin-top:1px}
-.m-right{text-align:right;flex-shrink:0;pointer-events:none}
-.m-pn{font-family:var(--ft);font-size:1.05rem;color:var(--gold);display:block}
-.m-ps{font-size:.66rem;color:var(--text3);font-family:var(--fu);letter-spacing:1px}
-
-/* TOAST */
-.xp-toast{position:fixed;top:54px;left:50%;transform:translateX(-50%);background:var(--gold);color:#080b10;font-family:var(--ft);font-size:.9rem;padding:6px 20px;border-radius:30px;pointer-events:none;opacity:0;z-index:9999;letter-spacing:2px;white-space:nowrap}
-.xp-toast.show{animation:tup 1.6s ease forwards}
-@keyframes tup{0%{opacity:0;transform:translateX(-50%) translateY(8px)}20%{opacity:1;transform:translateX(-50%) translateY(-5px)}70%{opacity:1;transform:translateX(-50%) translateY(-9px)}100%{opacity:0;transform:translateX(-50%) translateY(-26px)}}
-
-/* MODAL */
-.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:800;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .3s}
-.modal-bg.show{opacity:1;pointer-events:all}
-.modal-box{background:var(--surface2);border:1px solid var(--gold);border-radius:20px;padding:28px 24px;text-align:center;max-width:280px;width:90%;box-shadow:0 0 50px rgba(201,148,58,.25);transform:scale(.85);transition:transform .3s}
-.modal-bg.show .modal-box{transform:scale(1)}
-.m-ico{font-size:2.6rem;margin-bottom:8px}
-.m-tit{font-family:var(--ft);font-size:.95rem;color:var(--gold-l);margin-bottom:7px;letter-spacing:2px}
-.m-bod{font-size:.82rem;color:var(--text2);line-height:1.6;margin-bottom:16px}
-.m-btn{background:rgba(201,148,58,.12);border:1px solid var(--gold);color:var(--gold);padding:8px 22px;border-radius:8px;font-family:var(--fu);font-weight:700;font-size:.76rem;letter-spacing:3px;cursor:pointer}
-
-/* ACTIONS */
-.actions{display:flex;gap:7px;margin:18px 0 7px}
-.btn-act{flex:1;padding:12px 5px;border-radius:10px;border:1px solid var(--border2);background:transparent;color:var(--text3);font-family:var(--fu);font-weight:700;font-size:.78rem;letter-spacing:2px;text-transform:uppercase;cursor:pointer;transition:all .2s}
-.btn-act:hover{border-color:var(--gold);color:var(--gold)}
-.btn-act.primary{border-color:rgba(201,148,58,.4);background:rgba(201,148,58,.06);color:var(--gold)}
-
-/* HISTORY */
-.hist-panel{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:12px;margin:6px 0;display:none}
-.hist-panel.open{display:block}
-.hist-item{padding:8px 0;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:flex-start}
-.hist-item:last-child{border-bottom:none}
-.hist-cyc{font-family:var(--fu);font-size:.78rem;font-weight:600;color:var(--text)}
-.hist-date{font-size:.6rem;color:var(--text3);margin-top:2px}
-.hist-pts{font-family:var(--ft);font-size:.84rem;color:var(--gold)}
-.hist-empty{text-align:center;color:var(--text3);font-size:.76rem;padding:14px;font-style:italic}
-.footer{text-align:center;padding:16px 0 4px;font-family:var(--fu);font-size:.56rem;letter-spacing:3px;color:var(--text3)}
-
-/* REGISTRO TAB */
-.reg-item{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:10px 12px;display:flex;align-items:center;gap:9px;transition:all .18s;position:relative;overflow:hidden;margin-bottom:5px}
-.reg-item::before{content:'';position:absolute;left:0;top:0;bottom:0;width:2.5px;background:var(--ic,var(--border))}
-.reg-item.expired{cursor:pointer;-webkit-tap-highlight-color:transparent;user-select:none}
-.reg-item.expired:active{transform:scale(.97)}
-.reg-item.completed{opacity:.55}
-.reg-chk{width:22px;height:22px;flex-shrink:0;border-radius:6px;border:1.5px solid var(--ic,var(--border));display:flex;align-items:center;justify-content:center;font-size:.72rem;background:transparent}
-.reg-item.completed .reg-chk{background:var(--ic,var(--text3));border-color:var(--ic)}
-.reg-body{flex:1;min-width:0}
-.reg-name{font-family:var(--fu);font-weight:700;font-size:1rem;color:var(--text);line-height:1.3}
-.reg-item.completed .reg-name{text-decoration:line-through}
-.reg-meta{font-size:.74rem;color:var(--text3);font-style:italic;margin-top:2px}
-.reg-pts{font-family:var(--ft);font-size:1rem;color:var(--gold);flex-shrink:0;white-space:nowrap}
-.reg-player{font-family:var(--fu);font-size:.62rem;font-weight:700;letter-spacing:2px;padding:1px 6px;border-radius:10px;text-transform:uppercase;flex-shrink:0}
-.reg-player.mono{color:var(--mono);background:rgba(126,184,232,.12)}
-.reg-player.oso{color:var(--oso);background:rgba(232,168,126,.12)}
-/* ── MENU PRINCIPAL ─────────────────────────── */
-.menu-screen{position:fixed;inset:0;background:var(--bg);z-index:800;display:none;flex-direction:column;align-items:center;justify-content:center;gap:0;padding:24px}
-.menu-screen.show{display:flex}
-.menu-title{font-family:var(--ft);font-size:1.4rem;color:var(--gold-l);letter-spacing:3px;margin-bottom:6px;text-align:center;text-shadow:0 0 24px rgba(232,185,106,.4)}
-.menu-player{font-family:var(--fu);font-size:.78rem;color:var(--text3);letter-spacing:3px;text-transform:uppercase;margin-bottom:32px}
-.menu-cards{display:flex;flex-direction:column;gap:14px;width:100%;max-width:320px}
-.menu-card{background:var(--surface);border:1px solid var(--border2);border-radius:16px;padding:20px 22px;display:flex;align-items:center;gap:16px;cursor:pointer;transition:all .22s;position:relative;overflow:hidden;-webkit-tap-highlight-color:transparent}
-.menu-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent);opacity:.5}
-.menu-card:active{transform:scale(.97)}
-.menu-card-ico{font-size:2rem;flex-shrink:0}
-.menu-card-body{flex:1}
-.menu-card-name{font-family:var(--ft);font-size:1rem;color:var(--gold-l);letter-spacing:1px;margin-bottom:3px}
-.menu-card-desc{font-family:var(--fb);font-size:.78rem;color:var(--text3)}
-.menu-card-arr{color:var(--text3);font-size:1.2rem}
-.menu-card:hover,.menu-card:active{border-color:var(--gold);box-shadow:0 0 16px rgba(201,148,58,.12)}
-.menu-back{font-family:var(--fu);font-size:.72rem;color:var(--text3);letter-spacing:2px;text-transform:uppercase;margin-top:24px;cursor:pointer;-webkit-tap-highlight-color:transparent;padding:6px 16px;border:1px solid var(--border);border-radius:8px}
-
-/* ── PROVISIONES ────────────────────────────── */
-.prov-screen{position:fixed;inset:0;background:var(--bg);z-index:700;display:none;flex-direction:column}
-.prov-screen.show{display:flex}
-.prov-header{padding:calc(var(--safe-top) + 12px) 16px 12px;background:var(--surface);border-bottom:1px solid var(--border2);display:flex;align-items:center;gap:12px;flex-shrink:0}
-.prov-header-title{font-family:var(--ft);font-size:1.1rem;color:var(--gold-l);letter-spacing:2px;flex:1}
-.prov-back{font-size:1.3rem;cursor:pointer;color:var(--text2);-webkit-tap-highlight-color:transparent;padding:4px 8px}
-.prov-body{flex:1;overflow-y:auto;padding:12px 14px 80px}
-.prov-cat-hdr{font-family:var(--fu);font-size:.78rem;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--gold);padding:10px 0 6px;margin-top:8px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px;cursor:pointer;user-select:none;-webkit-tap-highlight-color:transparent}
-.prov-cat-hdr::before{content:'⚔';font-size:.7rem}
-.prov-cat-chevron{margin-left:auto;font-size:.75rem;color:var(--text3);transition:transform .22s}
-.prov-cat-hdr.collapsed .prov-cat-chevron{transform:rotate(-90deg)}
-.prov-cat-body{overflow:hidden;transition:max-height .25s ease}
-.prov-cat-body.collapsed{max-height:0!important}
-.prov-row-actions{display:flex;gap:6px;padding:4px 4px 4px 0;justify-content:flex-end}
-.prov-act-btn{width:28px;height:28px;border-radius:7px;border:1px solid var(--border2);background:var(--surface2);display:inline-flex;align-items:center;justify-content:center;cursor:pointer;font-size:.8rem;-webkit-tap-highlight-color:transparent;transition:all .15s;flex-shrink:0}
-.prov-act-btn:active{transform:scale(.9)}
-.prov-act-btn.edit{color:var(--gold)}
-.prov-act-btn.del{color:#e05555}
-.prov-cat-actions{margin-left:auto;display:flex;gap:6px;align-items:center}
-.prov-cat-act-btn{width:24px;height:24px;border-radius:6px;border:1px solid var(--border2);background:rgba(0,0,0,.25);display:inline-flex;align-items:center;justify-content:center;cursor:pointer;font-size:.7rem;-webkit-tap-highlight-color:transparent;transition:all .15s}
-.prov-cat-act-btn:active{transform:scale(.9)}
-.prov-cat-act-btn.edit{color:var(--gold)}
-.prov-cat-act-btn.del{color:#e05555}
-/* Edit modal */
-.prov-edit-modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:950;display:none;align-items:flex-end;justify-content:center}
-.prov-edit-modal-bg.show{display:flex}
-.prov-edit-modal{background:var(--surface);border:1px solid var(--border2);border-radius:20px 20px 0 0;padding:20px 18px calc(var(--safe-bot)+20px);width:100%;max-width:480px}
-.prov-edit-modal-title{font-family:var(--ft);font-size:1rem;color:var(--gold-l);letter-spacing:2px;margin-bottom:16px;text-align:center}
-.prov-del-confirm{background:rgba(160,40,40,.18);border:1px solid rgba(160,40,40,.35);border-radius:10px;padding:12px;margin-bottom:14px;font-family:var(--fb);font-size:.85rem;color:#e8a0a0;text-align:center;display:none}
-.prov-del-confirm.show{display:block}
-.prov-table{width:100%;border-collapse:collapse;margin-bottom:4px}
-.prov-table th{font-family:var(--fu);font-size:.62rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--text3);padding:5px 8px 5px 4px;text-align:left;border-bottom:1px solid var(--border)}
-.prov-table th.th-hay{text-align:center;width:40px}
-.prov-table th.th-qty{text-align:center;width:60px}
-.prov-row{border-bottom:1px solid rgba(30,45,61,.6);transition:background .15s}
-.prov-row:active{background:var(--surface2)}
-.prov-row.row-warn{background:rgba(180,130,20,.13);border-bottom-color:rgba(180,130,20,.2)}
-.prov-row.row-warn:active{background:rgba(180,130,20,.22)}
-.prov-row.row-danger{background:rgba(160,40,40,.18);border-bottom-color:rgba(160,40,40,.25)}
-.prov-row.row-danger:active{background:rgba(160,40,40,.28)}
-.prov-cell{padding:8px 8px 8px 4px;font-family:var(--fb);font-size:.88rem;color:var(--text)}
-.prov-cell-hay{text-align:center;padding:6px 4px}
-.prov-cell-qty{text-align:center;padding:6px 4px}
-.prov-chk{width:20px;height:20px;border:2px solid var(--border2);border-radius:5px;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;transition:all .18s;-webkit-tap-highlight-color:transparent;background:transparent}
-.prov-chk.yes{background:rgba(61,214,140,.15);border-color:#3dd68c}
-.prov-chk.yes::after{content:'✓';font-size:.72rem;color:#3dd68c}
-.prov-qty-wrap{display:flex;align-items:center;justify-content:center;gap:4px}
-.prov-qty-val{font-family:var(--fu);font-weight:700;font-size:.95rem;min-width:22px;text-align:center;color:var(--text)}
-.prov-qty-val.warn{color:#f0c040}
-.prov-qty-val.danger{color:#e05555}
-.prov-qty-btn{width:22px;height:22px;border-radius:6px;border:1px solid var(--border2);background:var(--surface2);color:var(--text2);font-size:.9rem;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:all .15s;line-height:1}
-.prov-qty-btn:active{background:var(--border)}
-.prov-add-btn{position:fixed;bottom:calc(var(--safe-bot) + 18px);right:18px;width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,var(--gold),#a0722a);border:none;color:#000;font-size:1.5rem;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 4px 16px rgba(201,148,58,.4);-webkit-tap-highlight-color:transparent;transition:transform .15s}
-.prov-add-btn:active{transform:scale(.92)}
-/* Modal agregar */
-.prov-modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:900;display:none;align-items:flex-end;justify-content:center}
-.prov-modal-bg.show{display:flex}
-.prov-modal{background:var(--surface);border:1px solid var(--border2);border-radius:20px 20px 0 0;padding:20px 18px calc(var(--safe-bot)+20px);width:100%;max-width:480px}
-.prov-modal-title{font-family:var(--ft);font-size:1rem;color:var(--gold-l);letter-spacing:2px;margin-bottom:16px;text-align:center}
-.prov-field{margin-bottom:12px}
-.prov-field label{font-family:var(--fu);font-size:.72rem;letter-spacing:2px;text-transform:uppercase;color:var(--text3);display:block;margin-bottom:4px}
-.prov-field input,.prov-field select{width:100%;background:var(--surface2);border:1px solid var(--border2);border-radius:8px;padding:10px 12px;color:var(--text);font-family:var(--fb);font-size:.95rem;outline:none;-webkit-appearance:none}
-.prov-field input:focus,.prov-field select:focus{border-color:var(--gold);box-shadow:0 0 0 2px rgba(201,148,58,.15)}
-.prov-field select option{background:var(--surface2)}
-.prov-modal-btns{display:flex;gap:10px;margin-top:16px}
-.prov-modal-btn{flex:1;padding:12px;border-radius:10px;border:none;font-family:var(--fu);font-size:.88rem;font-weight:700;letter-spacing:1px;cursor:pointer;transition:all .18s}
-.prov-modal-btn.cancel{background:var(--surface2);color:var(--text2);border:1px solid var(--border)}
-.prov-modal-btn.confirm{background:linear-gradient(135deg,var(--gold),#a0722a);color:#000}
-.prov-new-cat-row{display:flex;gap:8px;align-items:flex-end}
-.prov-new-cat-row .prov-field{flex:1;margin:0}
-.prov-new-cat-toggle{font-family:var(--fu);font-size:.68rem;color:var(--gold);letter-spacing:1px;cursor:pointer;white-space:nowrap;padding:10px 0 0;text-decoration:underline}
-.reg-empty{text-align:center;color:var(--text3);font-size:.82rem;padding:20px 0;font-style:italic}
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Cacos Quest</title>
+  <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
 
-<div class="xp-toast" id="xpToast"></div>
-
-<!-- PLAYER SELECT -->
-<div class="ps-screen" id="psScreen">
-  <div style="font-size:2.4rem">🏯</div>
-  <div class="ps-title">Cacos Quest</div>
-  <div class="ps-sub">¿Quién eres hoy?</div>
-  <div class="ps-btns">
-    <div class="ps-btn mono-btn" id="btnMono">
-      <span class="ps-ico">🐒</span>
-      <span class="ps-name">Mono</span>
-    </div>
-    <div class="ps-btn oso-btn" id="btnOso">
-      <span class="ps-ico">🐻</span>
-      <span class="ps-name">Oso</span>
-    </div>
-  </div>
-</div>
-
-<!-- MENU PRINCIPAL -->
-<div class="menu-screen" id="menuScreen">
-  <div style="font-size:2rem">🏯</div>
-  <div class="menu-title">Cacos Quest</div>
-  <div class="menu-player" id="menuPlayerLabel">Bienvenido</div>
-  <div class="menu-cards">
-    <div class="menu-card" id="menuMisiones">
-      <div class="menu-card-ico">⚔️</div>
-      <div class="menu-card-body">
-        <div class="menu-card-name">Lista de Misiones</div>
-        <div class="menu-card-desc">Diarias, semanales y mensuales del reino</div>
+  <!-- PANTALLA: Selección de jugador -->
+  <div id="screen-player" class="screen">
+    <div class="player-select-title">Cacos Quest</div>
+    <div class="player-select-subtitle">¿Quién eres?</div>
+    <div class="player-select-btns">
+      <div class="player-select-btn mono-btn" onclick="selectPlayer('mono')">
+        <span class="player-select-icon">🐵</span>
+        <span class="player-select-name">Mono</span>
       </div>
-      <div class="menu-card-arr">›</div>
-    </div>
-    <div class="menu-card" id="menuProvisiones">
-      <div class="menu-card-ico">📦</div>
-      <div class="menu-card-body">
-        <div class="menu-card-name">Lista de Provisiones</div>
-        <div class="menu-card-desc">Inventario y suministros del hogar</div>
-      </div>
-      <div class="menu-card-arr">›</div>
-    </div>
-  </div>
-  <div class="menu-back" id="menuBack">← Cambiar jugador</div>
-</div>
-
-<!-- PROVISIONES -->
-<div class="prov-screen" id="provScreen">
-  <div class="prov-header">
-    <div class="prov-back" id="provBack">‹</div>
-    <div class="prov-header-title">📦 Lista de Provisiones</div>
-    <div id="provSyncDot" style="width:8px;height:8px;border-radius:50%;background:#3dd68c;flex-shrink:0;transition:background .3s"></div>
-  </div>
-  <div class="prov-body" id="provBody"></div>
-  <button class="prov-add-btn" id="provAddBtn">＋</button>
-</div>
-
-<!-- MODAL AGREGAR PROVISIÓN -->
-<div class="prov-modal-bg" id="provModalBg">
-  <div class="prov-modal">
-    <div class="prov-modal-title">Nueva Provisión</div>
-    <div class="prov-field">
-      <label>Categoría</label>
-      <select id="provCatSelect"></select>
-    </div>
-    <div id="provNewCatWrap" style="display:none">
-      <div class="prov-field">
-        <label>Nueva categoría</label>
-        <input type="text" id="provNewCatInput" placeholder="Nombre de la categoría...">
+      <div class="player-select-btn oso-btn" onclick="selectPlayer('oso')">
+        <span class="player-select-icon">🐻</span>
+        <span class="player-select-name">Oso</span>
       </div>
     </div>
-    <div style="text-align:right;margin-bottom:10px">
-      <span class="prov-new-cat-toggle" id="provNewCatToggle">+ Nueva categoría</span>
-    </div>
-    <div class="prov-field">
-      <label>Provisión</label>
-      <input type="text" id="provItemInput" placeholder="Nombre del ítem...">
-    </div>
-    <div class="prov-modal-btns">
-      <button class="prov-modal-btn cancel" id="provModalCancel">Cancelar</button>
-      <button class="prov-modal-btn confirm" id="provModalConfirm">Agregar</button>
-    </div>
-  </div>
-</div>
-
-<!-- MODAL EDITAR/ELIMINAR PROVISIÓN -->
-<div class="prov-edit-modal-bg" id="provEditModalBg">
-  <div class="prov-edit-modal">
-    <div class="prov-edit-modal-title" id="provEditTitle">Editar</div>
-    <div class="prov-del-confirm" id="provDelConfirm"></div>
-    <div class="prov-field">
-      <label id="provEditLabel">Nombre</label>
-      <input type="text" id="provEditInput" placeholder="">
-    </div>
-    <div class="prov-modal-btns" id="provEditBtns">
-      <button class="prov-modal-btn cancel" id="provEditCancel">Cancelar</button>
-      <button class="prov-modal-btn cancel" id="provEditDelete" style="color:#e05555;border-color:rgba(160,40,40,.4)">🗑 Eliminar</button>
-      <button class="prov-modal-btn confirm" id="provEditSave">Guardar</button>
-    </div>
-    <div class="prov-modal-btns" id="provDelBtns" style="display:none">
-      <button class="prov-modal-btn cancel" id="provDelNo">← Cancelar</button>
-      <button class="prov-modal-btn confirm" id="provDelYes" style="background:linear-gradient(135deg,#a02828,#6b1515);color:#fff">Sí, eliminar</button>
-    </div>
-  </div>
-</div>
-
-<!-- LEVEL UP MODAL -->
-<div class="modal-bg" id="lvlModal">
-  <div class="modal-box">
-    <div class="m-ico" id="mIco">⚔️</div>
-    <div class="m-tit" id="mTit">NIVEL ALCANZADO</div>
-    <div class="m-bod" id="mBod">Has ascendido.</div>
-    <button class="m-btn" id="mCloseBtn">¡RECLAMAR PODER!</button>
-  </div>
-</div>
-
-<!-- MAIN APP -->
-<div class="app" id="mainApp" style="display:none">
-  <div class="sync-bar" id="syncBar">
-    <div class="sync-dot"></div>
-    <span id="syncTxt">Conectando...</span>
   </div>
 
-  <div class="header">
-    <div class="hdr-back" id="appMenuBack">‹</div>
-    <div class="hdr-icon">🏯</div>
-    <div class="hdr-title">Cacos Quest</div>
-    <div class="hdr-sub">⚔️ Lista de Misiones</div>
-    <div class="hdr-players">
-      <span class="pbadge mono" id="badgeMono">🐒 Mono</span>
-      <span class="pbadge oso"  id="badgeOso">🐻 Oso</span>
+  <!-- PANTALLA: Menú principal -->
+  <div id="screen-menu" class="screen hidden">
+    <div class="menu-header">
+      <span id="player-name"></span>
+      <button onclick="changePlayer()">Cambiar jugador</button>
+    </div>
+    <div class="menu-options">
+      <button onclick="navigate('missions')">⚔️ Misiones</button>
+      <button onclick="navigate('provisions')">🛒 Provisiones</button>
+      <button onclick="navigate('battlepass')">🏆 Pase de Viaje</button>
+      <button onclick="navigate('cycles')">🌖 Ciclos</button>
     </div>
   </div>
 
-  <div class="score-panel">
-    <div class="score-grid">
-      <div class="score-block" id="monoBtn" style="cursor:pointer;-webkit-tap-highlight-color:transparent" title="Ver misiones de Mono">
-        <span class="s-label">🐒 Mono</span>
-        <div class="s-num mono" id="sMono">0</div>
+  <!-- PANTALLA: Misiones -->
+  <div id="screen-missions" class="screen hidden">
+    <div class="missions-header">
+      <button class="back-btn" onclick="navigate('menu')">← Volver</button>
+      <h2 class="screen-title">Misiones</h2>
+      <span id="puntos-display">⭐ 0 Nenurios</span>
+    </div>
+    <div class="missions-tabs">
+      <button class="tab-btn active" onclick="cambiarTab('diarias')">Diarias</button>
+      <button class="tab-btn" onclick="cambiarTab('semanales')">Semanales</button>
+      <button class="tab-btn" onclick="cambiarTab('mensuales')">Mensuales</button>
+    </div>
+    <div id="missions-container">
+      <!-- Las misiones se renderizan aquí con JavaScript -->
+    </div>
+  </div>
+
+  <!-- PANTALLA: Provisiones -->
+  <div id="screen-provisions" class="screen hidden">
+    <div class="prov-header">
+      <button class="back-btn" onclick="navigate('menu')">← Volver</button>
+      <div class="prov-header-titulo">📦 Provisiones</div>
+    </div>
+    <div class="prov-body" id="prov-body"></div>
+    <div class="prov-fab-menu" id="prov-fab-menu">
+      <button class="prov-fab-opcion" onclick="abrirModalAgregarCategoria()">🗂 Categoría</button>
+      <button class="prov-fab-opcion" onclick="abrirModalAgregar()">📦 Provisión</button>
+    </div>
+    <button class="prov-btn-agregar" onclick="toggleFabMenu()">＋</button>
+  </div>
+
+  <!-- PANTALLA: Pase de viaje -->
+  <div id="screen-battlepass" class="screen hidden">
+      <div class="bp-header">
+          <button class="back-btn" onclick="navigate('menu')">← Volver</button>
+          <h2 class="screen-title">Pase de Viaje</h2>
+          <span id="bp-nivel-badge" class="bp-nivel-badge">Sin nivel</span>
       </div>
-      <div class="s-div"></div>
-      <div class="score-block" id="nenuriosBtn" style="cursor:pointer;-webkit-tap-highlight-color:transparent" title="Ver todas las misiones">
-        <span class="s-label">⭐ Nenurios</span>
-        <div class="s-num" id="sTotal">0</div>
-      </div>
-      <div class="s-div"></div>
-      <div class="score-block" id="osoBtn" style="cursor:pointer;-webkit-tap-highlight-color:transparent" title="Ver misiones de Oso">
-        <span class="s-label">🐻 Oso</span>
-        <div class="s-num oso" id="sOso">0</div>
-      </div>
-    </div>
-    <div class="cycle-wrap">
-      <div class="cycle-meta">
-        <span>Ciclo — Día <strong id="cDay">1</strong>/<span id="cTotal">30</span></span>
-        <span>Termina: <strong id="cEnd">—</strong></span>
-      </div>
-      <div class="bar-track"><div class="bar-fill" id="cBar" style="width:0%"></div></div>
-    </div>
-  </div>
 
-  <div class="battle-pass">
-    <div class="panel-hdr">⚔ Pase de Batalla<span class="panel-badge" id="bpBadge">Nivel 0</span></div>
-    <div class="bp-grid" id="bpGrid"></div>
-    <div class="bar-track"><div class="bar-fill" id="bpBar" style="width:0%"></div></div>
-    <div class="bp-prog"><span id="bpCur">0 Nenurios</span><span id="bpNxt">— para Nv.1</span></div>
-  </div>
-
-  <div class="tabs">
-    <button class="tab-btn active" id="tabD">Diarias</button>
-    <button class="tab-btn" id="tabW">Semanales</button>
-    <button class="tab-btn" id="tabM">Mensuales</button>
-    <button class="tab-btn" id="tabR">Registro</button>
-  </div>
-
-  <div id="tabContent"></div>
-
-  <div class="actions">
-    <button class="btn-act" id="histBtn">📜 Historial</button>
-    <button class="btn-act primary" id="newCycleBtn">🌙 Nuevo Ciclo</button>
-  </div>
-  <div class="hist-panel" id="histPanel">
-    <div class="sec-hdr" style="margin-top:0">Ciclos Anteriores</div>
-    <div id="histList"></div>
-  </div>
-  <div class="footer">QUESTLOG v3.1 — MONO &amp; OSO · SYNC ONLINE</div>
-</div>
-
-<!-- SERVICE WORKER for offline support -->
-<script>
-if ('serviceWorker' in navigator) {
-  const sw = `
-    const C='ql-v1';
-    self.addEventListener('install',e=>e.waitUntil(
-      caches.open(C).then(c=>c.add(self.location.href))
-    ));
-    self.addEventListener('fetch',e=>e.respondWith(
-      fetch(e.request).catch(()=>caches.match(e.request))
-    ));
-  `;
-  const url = URL.createObjectURL(new Blob([sw],{type:'application/javascript'}));
-  navigator.serviceWorker.register(url).catch(()=>{});
-}
-</script>
-
-<!-- NON-MODULE BOOTSTRAP: attaches player select before Firebase loads -->
-<script>
-// Player selection works immediately, no Firebase needed
-function showMenu(player) {
-  window.__selectedPlayer = player;
-  document.getElementById('psScreen').style.display = 'none';
-  document.getElementById('menuPlayerLabel').textContent =
-    player === 'mono' ? '🐒 Jugando como Mono' : '🐻 Jugando como Oso';
-  document.getElementById('menuScreen').classList.add('show');
-}
-document.getElementById('btnMono').addEventListener('click', function() { showMenu('mono'); });
-document.getElementById('btnOso').addEventListener('click',  function() { showMenu('oso'); });
-
-document.getElementById('menuBack').addEventListener('click', function() {
-  document.getElementById('menuScreen').classList.remove('show');
-  document.getElementById('psScreen').style.display = 'flex';
-  window.__selectedPlayer = null;
-});
-
-document.getElementById('menuMisiones').addEventListener('click', function() {
-  const p = window.__selectedPlayer; if (!p) return;
-  document.getElementById('menuScreen').classList.remove('show');
-  document.getElementById('mainApp').style.display = 'block';
-  if (window.__appReady) window.__appReady(p);
-  // If __appReady not set yet (Firebase not loaded), store for later
-  else window.__selectedPlayer = p;
-});
-
-document.getElementById('menuProvisiones').addEventListener('click', function() {
-  document.getElementById('menuScreen').classList.remove('show');
-  document.getElementById('provScreen').classList.add('show');
-  // renderProvisions se llama desde el módulo cuando está listo
-  if (window.__provReady) window.__provReady();
-});
-document.getElementById('mCloseBtn').addEventListener('click', function() {
-  document.getElementById('lvlModal').classList.remove('show');
-});
-document.getElementById('appMenuBack').addEventListener('click', function() {
-  document.getElementById('mainApp').style.display = 'none';
-  document.getElementById('menuScreen').classList.add('show');
-});
-</script>
-
-<!-- FIREBASE MODULE -->
-<script type="module">
-import { initializeApp }    from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
-import { getFirestore, doc, onSnapshot, setDoc } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
-
-// ── FIREBASE INIT ──────────────────────────────
-const firebaseConfig = {
-  apiKey: "AIzaSyAbGHJHmiS8FswN3jZzrGibzZqCnytl1e4",
-  authDomain: "queslog-monoso.firebaseapp.com",
-  projectId: "queslog-monoso",
-  storageBucket: "queslog-monoso.firebasestorage.app",
-  messagingSenderId: "775907253734",
-  appId: "1:775907253734:web:1fb4200a0e5f97ea8e8a27"
-};
-const fbApp  = initializeApp(firebaseConfig);
-const db     = getFirestore(fbApp);
-const ST_DOC = doc(db, 'questlog', 'state');
-
-// ── STATIC DATA ────────────────────────────────
-const DP = [
-  {id:'dp0',name:'Llamado del Centinela',desc:'Despertar temprano (hora acordada)',pts:1},
-  {id:'dp1',name:'Ritual de la Cascada Sagrada',desc:'Bañarse',pts:1},
-  {id:'dp2',name:'Sustento Matutino',desc:'Desayunar comida casera',pts:1},
-  {id:'dp3',name:'Sustento Diurno',desc:'Almorzar comida casera',pts:1},
-  {id:'dp4',name:'Sustento Vespertino',desc:'Cenar comida casera',pts:1},
-  {id:'dp5',name:'Retirada al Santuario del Sueño',desc:'Acostarse temprano (hora acordada)',pts:1},
-  {id:'dp6',name:'Elixir de la Vitalidad Infinita',desc:'Tomar 2 litros de agua al día',pts:1},
-  {id:'dp7',name:'Sintonía del Guerrero',desc:'Ejercicios de activación/estiramiento (15 min)',pts:1},
-  {id:'dp8',name:'Aplicación de Hechizo Protector',desc:'Skin care diario',pts:1}
-];
-const DH = [
-  {id:'dh0',name:'Despliegue del Campamento',desc:'Tender la cama',pts:2},
-  {id:'dh1',name:'Purificación de Cristal',desc:'Lavar platos',pts:2},
-  {id:'dh2',name:'Almacenamiento de Cristal',desc:'Secar platos',pts:2},
-  {id:'dh3',name:'El Sereno del Cristal',desc:'Dejar todos los vasos en desuso en la alacena',pts:2},
-  {id:'dh4',name:'Restauración de los Mesones',desc:'Limpiar los mesones de la cocina',pts:5},
-  {id:'dh5',name:'El Suelo es Lava',desc:'No dejar ropa en el suelo al final del día',pts:2}
-];
-const WG = [
-  {id:'wg0',name:'Orden del Portal del Sueño',desc:'Limpiar habitación',buff:'Descanso del Guerrero',buffPts:20,
-   minors:[{id:'wm00',name:'Purificar Superficies',desc:'Limpiar superficies',pts:20},{id:'wm01',name:'Cambio de la Seda del Descanso',desc:'Cambiar las sábanas',pts:20},{id:'wm02',name:'Alineación de los Tótems',desc:'Organizar espacios',pts:20}]},
-  {id:'wg1',name:'Purga Santuario Monuna',desc:'Limpiar oficina de Mono',buff:'Claridad Mental del Sabio Mono',buffPts:20,
-   minors:[{id:'wm10',name:'Mantenimiento Mesa de Trabajo',desc:'Limpiar escritorio',pts:20},{id:'wm11',name:'Purificar Superficies',desc:'Limpiar superficies',pts:20},{id:'wm12',name:'Organización de los Equipos',desc:'Organizar espacios',pts:20}]},
-  {id:'wg2',name:'Purga Santuario Osuna',desc:'Limpiar oficina de Oso',buff:'Claridad Mental del Sabio Oso',buffPts:20,
-   minors:[{id:'wm20',name:'Mantenimiento Mesa de Trabajo',desc:'Limpiar escritorio',pts:20},{id:'wm21',name:'Purificar Superficies',desc:'Limpiar superficies',pts:20},{id:'wm22',name:'Organización de los Equipos',desc:'Organizar espacios',pts:20}]},
-  {id:'wg3',name:'Restauración de la Cascada Mayor',desc:'Limpiar baño principal',buff:'Purificación Total Mayor',buffPts:20,
-   minors:[{id:'wm30',name:'Purificación del Cristal',desc:'Limpiar espejo',pts:20},{id:'wm31',name:'Exorcismo de la Laguna de Cristal',desc:'Limpiar bañera',pts:20},{id:'wm32',name:'Purificación del Trono de Piedra',desc:'Limpiar inodoro',pts:20},{id:'wm33',name:'Pulido del Manantial del Alba',desc:'Limpiar lavamanos',pts:20}]},
-  {id:'wg4',name:'Restauración de la Cascada Menor',desc:'Limpiar baño secundario',buff:'Purificación Total Menor',buffPts:20,
-   minors:[{id:'wm40',name:'Purificación del Cristal',desc:'Limpiar espejo',pts:20},{id:'wm41',name:'Exorcismo de la Laguna de Cristal',desc:'Limpiar bañera',pts:20},{id:'wm42',name:'Purificación del Trono de Piedra',desc:'Limpiar inodoro',pts:20},{id:'wm43',name:'Pulido del Manantial del Alba',desc:'Limpiar lavamanos',pts:20}]},
-  {id:'wg5',name:'Brillo en el Corazón del Hogar',desc:'Limpiar la cocina',buff:null,
-   minors:[{id:'wm51',name:'Cuidado del Huerto de las Delicias',desc:'Limpiar el frutero',pts:20},{id:'wm52',name:'Purificación Altar de Fuego y Agua',desc:'Limpiar fregadero y cocina',pts:20},{id:'wm53',name:'Cámara de Impulso Térmico',desc:'Limpiar microondas',pts:20},{id:'wm54',name:'Orden de los Estantes de Alquimia',desc:'Limpiar el estante sobre el mesón',pts:20}]},
-  {id:'wg6',name:'Orden del Salón de Guerra',desc:'Limpiar el salón',buff:'Estratega Maestro',buffPts:20,
-   minors:[{id:'wm60',name:'Restauración del Trono Acolchado',desc:'Limpiar el sofá',pts:20},{id:'wm61',name:'Peinado de la Pradera Interior',desc:'Aspirar la alfombra',pts:20},{id:'wm62',name:'Pulido del Tablero de Reuniones',desc:'Limpiar el comedor',pts:20},{id:'wm63',name:'Brillo del Escudo del Hogar',desc:'Limpiar superficies',pts:20}]}
-];
-const WS = [
-  {id:'ws0',name:'Despeje de la Senda del Viajero',desc:'Limpiar recibidor y pasillo',pts:30},
-  {id:'ws1',name:'Expedición a la Logia Olvidada',desc:'Limpiar la logia',pts:30},
-  {id:'ws2',name:'Conquista de la Atalaya Externa',desc:'Limpiar la terraza',pts:30},
-  {id:'ws3',name:'Estrategia de Suministros del Reino',desc:'Planificar comidas de la semana',pts:30},
-  {id:'ws4',name:'Censo de Provisiones Necesarias',desc:'Actualizar lista de compras',pts:30},
-  {id:'ws5',name:'Incursión en el Mercado de los Tesoros',desc:'Hacer mercado el día de oferta',pts:40},
-  {id:'ws6',name:'Gran Alquimia del Banquete Fase I',desc:'Cocinar almuerzo 1',pts:25},
-  {id:'ws7',name:'Gran Alquimia del Banquete Fase II',desc:'Cocinar almuerzo 2',pts:25},
-  {id:'ws8',name:'Gran Alquimia del Banquete Fase III',desc:'Cocinar almuerzo 3',pts:25},
-  {id:'ws9',name:'Gran Alquimia del Banquete Fase IV',desc:'Cocinar almuerzo 4',pts:25},
-  {id:'ws10_mono',name:'Forja del Guerrero de Bronce 🐒',desc:'Hacer ejercicios de fuerza 1',pts:15,player:'mono'},
-  {id:'ws10_oso', name:'Forja del Guerrero de Bronce 🐻',desc:'Hacer ejercicios de fuerza 1',pts:15,player:'oso'},
-  {id:'ws11_mono',name:'Forja del Guerrero de Plata 🐒', desc:'Hacer ejercicios de fuerza 2',pts:15,player:'mono'},
-  {id:'ws11_oso', name:'Forja del Guerrero de Plata 🐻', desc:'Hacer ejercicios de fuerza 2',pts:15,player:'oso'},
-  {id:'ws12_mono',name:'Forja del Guerrero de Oro 🐒',   desc:'Hacer ejercicios de fuerza 3',pts:15,player:'mono'},
-  {id:'ws12_oso', name:'Forja del Guerrero de Oro 🐻',   desc:'Hacer ejercicios de fuerza 3',pts:15,player:'oso'},
-  {id:'ws13',name:'Ritual de la Hebra Limpia (Lavado)',desc:'Lavar la ropa',pts:25},
-  {id:'ws14',name:'Ritual de la Hebra Limpia (Armadura)',desc:'Doblar la ropa',pts:25},
-  {id:'ws15',name:'Torbellino Erradicador de Polvo I',desc:'Aspirar 1ra vez',pts:20},
-  {id:'ws16',name:'Torbellino Erradicador de Polvo II',desc:'Aspirar 2da vez',pts:20},
-  {id:'ws17',name:'Torbellino Erradicador de Polvo III',desc:'Aspirar 3ra vez',pts:20},
-  {id:'ws18',name:'Rastreo del Sendero Brillante I',desc:'Pasar trapeador 1ra vez',pts:20},
-  {id:'ws19',name:'Rastreo del Sendero Brillante II',desc:'Pasar trapeador 2da vez',pts:20},
-  {id:'ws20',name:'Rastreo del Sendero Brillante III',desc:'Pasar trapeador 3ra vez',pts:20},
-  {id:'ws21',name:'Exilio de los Residuos I',desc:'Sacar todas las basuras I',pts:20},
-  {id:'ws22',name:'Exilio de los Residuos II',desc:'Sacar todas las basuras II',pts:20},
-  {id:'ws23',name:'Exilio de los Residuos III',desc:'Sacar todas las basuras III',pts:20}
-];
-const MM = [
-  {id:'mm0',name:'Cacería de la Escarcha Ancestral',desc:'Limpieza profunda del refrigerador',pts:200,player:null},
-  {id:'mm1',name:'Excavación en las Bóvedas de Suministros',desc:'Limpieza profunda de las alacenas',pts:200,player:null},
-  {id:'mm2',name:'Purificación del Crisol del Fuego',desc:'Limpieza del horno',pts:200,player:null},
-  {id:'mm3',name:'Bendición de la Criatura Creadora del Bosque',desc:'Mantenimiento de Bambi',pts:250,player:null},
-  {id:'mm4_mono',name:'El Tesoro del Dragón',desc:'Ahorrar según el monto acordado',pts:150,player:'mono'},
-  {id:'mm4_oso', name:'El Tesoro del Dragón',desc:'Ahorrar según el monto acordado',pts:150,player:'oso'},
-  {id:'mm5_mono',name:'Aniquilación de la Sombra de la Deuda',desc:'Pagar el monto mensual de las TDCs',pts:150,player:'mono'},
-  {id:'mm5_oso', name:'Aniquilación de la Sombra de la Deuda',desc:'Pagar el monto mensual de las TDCs',pts:150,player:'oso'}
-];
-const BP = [
-  {lv:1,xp:50,ico:'🌿',name:'Aprendiz'},{lv:2,xp:150,ico:'🗡️',name:'Guerrero'},
-  {lv:3,xp:300,ico:'🔥',name:'En Llamas'},{lv:4,xp:500,ico:'🌙',name:'Nocturno'},
-  {lv:5,xp:750,ico:'💎',name:'Diamante'},{lv:6,xp:1100,ico:'⚡',name:'Relámpago'},
-  {lv:7,xp:1500,ico:'🦅',name:'Águila'},{lv:8,xp:2000,ico:'🌟',name:'Estelar'},
-  {lv:9,xp:2700,ico:'🧠',name:'Sabio'},{lv:10,xp:3500,ico:'👑',name:'Leyenda'}
-];
-const ROMAN = ['I','II','III','IV','V'];
-
-// ── STATE ──────────────────────────────────────
-function blank() {
-  return {totalXP:0,monoXP:0,osoXP:0,cycleStart:Date.now(),
-    dailyDone:{},dailyHogarDone:{},weeklyDone:{},
-    buffClaimed:{},monthlyDone:{},lastSeenLevel:0,history:[]};
-}
-let ST = blank();
-let currentPlayer = null;
-let saving = false;
-let pendingSave = false;
-let curTab = 'daily';
-let curTabSub = null;
-
-// ── SYNC UI ────────────────────────────────────
-function syncStatus(cls, txt) {
-  document.getElementById('syncBar').className = 'sync-bar ' + cls;
-  document.getElementById('syncTxt').textContent = txt;
-}
-
-// ── SAVE ───────────────────────────────────────
-function save() {
-  syncStatus('syncing', 'Guardando...');
-  if (saving) { pendingSave = true; return; }
-  saving = true;
-  setDoc(ST_DOC, ST)
-    .then(() => {
-      saving = false;
-      syncStatus('online', 'Sincronizado ✓');
-      if (pendingSave) { pendingSave = false; save(); }
-    })
-    .catch(err => {
-      saving = false;
-      syncStatus('error', 'Error: ' + err.code);
-      console.error('Firestore save:', err);
-    });
-}
-
-// ── REAL-TIME LISTENER ─────────────────────────
-onSnapshot(ST_DOC, snap => {
-  if (!snap.exists()) { syncStatus('online', 'Sincronizado ✓'); return; }
-  const data = snap.data();
-  // Firestore puede devolver cycleStart como Timestamp — convertir a número Unix
-  if (data.cycleStart?.toMillis) data.cycleStart = data.cycleStart.toMillis();
-  else if (data.cycleStart?.seconds) data.cycleStart = data.cycleStart.seconds * 1000;
-  ST = Object.assign(blank(), data);
-  recalcXP();
-  syncStatus('online', 'Sincronizado ✓');
-  if (currentPlayer) renderAll();
-}, err => {
-  syncStatus('error', 'Sin conexión');
-  console.error('Firestore listen:', err);
-});
-
-// ── HELPERS ────────────────────────────────────
-// Day resets at 6AM local time
-const todayKey = () => {
-  const d = new Date();
-  // If before 6AM, count as previous day
-  if (d.getHours() < 6) d.setDate(d.getDate() - 1);
-  return `${d.getFullYear()}-${d.getMonth()+1}-${d.getDate()}`;
-};
-const yesterdayKey = () => {
-  const d = new Date();
-  // "yesterday" relative to 6AM boundary
-  if (d.getHours() < 6) d.setDate(d.getDate() - 2);
-  else d.setDate(d.getDate() - 1);
-  return `${d.getFullYear()}-${d.getMonth()+1}-${d.getDate()}`;
-};
-// Conversión segura de cycleStart (puede llegar como Timestamp de Firestore)
-const getCycleStart = () => {
-  const cs = ST.cycleStart;
-  if (cs?.toMillis) return cs.toMillis();
-  if (cs?.seconds)  return cs.seconds * 1000;
-  const n = Number(cs);
-  // Nunca usar Date.now() como fallback — rompería weekKey
-  // Si no hay valor válido, usar epoch 0 (se verá cycleDay=1 pero no rompe)
-  return (n && n > 0) ? n : 0;
-};
-
-// Devuelve el lunes de la semana actual (con corte a las 6AM del lunes)
-// Si es lunes antes de las 6AM, pertenece a la semana anterior
-const currentMondayMs = () => {
-  const now = new Date();
-  const d = new Date(now);
-  // Si es lunes y antes de las 6AM, retroceder al lunes anterior
-  if (d.getDay() === 1 && d.getHours() < 6) d.setDate(d.getDate() - 7);
-  // Retroceder hasta el lunes más reciente
-  const dayOfWeek = d.getDay(); // 0=dom, 1=lun ... 6=sab
-  const daysToMonday = (dayOfWeek === 0) ? 6 : dayOfWeek - 1;
-  d.setDate(d.getDate() - daysToMonday);
-  d.setHours(0, 0, 0, 0);
-  return d.getTime();
-};
-const weekKey = () => {
-  const d = new Date(currentMondayMs());
-  return `lun-${d.getFullYear()}-${d.getMonth()+1}-${d.getDate()}`;
-};
-// Número de semana dentro del ciclo: cuántos lunes han pasado desde cycleStart
-const weekNum = () => {
-  const cs = getCycleStart();
-  const cycleMonday = new Date(cs);
-  // Retroceder al lunes de la semana de inicio del ciclo
-  const dow = cycleMonday.getDay();
-  const back = (dow === 0) ? 6 : dow - 1;
-  cycleMonday.setDate(cycleMonday.getDate() - back);
-  cycleMonday.setHours(0, 0, 0, 0);
-  return Math.floor((currentMondayMs() - cycleMonday.getTime()) / (7 * 86400000));
-};
-// Fin del ciclo = último día del mes en que comenzó, a las 6AM
-const cycleEndDate = () => {
-  const start = new Date(getCycleStart());
-  return new Date(start.getFullYear(), start.getMonth()+1, 0, 6, 0, 0);
-};
-const cycleDay  = () => {
-  const cs  = getCycleStart();
-  const end = cycleEndDate();
-  const total   = Math.round((end - cs) / 86400000);
-  const elapsed = Math.floor((Date.now() - cs) / 86400000);
-  return Math.min(elapsed + 1, total);
-};
-const cycleTotalDays = () => {
-  const cs  = getCycleStart();
-  const end = cycleEndDate();
-  return Math.round((end - cs) / 86400000);
-};
-const cycleEnd  = () => cycleEndDate().toLocaleDateString('es-ES',{day:'numeric',month:'short'});
-const curLv     = () => { for(let i=BP.length-1;i>=0;i--) if(ST.totalXP>=BP[i].xp) return BP[i].lv; return 0; };
-const wkSuffix  = () => ROMAN[Math.min(weekNum(),4)];
-const byId      = (arr,id) => arr.find(x=>x.id===id) || null;
-const isDDaily  = (tid,p) => { const k=`${tid}_${p}`,dk=todayKey(); return !!(ST.dailyDone[dk]&&ST.dailyDone[dk][k]); };
-const isDHogar  = (tid) => { const dk=todayKey(); return !!(ST.dailyHogarDone[dk]&&ST.dailyHogarDone[dk][tid]); };
-const whoDidHogar = (tid) => { const dk=todayKey(); return ST.dailyHogarDone[dk]?.[tid] || null; }; // returns 'mono'|'oso'|null
-const isWMinor  = id => { const wk=weekKey(); return !!(ST.weeklyDone[wk]&&ST.weeklyDone[wk][id]); };
-const isWSolo   = id => { const wk=weekKey(); return !!(ST.weeklyDone[wk]&&ST.weeklyDone[wk][id]); };
-const isMthly   = id => !!ST.monthlyDone[id];
-const isBuff    = id => !!ST.buffClaimed[id];
-// ── XP RECALCULADO (nunca se desbalancea) ──────
-function recalcXP() {
-  let total=0, mono=0, oso=0;
-
-  // Daily personal — jugador asignado en la clave (tid_player)
-  for (const tasks of Object.values(ST.dailyDone||{})) {
-    for (const [k, v] of Object.entries(tasks||{})) {
-      if (!v) continue;
-      const parts = k.split('_'); const p = parts.pop(); const tid = parts.join('_');
-      const t = byId(DP, tid); if(!t) continue;
-      total+=t.pts;
-      if(p==='mono') mono+=t.pts; else oso+=t.pts;
-    }
-  }
-  // Daily hogar — valor es el jugador que la completó
-  for (const tasks of Object.values(ST.dailyHogarDone||{})) {
-    for (const [tid, p] of Object.entries(tasks||{})) {
-      if (!p) continue;
-      const t = byId(DH, tid); if(!t) continue;
-      total+=t.pts;
-      if(p==='mono') mono+=t.pts; else if(p==='oso') oso+=t.pts;
-    }
-  }
-  // Weekly — compartidas, se dividen 50/50
-  for (const tasks of Object.values(ST.weeklyDone||{})) {
-    for (const [tid, v] of Object.entries(tasks||{})) {
-      if (!v) continue;
-      let pts = 0, found = false;
-      for (const grp of WG) {
-        const m = byId(grp.minors, tid);
-        if (m) { pts = m.pts; found = true; break; }
-      }
-      if (!found) {
-        const ws = byId(WS, tid);
-        if (ws) {
-          pts = ws.pts;
-          if (ws.player === 'mono') { total+=pts; mono+=pts; continue; }
-          if (ws.player === 'oso')  { total+=pts; oso+=pts;  continue; }
-        }
-      }
-      if (pts) { total+=pts; mono+=pts/2; oso+=pts/2; }
-    }
-  }
-  // Buffs — compartidos, 50/50
-  for (const [bid, v] of Object.entries(ST.buffClaimed||{})) {
-    if (!v) continue;
-    const grp = byId(WG, bid.replace('_buff',''));
-    if (grp?.buffPts) { total+=grp.buffPts; mono+=grp.buffPts/2; oso+=grp.buffPts/2; }
-  }
-  // Monthly — si tiene player asignado va a ese jugador, si no 50/50
-  for (const [tid, v] of Object.entries(ST.monthlyDone||{})) {
-    if (!v) continue;
-    const t = byId(MM, tid); if(!t) continue;
-    total+=t.pts;
-    if (t.player==='mono') mono+=t.pts;
-    else if (t.player==='oso') oso+=t.pts;
-    else { mono+=t.pts/2; oso+=t.pts/2; }
-  }
-
-  ST.totalXP = total;
-  ST.monoXP  = Math.round(mono);
-  ST.osoXP   = Math.round(oso);
-}
-
-// XP se recalcula siempre desde cero con recalcXP() — no se acumula incrementalmente
-
-// ── TOAST ──────────────────────────────────────
-function toast(txt) {
-  const el = document.getElementById('xpToast');
-  el.textContent = txt;
-  el.classList.remove('show');
-  void el.offsetWidth;
-  el.classList.add('show');
-}
-
-// ── LEVEL CHECK ────────────────────────────────
-function checkLv(prev) {
-  const cur = curLv();
-  // Si subió de nivel, mostrar modal
-  if (cur > prev && cur > ST.lastSeenLevel) {
-    ST.lastSeenLevel = cur;
-    const d = BP[cur-1];
-    setTimeout(() => {
-      document.getElementById('mIco').textContent = d.ico;
-      document.getElementById('mTit').textContent = `¡NIVEL ${cur} ALCANZADO!`;
-      document.getElementById('mBod').innerHTML = `El reino reconoce vuestra destreza.<br>Rango: <strong style="color:var(--gold-l)">${d.name}</strong>`;
-      document.getElementById('lvlModal').classList.add('show');
-    }, 500);
-  }
-  // Si bajó de nivel (desmarcaron misión), resetear lastSeenLevel para que no quede "bloqueado"
-  if (cur < ST.lastSeenLevel) {
-    ST.lastSeenLevel = cur;
-  }
-}
-
-// ── PLAYER INIT ────────────────────────────────
-function initPlayer(p) {
-  currentPlayer = p;
-  document.getElementById('badgeMono').className = 'pbadge mono' + (p==='mono'?' active-player':'');
-  document.getElementById('badgeOso').className  = 'pbadge oso'  + (p==='oso' ?' active-player':'');
-  renderAll();
-}
-
-// Expose callback so the non-module script can call it after Firebase loads
-window.__appReady = initPlayer;
-// If player was selected before Firebase finished loading, init now
-if (window.__selectedPlayer) initPlayer(window.__selectedPlayer);
-
-// Badge switch
-document.getElementById('badgeMono').addEventListener('click', () => {
-  currentPlayer = 'mono';
-  document.getElementById('badgeMono').className = 'pbadge mono active-player';
-  document.getElementById('badgeOso').className  = 'pbadge oso';
-  renderTab();
-});
-document.getElementById('badgeOso').addEventListener('click', () => {
-  currentPlayer = 'oso';
-  document.getElementById('badgeMono').className = 'pbadge mono';
-  document.getElementById('badgeOso').className  = 'pbadge oso active-player';
-  renderTab();
-});
-
-// Tabs
-document.getElementById('tabD').addEventListener('click', () => switchTab('daily'));
-document.getElementById('tabW').addEventListener('click', () => switchTab('weekly'));
-document.getElementById('tabM').addEventListener('click', () => switchTab('monthly'));
-document.getElementById('tabR').addEventListener('click', () => switchTab('registro'));
-document.getElementById('nenuriosBtn').addEventListener('click', () => switchTab('registro', 'earned'));
-document.getElementById('monoBtn').addEventListener('click', () => switchTab('registro', 'earned-mono'));
-document.getElementById('osoBtn').addEventListener('click', () => switchTab('registro', 'earned-oso'));
-function switchTab(t, sub) {
-  curTab = t;
-  curTabSub = sub || null;
-  document.getElementById('tabD').className = 'tab-btn' + (t==='daily'   ?' active':'');
-  document.getElementById('tabW').className = 'tab-btn' + (t==='weekly'  ?' active':'');
-  document.getElementById('tabM').className = 'tab-btn' + (t==='monthly' ?' active':'');
-  document.getElementById('tabR').className = 'tab-btn' + (t==='registro'?' active':'');
-  renderTab();
-}
-
-// Actions
-document.getElementById('histBtn').addEventListener('click', () => {
-  document.getElementById('histPanel').classList.toggle('open');
-  renderHist();
-});
-document.getElementById('newCycleBtn').addEventListener('click', newCycle);
-
-// ── RENDER ─────────────────────────────────────
-function renderAll() { recalcXP(); renderScores(); renderBP(); renderTab(); renderHist(); }
-
-function renderScores() {
-  document.getElementById('sMono').textContent  = ST.monoXP;
-  document.getElementById('sOso').textContent   = ST.osoXP;
-  document.getElementById('sTotal').textContent = ST.totalXP;
-  const d = cycleDay(), total = cycleTotalDays();
-  document.getElementById('cDay').textContent = d;
-  document.getElementById('cTotal').textContent = total;
-  document.getElementById('cEnd').textContent = cycleEnd();
-  document.getElementById('cBar').style.width = (d/total*100)+'%';
-}
-
-function renderBP() {
-  const cur = curLv();
-  document.getElementById('bpBadge').textContent = 'Nivel '+cur;
-  document.getElementById('bpGrid').innerHTML = BP.map(d => {
-    const unl=ST.totalXP>=d.xp, nxt=d.lv===cur+1;
-    const cls='bp-node'+(unl?' unlocked':nxt?' nextup':'');
-    return `<div class="${cls}" title="${d.name}: ${d.xp} XP"><div class="bp-lv">Nv.${d.lv}</div><div class="bp-ico">${d.ico}</div><div class="bp-rew">${d.name}</div></div>`;
-  }).join('');
-  const mx = BP[BP.length-1].xp;
-  document.getElementById('bpBar').style.width = Math.min(ST.totalXP/mx*100,100)+'%';
-  document.getElementById('bpCur').textContent = ST.totalXP+' Nenurios';
-  document.getElementById('bpNxt').textContent = cur<10 ? `${BP[cur].xp} Nenurios → Nv.${BP[cur].lv}` : '¡LEYENDA MÁXIMA!';
-}
-
-function renderTab() {
-  const c = document.getElementById('tabContent');
-  if (curTab==='daily')    { c.innerHTML = buildDaily();    bindDaily(); }
-  if (curTab==='weekly')   { c.innerHTML = buildWeekly();   bindWeekly(); }
-  if (curTab==='monthly')  { c.innerHTML = buildMonthly();  bindMonthly(); }
-  if (curTab==='registro') { c.innerHTML = buildRegistro(); bindRegistro(); }
-}
-
-// Horas hasta las 6AM del día siguiente
-const hoursUntilReset = () => {
-  const now = new Date();
-  const next = new Date(now);
-  if (now.getHours() >= 6) next.setDate(next.getDate() + 1);
-  next.setHours(6, 0, 0, 0);
-  const diff = next - now;
-  const h = Math.floor(diff / 3600000);
-  const m = Math.floor((diff % 3600000) / 60000);
-  return `${h}h ${m}m`;
-};
-function buildDaily() {
-  const p = currentPlayer;
-  const ic = p==='mono' ? 'var(--mono)' : 'var(--oso)';
-  const pn = p==='mono' ? '🐒 Mono' : '🐻 Oso';
-  const hrs = hoursUntilReset();
-  const countdownBadge = `<span style="margin-left:6px;font-size:.68rem;color:var(--gold);font-family:var(--fu);font-weight:700;letter-spacing:1px;background:rgba(201,148,58,.1);padding:1px 7px;border-radius:8px;border:1px solid rgba(201,148,58,.2)">⏱ ${hrs}</span>`;
-
-  let h = `<div class="sec-hdr">⚔ Misiones Personales ${countdownBadge}</div><div class="task-list">`;
-  for (const t of DP) {
-    const done = isDDaily(t.id, p);
-    h += `<div class="task-item${done?' done':''}" style="--ic:${ic};cursor:default" data-id="${t.id}" data-p="${p}" data-type="personal">
-      <div class="task-chk daily-chk" data-id="${t.id}" data-p="${p}" data-type="personal" style="cursor:pointer;pointer-events:all">${done?'✓':''}</div>
-      <div class="task-body" style="pointer-events:none"><div class="task-name">${t.name}</div><div class="task-desc">${t.desc}</div></div>
-      <div class="task-pts" style="pointer-events:none">${done?'✓':'+'}${t.pts}</div></div>`;
-  }
-  h += `<div class="sec-hdr" style="margin-top:16px">🏠 Misiones del Hogar ${countdownBadge}</div><div class="task-list">`;
-  const hogarPendientes = DH.filter(t => !isDHogar(t.id));
-  const hogarCompletadas = DH.filter(t => isDHogar(t.id));
-  for (const t of hogarPendientes) {
-    h += `<div class="task-item" style="--ic:var(--gold);cursor:default" data-id="${t.id}" data-type="hogar">
-      <div class="task-chk daily-chk" data-id="${t.id}" data-type="hogar" style="cursor:pointer;pointer-events:all"></div>
-      <div class="task-body" style="pointer-events:none"><div class="task-name">${t.name}</div><div class="task-desc">${t.desc}</div></div>
-      <div class="task-pts" style="pointer-events:none">+${t.pts}</div></div>`;
-  }
-  if (hogarCompletadas.length) {
-    for (const t of hogarCompletadas) {
-      const who  = whoDidHogar(t.id);
-      const whoIc = who==='mono' ? 'var(--mono)' : 'var(--oso)';
-      const whoTag = `<span class="ptag ${who}" style="pointer-events:none">${who==='mono'?'🐒 Mono':'🐻 Oso'}</span>`;
-      h += `<div class="task-item done" style="--ic:${whoIc};cursor:default;opacity:.5">
-        <div class="task-chk daily-chk" data-id="${t.id}" data-type="hogar" style="cursor:pointer;pointer-events:all">✓</div>
-        <div class="task-body" style="pointer-events:none"><div class="task-name">${t.name}</div><div class="task-desc">${t.desc}</div></div>
-        ${whoTag}
-        <div class="task-pts" style="pointer-events:none">✓${t.pts}</div></div>`;
-    }
-  }
-  if (!hogarPendientes.length && !hogarCompletadas.length)
-    h += '<div style="font-family:var(--fb);font-size:.82rem;color:var(--text3);padding:8px 0;font-style:italic">¡Todas las misiones del hogar completadas! 🏠</div>';
-  return h + '</div>';
-}
-function bindDaily() {
-  document.querySelectorAll('.daily-chk').forEach(chk => {
-    chk.addEventListener('click', e => {
-      e.stopPropagation();
-      const {id:tid, p, type} = chk.dataset;
-      const dk=todayKey(), prev=curLv();
-      if (type==='personal') {
-        const k=`${tid}_${p}`;
-        const pts = byId(DP,tid).pts;
-        if (!ST.dailyDone[dk]) ST.dailyDone[dk]={};
-        if (ST.dailyDone[dk][k]) { delete ST.dailyDone[dk][k]; toast(`-${pts} ★`); }
-        else { ST.dailyDone[dk][k]=true; toast(`+${pts} ★`); }
-      } else {
-        const pts = byId(DH,tid).pts;
-        if (!ST.dailyHogarDone[dk]) ST.dailyHogarDone[dk]={};
-        if (ST.dailyHogarDone[dk][tid]) { delete ST.dailyHogarDone[dk][tid]; toast(`-${pts} ★`); }
-        else { ST.dailyHogarDone[dk][tid] = currentPlayer; toast(`+${pts} ★`); }
-      }
-      checkLv(prev); save(); renderAll();
-    });
-  });
-}
-
-// ── WEEKLY ─────────────────────────────────────
-function buildWeekly() {
-  const suf = wkSuffix();
-
-  // Separar grupos completos de incompletos
-  const activeGrps = [], doneGrps = [];
-  for (const grp of WG) {
-    const doneCnt = grp.minors.filter(m=>isWMinor(m.id)).length;
-    if (doneCnt === grp.minors.length) doneGrps.push({grp, doneCnt});
-    else activeGrps.push({grp, doneCnt});
-  }
-  const activeSolo = WS.filter(t => !isWSolo(t.id) && (!t.player || t.player === currentPlayer));
-  const doneSolo   = WS.filter(t =>  isWSolo(t.id) && (!t.player || t.player === currentPlayer));
-
-  let h = `<div class="sec-hdr">🏰 Misiones Mayores — Semana ${suf}</div>`;
-
-  // Grupos activos (no completados)
-  if (!activeGrps.length) {
-    h += '<div style="font-family:var(--fb);font-size:.82rem;color:var(--text3);padding:10px 0;font-style:italic">¡Todas las misiones mayores completadas! 🎉</div>';
-  }
-  for (const {grp, doneCnt} of activeGrps) {
-    const total = grp.minors.length;
-    const bk=`${grp.id}_buff`, buffCl=isBuff(bk), showBuff=grp.buff&&buffCl;
-    h += `<div class="mission-group" id="grp_${grp.id}">
-      <div class="mission-major" data-grp="${grp.id}">
-        <div class="maj-icon">🗺️</div>
-        <div class="maj-body"><div class="maj-name">${grp.name} ${suf}</div><div class="maj-desc">${grp.desc}</div></div>
-        <div class="maj-prog">${doneCnt}/${total}</div>
-        <div class="chevron">›</div>
-      </div>
-      <div class="minor-list">`;
-    for (const m of grp.minors) {
-      const md = isWMinor(m.id);
-      h += `<div class="minor-item${md?' done':''}" data-mid="${m.id}" data-grp="${m.id}" style="cursor:default">
-        <div class="minor-chk weekly-chk" data-mid="${m.id}" data-grp="${grp.id}" style="cursor:pointer;pointer-events:all">${md?'✓':''}</div>
-        <div class="minor-body" style="pointer-events:none"><div class="minor-name">${m.name}</div><div class="minor-desc">${m.desc}</div></div>
-        <div class="minor-pts" style="pointer-events:none">${md?'✓':'+'}${m.pts}</div></div>`;
-    }
-    if (grp.buff) {
-      h += `<div class="buff-zone${showBuff?' show':''}${buffCl?' claimed':''}" id="buff_${grp.id}">
-        <span>⚡</span>
-        <div class="buff-txt"><strong>Buff: ${grp.buff}</strong><br>${buffCl?'Ya reclamado':'Completa todas las misiones para reclamar'}</div>
-        <div class="buff-pts">${buffCl?'✓':'+'+grp.buffPts}</div></div>`;
-    }
-    h += '</div></div>';
-  }
-
-  h += `<div class="sec-hdr" style="margin-top:16px">⚔ Misiones Individuales — Semana ${suf}</div>`;
-  if (!activeSolo.length) {
-    h += '<div style="font-family:var(--fb);font-size:.82rem;color:var(--text3);padding:10px 0;font-style:italic">¡Todas las misiones individuales completadas! 🎉</div>';
-  }
-  for (const t of activeSolo) {
-    h += `<div class="solo-item" data-sid="${t.id}" style="cursor:default">
-      <div class="solo-chk solo-chk-btn" data-sid="${t.id}" style="cursor:pointer;pointer-events:all"></div>
-      <div class="solo-body" style="pointer-events:none"><div class="solo-name">${t.name}</div><div class="solo-desc">${t.desc}</div></div>
-      <div class="solo-pts" style="pointer-events:none">+${t.pts}</div></div>`;
-  }
-
-  // ── SECCIÓN COMPLETADAS ──
-  const totalDone = doneGrps.length + doneSolo.length;
-  if (totalDone > 0) {
-    h += `<div class="sec-hdr" style="margin-top:20px">✅ Completadas esta semana <span style="font-size:.68rem;background:rgba(61,214,140,.1);color:#3dd68c;padding:1px 8px;border-radius:8px;border:1px solid rgba(61,214,140,.2);margin-left:4px">${totalDone}</span></div>`;
-
-    for (const {grp} of doneGrps) {
-      const bk=`${grp.id}_buff`, buffCl=isBuff(bk);
-      h += `<div class="mission-group" id="grp_${grp.id}" style="opacity:.55">
-        <div class="mission-major" data-grp="${grp.id}">
-          <div class="maj-icon">✅</div>
-          <div class="maj-body"><div class="maj-name">${grp.name} ${suf}</div><div class="maj-desc">${grp.desc}</div></div>
-          <div class="maj-prog complete">${grp.minors.length}/${grp.minors.length}</div>
-          <div class="chevron">›</div>
-        </div>
-        <div class="minor-list">`;
-      for (const m of grp.minors) {
-        h += `<div class="minor-item done" data-mid="${m.id}" data-grp="${grp.id}">
-          <div class="minor-chk">✓</div>
-          <div class="minor-body"><div class="minor-name">${m.name}</div><div class="minor-desc">${m.desc}</div></div>
-          <div class="minor-pts">✓${m.pts}</div></div>`;
-      }
-      if (grp.buff && buffCl) {
-        h += `<div class="buff-zone show claimed" id="buff_${grp.id}">
-          <span>⚡</span>
-          <div class="buff-txt"><strong>Buff: ${grp.buff}</strong><br>Ya reclamado</div>
-          <div class="buff-pts">✓</div></div>`;
-      }
-      h += '</div></div>';
-    }
-
-    for (const t of doneSolo) {
-      h += `<div class="solo-item done" data-sid="${t.id}" style="opacity:.55">
-        <div class="solo-chk">✓</div>
-        <div class="solo-body"><div class="solo-name">${t.name}</div><div class="solo-desc">${t.desc}</div></div>
-        <div class="solo-pts">✓${t.pts}</div></div>`;
-    }
-  }
-
-  return h;
-}
-function bindWeekly() {
-  document.querySelectorAll('.mission-major').forEach(el => {
-    el.addEventListener('click', () => document.getElementById('grp_'+el.dataset.grp).classList.toggle('open'));
-  });
-  document.querySelectorAll('.weekly-chk').forEach(chk => {
-    chk.addEventListener('click', e => {
-      e.stopPropagation();
-      const {mid, grp:grpId} = chk.dataset;
-      const grp = byId(WG,grpId), m = byId(grp.minors,mid);
-      const wk=weekKey(); if(!ST.weeklyDone[wk]) ST.weeklyDone[wk]={};
-      const prev=curLv();
-      if (ST.weeklyDone[wk][mid]) {
-        delete ST.weeklyDone[wk][mid]; toast(`-${m.pts} ★`);
-        const bk=`${grpId}_buff`;
-        if (grp.buff && ST.buffClaimed[bk]) { delete ST.buffClaimed[bk]; }
-      } else {
-        ST.weeklyDone[wk][mid]=true; toast(`+${m.pts} ★`);
-      }
-      checkLv(prev); save(); renderAll();
-    });
-  });
-  document.querySelectorAll('.buff-zone').forEach(el => {
-    el.addEventListener('click', e => {
-      e.stopPropagation();
-      if (el.classList.contains('claimed')) return;
-      const grpId = el.id.replace('buff_','');
-      const grp = byId(WG,grpId);
-      if (!grp?.buff) return;
-      if (!grp.minors.every(m=>isWMinor(m.id))) { toast('⚠ Completa todas las misiones menores'); return; }
-      const bk=`${grpId}_buff`; if(ST.buffClaimed[bk]) return;
-      const prev=curLv();
-      ST.buffClaimed[bk]=true; toast(`⚡ Buff +${grp.buffPts} ★`);
-      checkLv(prev); save(); renderAll();
-    });
-  });
-  document.querySelectorAll('.solo-chk-btn').forEach(chk => {
-    chk.addEventListener('click', e => {
-      e.stopPropagation();
-      const task = byId(WS,chk.dataset.sid); if(!task) return;
-      const wk=weekKey(); if(!ST.weeklyDone[wk]) ST.weeklyDone[wk]={};
-      const prev=curLv();
-      if (ST.weeklyDone[wk][task.id]) { delete ST.weeklyDone[wk][task.id]; toast(`-${task.pts} ★`); }
-      else { ST.weeklyDone[wk][task.id]=true; toast(`+${task.pts} ★`); }
-      checkLv(prev); save(); renderAll();
-    });
-  });
-}
-
-// ── MONTHLY ────────────────────────────────────
-function buildMonthly() {
-  const active = MM.filter(t => !isMthly(t.id));
-  const done   = MM.filter(t =>  isMthly(t.id));
-  const pTag = p => p ? `<span class="ptag ${p}" style="pointer-events:none">${p==='mono'?'🐒 Mono':'🐻 Oso'}</span>` : '';
-
-  let h = '<div class="sec-hdr">🌕 Misiones del Gran Ciclo</div>';
-  h += '<p style="font-family:var(--fb);font-size:.74rem;color:var(--text3);margin-bottom:12px;font-style:italic">Solo una vez por ciclo. ¡Cada misión sube un nivel completo!</p>';
-
-  if (!active.length) {
-    h += '<div style="font-family:var(--fb);font-size:.82rem;color:var(--text3);padding:10px 0;font-style:italic">¡Todas las misiones del ciclo completadas! 👑</div>';
-  }
-  for (const t of active) {
-    h += `<div class="monthly-item" data-mid="${t.id}" style="cursor:default">
-      <div class="m-chk monthly-chk" data-mid="${t.id}" style="cursor:pointer;pointer-events:all">🔮</div>
-      <div class="m-body" style="pointer-events:none"><div class="m-name">${t.name}</div><div class="m-desc">${t.desc}</div></div>
-      ${pTag(t.player)}
-      <div class="m-right" style="pointer-events:none"><span class="m-pn">+${t.pts}</span><span class="m-ps">+1 NIVEL</span></div>
-    </div>`;
-  }
-
-  if (done.length) {
-    h += `<div class="sec-hdr" style="margin-top:20px">✅ Completadas este ciclo <span style="font-size:.68rem;background:rgba(61,214,140,.1);color:#3dd68c;padding:1px 8px;border-radius:8px;border:1px solid rgba(61,214,140,.2);margin-left:4px">${done.length}</span></div>`;
-    for (const t of done) {
-      h += `<div class="monthly-item done" data-mid="${t.id}" style="opacity:.55;cursor:default">
-        <div class="m-chk monthly-chk" data-mid="${t.id}" style="cursor:pointer;pointer-events:all">✓</div>
-        <div class="m-body" style="pointer-events:none"><div class="m-name">${t.name}</div><div class="m-desc">${t.desc}</div></div>
-        ${pTag(t.player)}
-        <div class="m-right" style="pointer-events:none"><span class="m-pn">✓</span><span class="m-ps">completada</span></div>
-      </div>`;
-    }
-  }
-
-  return h;
-}
-function bindMonthly() {
-  document.querySelectorAll('.monthly-chk').forEach(chk => {
-    chk.addEventListener('click', e => {
-      e.stopPropagation();
-      const mid = chk.dataset.mid;
-      const task = byId(MM, mid); if(!task) return;
-      const prev = curLv();
-      if (ST.monthlyDone[task.id]) { delete ST.monthlyDone[task.id]; toast(`-${task.pts} ★`); }
-      else { ST.monthlyDone[task.id]=true; toast(`+${task.pts} ★ 🌕`); }
-      checkLv(prev); save(); renderAll();
-    });
-  });
-}
-
-// ── HISTORY ────────────────────────────────────
-function renderHist() {
-  const el = document.getElementById('histList');
-  if (!ST.history?.length) { el.innerHTML='<div class="hist-empty">Sin ciclos anteriores</div>'; return; }
-  el.innerHTML = [...ST.history].reverse().map((e,i) =>
-    `<div class="hist-item">
-      <div><div class="hist-cyc">Ciclo #${ST.history.length-i} — Nv.${e.level}</div>
-      <div class="hist-date">${e.date} · 🐒${e.monoXP} / 🐻${e.osoXP}</div></div>
-      <div class="hist-pts">${e.totalXP} XP</div>
-    </div>`
-  ).join('');
-}
-
-// ── NEW CYCLE ──────────────────────────────────
-function newCycle() {
-  const lv=curLv();
-  if (!confirm(`¿Iniciar nuevo ciclo?\n\nSe guardará en historial:\n• Total: ${ST.totalXP} XP\n• Mono: ${ST.monoXP} XP  /  Oso: ${ST.osoXP} XP\n• Nivel: ${lv}\n\nLas misiones se reiniciarán.`)) return;
-  const hist = ST.history || [];
-  hist.push({totalXP:ST.totalXP,monoXP:ST.monoXP,osoXP:ST.osoXP,level:lv,
-    date:new Date().toLocaleDateString('es-ES',{day:'numeric',month:'long',year:'numeric'})});
-  ST = blank(); ST.history = hist; ST.cycleStart = Date.now();
-  save(); renderAll(); toast('🌙 Nuevo ciclo iniciado');
-}
-
-// ── REGISTRO ───────────────────────────────────
-// ── EARNED (detalle de nenurios) ───────────────
-function buildEarned(filterPlayer) {
-  // filterPlayer: null = todos, 'mono' | 'oso' = solo ese jugador
-  const ic = p => p==='mono' ? 'var(--mono)' : p==='oso' ? 'var(--oso)' : 'var(--gold)';
-  const fmtDay = key => {
-    const [y,m,d] = key.split('-');
-    return new Date(+y,+m-1,+d).toLocaleDateString('es-ES',{weekday:'short',day:'numeric',month:'short'});
-  };
-  const catColor = {diaria:'var(--mono)', hogar:'var(--oso)', semanal:'var(--weekly)', buff:'var(--gold)', mensual:'var(--gold-l)'};
-  const catLabel = {diaria:'Diaria', hogar:'Hogar', semanal:'Semanal', buff:'⚡ Buff', mensual:'🌕 Ciclo'};
-
-  // ── Recolectar filas ──
-  const personal = {mono:[], oso:[]};  // misiones personales separadas por jugador
-  const shared = [];                    // hogar, semanal, buff, mensual
-
-  // Diarias personales
-  for (const [dk, tasks] of Object.entries(ST.dailyDone||{})) {
-    for (const [k, v] of Object.entries(tasks||{})) {
-      if (!v) continue;
-      const parts = k.split('_'); const p = parts.pop(); const tid = parts.join('_');
-      const t = byId(DP, tid); if(!t) continue;
-      personal[p]?.push({label: t.name, desc: fmtDay(dk), pts: t.pts, p, cat:'diaria'});
-    }
-  }
-  // Hogar
-  for (const [dk, tasks] of Object.entries(ST.dailyHogarDone||{})) {
-    for (const [tid, p] of Object.entries(tasks||{})) {
-      if (!p) continue;
-      const t = byId(DH, tid); if(!t) continue;
-      if (!filterPlayer || filterPlayer === p)
-        shared.push({label: t.name, desc: fmtDay(dk), pts: t.pts, p, cat:'hogar'});
-    }
-  }
-  // Semanales
-  if (!filterPlayer) {
-    for (const [wk, tasks] of Object.entries(ST.weeklyDone||{})) {
-      for (const [tid, v] of Object.entries(tasks||{})) {
-        if (!v) continue;
-        let found = false;
-        for (const grp of WG) {
-          const m = byId(grp.minors, tid);
-          if (m) { shared.push({label: m.name, desc: `Semana — ${grp.name}`, pts: m.pts, p:null, cat:'semanal'}); found=true; break; }
-        }
-        if (!found) { const ws = byId(WS, tid); if (ws) shared.push({label: ws.name, desc: 'Misión individual', pts: ws.pts, p:null, cat:'semanal'}); }
-      }
-    }
-    // Buffs
-    for (const [bid, v] of Object.entries(ST.buffClaimed||{})) {
-      if (!v) continue;
-      const grp = byId(WG, bid.replace('_buff',''));
-      if (grp?.buffPts) shared.push({label:`Buff: ${grp.buff}`, desc:grp.name, pts:grp.buffPts, p:null, cat:'buff'});
-    }
-  }
-  // Mensuales
-  for (const [tid, v] of Object.entries(ST.monthlyDone||{})) {
-    if (!v) continue;
-    const t = byId(MM, tid); if(!t) continue;
-    const belongsTo = t.player || null;
-    if (!filterPlayer || !belongsTo || filterPlayer === belongsTo)
-      shared.push({label: t.name, desc: 'Misión del gran ciclo', pts: t.pts, p: belongsTo, cat:'mensual'});
-  }
-  shared.sort((a,b) => b.pts - a.pts);
-
-  // ── Calcular total mostrado ──
-  const monoPersonal = personal.mono.reduce((s,r)=>s+r.pts,0);
-  const osoPersonal  = personal.oso.reduce((s,r)=>s+r.pts,0);
-  const sharedTotal  = shared.reduce((s,r)=>s+r.pts,0);
-  let displayTotal, displayPts, displayLabel, displayColor;
-  if (filterPlayer === 'mono') {
-    displayTotal = ST.monoXP; displayLabel = '🐒 Mono'; displayColor = 'var(--mono)';
-  } else if (filterPlayer === 'oso') {
-    displayTotal = ST.osoXP; displayLabel = '🐻 Oso'; displayColor = 'var(--oso)';
-  } else {
-    displayTotal = ST.totalXP; displayLabel = '⭐ Nenurios'; displayColor = 'var(--gold-l)';
-  }
-
-  // ── Header ──
-  let h = `<div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
-    <button id="earnedBack" style="background:rgba(201,148,58,.1);border:1px solid rgba(201,148,58,.3);color:var(--gold);font-family:var(--fu);font-size:.78rem;padding:4px 12px;border-radius:8px;cursor:pointer">← Volver</button>
-    <div class="sec-hdr" style="margin:0">${displayLabel}</div>
-  </div>`;
-  h += `<div style="font-family:var(--ft);font-size:1.6rem;color:${displayColor};text-shadow:0 0 16px var(--gold-g);margin-bottom:14px">${displayTotal} ★</div>`;
-
-  const renderRow = r => {
-    const color = r.p ? ic(r.p) : catColor[r.cat];
-    const pTag  = r.p ? `<span class="reg-player ${r.p}" style="pointer-events:none">${r.p==='mono'?'🐒':'🐻'} ${r.p==='mono'?'Mono':'Oso'}</span>` : '';
-    return `<div class="reg-item" style="--ic:${color}">
-      <div class="reg-body">
-        <div class="reg-name">${r.label}</div>
-        <div class="reg-meta">${r.desc} · <span style="color:${catColor[r.cat]};font-weight:700">${catLabel[r.cat]}</span></div>
-      </div>
-      ${pTag}
-      <div class="reg-pts">+${r.pts}</div>
-    </div>`;
-  };
-
-  // ── Sección misiones personales (colapsable) ──
-  const renderPersonalSection = (p, rows) => {
-    if (!rows.length) return '';
-    const pLabel = p==='mono' ? '🐒 Misiones Personales de Mono' : '🐻 Misiones Personales de Oso';
-    const pColor = p==='mono' ? 'var(--mono)' : 'var(--oso)';
-    const total  = rows.reduce((s,r)=>s+r.pts,0);
-    const secId  = `personal_${p}`;
-    return `
-      <div class="earned-group" id="${secId}" style="margin-bottom:8px">
-        <div class="earned-group-hdr" data-sec="${secId}" style="display:flex;align-items:center;gap:8px;padding:10px 12px;background:var(--surface);border:1px solid var(--border);border-radius:10px;cursor:pointer;user-select:none">
-          <div style="flex:1;font-family:var(--fu);font-weight:700;font-size:.88rem;color:${pColor}">${pLabel}</div>
-          <div style="font-family:var(--ft);font-size:.9rem;color:${pColor}">${total} ★</div>
-          <div class="earned-chevron" style="color:var(--text3);transition:transform .2s">›</div>
-        </div>
-        <div class="earned-group-body" style="display:none;margin-top:4px">
-          ${rows.map(renderRow).join('')}
-        </div>
-      </div>`;
-  };
-
-  if (!filterPlayer) {
-    // Vista total: secciones colapsables para personales de cada jugador
-    h += renderPersonalSection('mono', personal.mono);
-    h += renderPersonalSection('oso',  personal.oso);
-  } else {
-    // Vista filtrada: personales del jugador directo, sin anidar
-    personal[filterPlayer].forEach(r => { h += renderRow(r); });
-  }
-
-  // Misiones compartidas
-  if (shared.length) {
-    if (!filterPlayer)
-      h += `<div class="sec-hdr" style="margin:12px 0 8px">🌐 Compartidas</div>`;
-    shared.forEach(r => { h += renderRow(r); });
-  }
-
-  if (!personal.mono.length && !personal.oso.length && !shared.length)
-    h += '<div class="reg-empty">Aún no hay misiones completadas en este ciclo.</div>';
-
-  return h;
-}
-
-function buildRegistro() {
-  const dk  = todayKey();
-  const yk  = yesterdayKey();
-
-  // ── VISTAS DE DETALLE ──
-  if (curTabSub === 'earned')      return buildEarned(null);
-  if (curTabSub === 'earned-mono') return buildEarned('mono');
-  if (curTabSub === 'earned-oso')  return buildEarned('oso');
-
-  // Fechas formateadas
-  const fmtDate = key => {
-    const [y,m,d] = key.split('-');
-    return new Date(+y, +m-1, +d).toLocaleDateString('es-ES',{weekday:'long',day:'numeric',month:'long'});
-  };
-  const fechaHoy  = fmtDate(dk);
-  const fechaAyer = fmtDate(yk);
-
-  // ── CADUCADAS: tareas del día anterior no completadas ──
-  const expired = [];
-  for (const t of DP) {
-    for (const p of ['mono','oso']) {
-      const k = `${t.id}_${p}`;
-      const doneYest  = !!(ST.dailyDone[yk] && ST.dailyDone[yk][k]);
-      const doneToday = !!(ST.dailyDone[dk] && ST.dailyDone[dk][k]);
-      if (!doneYest && !doneToday) expired.push({t, p, type:'personal', pts:t.pts});
-    }
-  }
-  // Hogar: una sola entrada por tarea (compartida)
-  for (const t of DH) {
-    const doneYest  = !!(ST.dailyHogarDone[yk]?.[t.id]);
-    const doneToday = !!(ST.dailyHogarDone[dk]?.[t.id]);
-    if (!doneYest && !doneToday) expired.push({t, p:null, type:'hogar', pts:t.pts});
-  }
-
-  // ── COMPLETADAS HOY: ambos jugadores ──
-  const completed = [];
-  for (const t of DP) {
-    for (const p of ['mono','oso']) {
-      const k = `${t.id}_${p}`;
-      if (ST.dailyDone[dk]?.[k]) completed.push({t, p, type:'personal', pts:t.pts});
-    }
-  }
-  // Hogar: una sola entrada, mostrar quién la completó
-  for (const t of DH) {
-    const who = ST.dailyHogarDone[dk]?.[t.id];
-    if (who) completed.push({t, p:who, type:'hogar', pts:t.pts});
-  }
-
-  const ic = p => p==='mono' ? 'var(--mono)' : 'var(--oso)';
-
-  let h = `<div class="sec-hdr">⏰ Caducadas — ${fechaAyer}</div>`;
-  if (!expired.length) {
-    h += '<div class="reg-empty">¡Sin misiones caducadas! 🎉</div>';
-  } else {
-    h += '<div style="font-family:var(--fb);font-size:.8rem;color:var(--text3);margin-bottom:10px;font-style:italic">Toca para recuperar si la completaste y olvidaste marcarla.</div>';
-    for (const {t, p, type, pts} of expired) {
-      h += `<div class="reg-item expired" style="--ic:${ic(p)}" data-id="${t.id}" data-p="${p}" data-type="${type}">
-        <div class="reg-chk"></div>
-        <div class="reg-body">
-          <div class="reg-name">${t.name}</div>
-          <div class="reg-meta">${t.desc}</div>
-        </div>
-        <span class="reg-player ${p}">${p==='mono'?'🐒':'🐻'} ${p==='mono'?'Mono':'Oso'}</span>
-        <div class="reg-pts">+${pts}</div>
-      </div>`;
-    }
-  }
-
-  h += `<div class="sec-hdr" style="margin-top:16px">✅ Completadas — ${fechaHoy}</div>`;
-  if (!completed.length) {
-    h += '<div class="reg-empty">Aún no hay misiones completadas hoy.</div>';
-  } else {
-    for (const {t, p, type, pts} of completed) {
-      h += `<div class="reg-item completed" style="--ic:${ic(p)}">
-        <div class="reg-chk">✓</div>
-        <div class="reg-body">
-          <div class="reg-name">${t.name}</div>
-          <div class="reg-meta">${t.desc}</div>
-        </div>
-        <span class="reg-player ${p}">${p==='mono'?'🐒':'🐻'} ${p==='mono'?'Mono':'Oso'}</span>
-        <div class="reg-pts">+${pts}</div>
-      </div>`;
-    }
-  }
-
-  return h;
-}
-
-function bindRegistro() {
-  // Botón volver desde vista de nenurios
-  const backBtn = document.getElementById('earnedBack');
-  if (backBtn) backBtn.addEventListener('click', () => { curTabSub = null; renderTab(); });
-
-  // Toggle secciones colapsables de misiones personales
-  document.querySelectorAll('.earned-group-hdr').forEach(hdr => {
-    hdr.addEventListener('click', () => {
-      const body = hdr.nextElementSibling;
-      const chevron = hdr.querySelector('.earned-chevron');
-      const open = body.style.display !== 'none';
-      body.style.display = open ? 'none' : 'block';
-      chevron.style.transform = open ? '' : 'rotate(90deg)';
-    });
-  });
-
-  document.querySelectorAll('.reg-item.expired').forEach(el => {
-    el.addEventListener('click', () => {
-      const {id:tid, p, type} = el.dataset;
-      const yk = yesterdayKey(), prev = curLv();
-      if (type === 'personal') {
-        const k = `${tid}_${p}`;
-        const pts = byId(DP, tid).pts;
-        if (!ST.dailyDone[yk]) ST.dailyDone[yk] = {};
-        if (ST.dailyDone[yk][k]) { delete ST.dailyDone[yk][k]; toast(`-${pts} ★`); }
-        else { ST.dailyDone[yk][k] = true; toast(`+${pts} ★ ⏰`); }
-      } else {
-        // Hogar compartida: clave es tid, valor es currentPlayer
-        const pts = byId(DH, tid).pts;
-        if (!ST.dailyHogarDone[yk]) ST.dailyHogarDone[yk] = {};
-        if (ST.dailyHogarDone[yk][tid]) { delete ST.dailyHogarDone[yk][tid]; toast(`-${pts} ★`); }
-        else { ST.dailyHogarDone[yk][tid] = currentPlayer; toast(`+${pts} ★ ⏰`); }
-      }
-      checkLv(prev); save(); renderTab();
-    });
-  });
-}
-
-setInterval(() => {
-  if (!currentPlayer) return;
-  document.getElementById('cDay').textContent = cycleDay();
-  if (curTab === 'daily') renderTab();
-}, 60000);
-
-// ══════════════════════════════════════════════
-// PROVISIONES — mismo módulo, misma instancia db
-// ══════════════════════════════════════════════
-const PROV_DOC = doc(db, 'questlog', 'provisiones');
-
-
-
-
-// ── DATOS INICIALES ────────────────────────────
-const DEFAULT_PROVS = {
-  categories: [
-    {id:'c0', name:'Limpieza de Cuevarbol'},
-    {id:'c1', name:'Aseo del Jugador'},
-    {id:'c2', name:'Provisiones de Cocina'},
-    {id:'c3', name:'Lácteos y Embutidos'},
-    {id:'c4', name:'Carnes y Huevos'},
-    {id:'c5', name:'Alacena'},
-    {id:'c6', name:'Frutas, Vegetales y Hortalizas'}
-  ],
-  items: [
-    {id:'p000',cat:'c0',name:'Lysoform',qty:0,hay:false},
-    {id:'p001',cat:'c0',name:'Papel absorbente',qty:0,hay:false},
-    {id:'p002',cat:'c0',name:'Desinfectante para pisos',qty:0,hay:false},
-    {id:'p003',cat:'c0',name:'Limpiador de madera',qty:0,hay:false},
-    {id:'p004',cat:'c0',name:'Limpiador de superficies',qty:0,hay:false},
-    {id:'p005',cat:'c0',name:'Limpiador de baño',qty:0,hay:false},
-    {id:'p006',cat:'c0',name:'Limpiador de inodoro',qty:0,hay:false},
-    {id:'p007',cat:'c0',name:'Bolsas medianas',qty:0,hay:false},
-    {id:'p008',cat:'c0',name:'Bolsas pequeñas',qty:0,hay:false},
-    {id:'p009',cat:'c0',name:'Esponjas',qty:0,hay:false},
-    {id:'p010',cat:'c0',name:'Jabón lavaplatos',qty:0,hay:false},
-    {id:'p011',cat:'c0',name:'Jabón para lavar',qty:0,hay:false},
-    {id:'p100',cat:'c1',name:'Papel higiénico',qty:0,hay:false},
-    {id:'p101',cat:'c1',name:'Pasta dental',qty:0,hay:false},
-    {id:'p102',cat:'c1',name:'Jabón líquido',qty:0,hay:false},
-    {id:'p103',cat:'c1',name:'Jabón de mano',qty:0,hay:false},
-    {id:'p104',cat:'c1',name:'Desodorante',qty:0,hay:false},
-    {id:'p105',cat:'c1',name:'Talco para pies',qty:0,hay:false},
-    {id:'p200',cat:'c2',name:'Bolsas Ziploc',qty:0,hay:false},
-    {id:'p201',cat:'c2',name:'Papel mantequilla',qty:0,hay:false},
-    {id:'p202',cat:'c2',name:'Papel aluminio',qty:0,hay:false},
-    {id:'p203',cat:'c2',name:'Papel plástico',qty:0,hay:false},
-    {id:'p300',cat:'c3',name:'Queso laminado',qty:0,hay:false},
-    {id:'p301',cat:'c3',name:'Jamón de pavo',qty:0,hay:false},
-    {id:'p302',cat:'c3',name:'Leche',qty:0,hay:false},
-    {id:'p303',cat:'c3',name:'Bebida vegetal',qty:0,hay:false},
-    {id:'p304',cat:'c3',name:'Mantequilla',qty:0,hay:false},
-    {id:'p305',cat:'c3',name:'Queso Parmesano',qty:0,hay:false},
-    {id:'p400',cat:'c4',name:'Pollo',qty:0,hay:false},
-    {id:'p401',cat:'c4',name:'Carne molida',qty:0,hay:false},
-    {id:'p402',cat:'c4',name:'Bistec de carne',qty:0,hay:false},
-    {id:'p403',cat:'c4',name:'Huevos',qty:0,hay:false},
-    {id:'p404',cat:'c4',name:'Chorizos',qty:0,hay:false},
-    {id:'p500',cat:'c5',name:'Harina de trigo',qty:0,hay:false},
-    {id:'p501',cat:'c5',name:'Spaghetti',qty:0,hay:false},
-    {id:'p502',cat:'c5',name:'Rigati',qty:0,hay:false},
-    {id:'p503',cat:'c5',name:'Arroz',qty:0,hay:false},
-    {id:'p504',cat:'c5',name:'Harina de repostería',qty:0,hay:false},
-    {id:'p505',cat:'c5',name:'Harina de fuerza',qty:0,hay:false},
-    {id:'p506',cat:'c5',name:'Azúcar',qty:0,hay:false},
-    {id:'p507',cat:'c5',name:'Sal',qty:0,hay:false},
-    {id:'p508',cat:'c5',name:'Tortillas',qty:0,hay:false},
-    {id:'p509',cat:'c5',name:'Cereal Oso',qty:0,hay:false},
-    {id:'p510',cat:'c5',name:'Cereal Mono',qty:0,hay:false},
-    {id:'p600',cat:'c6',name:'Tomates triturados',qty:0,hay:false},
-    {id:'p601',cat:'c6',name:'Ajo triturado',qty:0,hay:false},
-    {id:'p602',cat:'c6',name:'Pimentón',qty:0,hay:false},
-    {id:'p603',cat:'c6',name:'Zanahorias',qty:0,hay:false},
-    {id:'p604',cat:'c6',name:'Tomates',qty:0,hay:false},
-    {id:'p605',cat:'c6',name:'Tomates cherry',qty:0,hay:false}
-  ]
-};
-
-let PV = { categories: [...DEFAULT_PROVS.categories], items: [...DEFAULT_PROVS.items] };
-let pvSaving = false; // evita guardados simultáneos
-
-// ── FIREBASE SYNC ─────────────────────────────
-onSnapshot(PROV_DOC, snap => {
-  // Flash sync dot green to confirm snapshot is arriving
-  const dot = document.getElementById('provSyncDot');
-  if (dot) { dot.style.background = '#f0c040'; setTimeout(() => { dot.style.background = '#3dd68c'; }, 600); }
-
-  if (snap.exists()) {
-    const d = snap.data();
-    PV.categories = d.categories || DEFAULT_PROVS.categories;
-    PV.items = d.items || DEFAULT_PROVS.items;
-  } else {
-    setDoc(PROV_DOC, { categories: PV.categories, items: PV.items });
-  }
-  renderProvisions();
-}, err => {
-  console.error('Prov onSnapshot error:', err);
-  const dot = document.getElementById('provSyncDot');
-  if (dot) dot.style.background = '#e05555';
-});
-
-async function saveProv() {
-  if (pvSaving) return;
-  pvSaving = true;
-  try { await setDoc(PROV_DOC, { categories: PV.categories, items: PV.items }); }
-  catch(e) { console.error('Prov save error:', e); }
-  finally { pvSaving = false; }
-}
-
-// ── RENDER ────────────────────────────────────
-// Track which categories are collapsed (persists across renders)
-const collapsedCats = new Set();
-
-function renderProvisions() {
-  const body = document.getElementById('provBody');
-  if (!body) return;
-  let h = '';
-  for (const cat of PV.categories) {
-    const items = PV.items.filter(i => i.cat === cat.id)
-      .sort((a, b) => a.name.localeCompare(b.name, 'es', {sensitivity:'base'}));
-    if (!items.length) continue;
-    const isCollapsed = collapsedCats.has(cat.id);
-    const colCls = isCollapsed ? ' collapsed' : '';
-    h += `<div class="prov-cat-hdr${colCls}" data-catid="${cat.id}">
-      ${cat.name}
-      <div class="prov-cat-actions">
-        <div class="prov-cat-act-btn edit" data-action="edit-cat" data-catid="${cat.id}" title="Editar categoría">✏</div>
-        <div class="prov-cat-act-btn del" data-action="del-cat" data-catid="${cat.id}" title="Eliminar categoría">🗑</div>
-        <span class="prov-cat-chevron">▾</span>
-      </div>
-    </div>`;
-    h += `<div class="prov-cat-body${colCls}" data-catbody="${cat.id}">`;
-    h += `<table class="prov-table"><thead><tr>
-      <th>Provisión</th>
-      <th class="th-hay">Hay</th>
-      <th class="th-qty">Cantidad</th>
-      <th style="width:64px"></th>
-    </tr></thead><tbody>`;
-    for (const item of items) {
-      const rowCls = item.qty === 0 ? ' row-danger' : item.qty === 1 ? ' row-warn' : '';
-      const numCls = item.qty === 0 ? ' danger' : item.qty === 1 ? ' warn' : '';
-      h += `<tr class="prov-row${rowCls}" data-id="${item.id}">
-        <td class="prov-cell">${item.name}</td>
-        <td class="prov-cell-hay">
-          <div class="prov-chk${item.hay?' yes':''}" data-action="hay" data-id="${item.id}"></div>
-        </td>
-        <td class="prov-cell-qty">
-          <div class="prov-qty-wrap">
-            <div class="prov-qty-btn" data-action="dec" data-id="${item.id}">−</div>
-            <div class="prov-qty-val${numCls}">${item.qty}</div>
-            <div class="prov-qty-btn" data-action="inc" data-id="${item.id}">＋</div>
+      <div class="bp-puntos-panel">
+          <div class="bp-jugador">
+              <span class="bp-jugador-emoji">🐵</span>
+              <span id="bp-xp-mono">0</span>
+              <span class="bp-jugador-label">XP Mono</span>
           </div>
-        </td>
-        <td>
-          <div class="prov-row-actions">
-            <div class="prov-act-btn edit" data-action="edit-item" data-id="${item.id}" title="Editar">✏</div>
-            <div class="prov-act-btn del" data-action="del-item" data-id="${item.id}" title="Eliminar">🗑</div>
+          <div class="bp-total">                                                                                                                                                                                        <div class="bp-total-fila">
+            <div class="bp-total-item">                                                                                                                                                                     
+              <span id="bp-xp-total">0</span>
+              <span class="bp-total-label">⭐ XP Total</span>
+            </div>
+            <div class="bp-total-item">
+              <span id="bp-puntos-total">0</span>
+              <span class="bp-total-label">💰 Nenurios</span>
+            </div>
           </div>
-        </td>
-      </tr>`;
-    }
-    h += '</tbody></table></div>';
-  }
-  body.innerHTML = h;
-  // Set actual heights for smooth transition
-  body.querySelectorAll('.prov-cat-body').forEach(el => {
-    el.style.maxHeight = el.classList.contains('collapsed') ? '0px' : el.scrollHeight + 'px';
-  });
-  bindProvisions();
-}
+      </div>
+          <div class="bp-jugador">
+              <span class="bp-jugador-emoji">🐻</span>
+              <span id="bp-xp-oso">0</span>
+              <span class="bp-jugador-label">XP Oso</span>
+          </div>
+      </div>
 
-function bindProvisions() {
-  // Category collapse toggle
-  document.querySelectorAll('.prov-cat-hdr').forEach(hdr => {
-    hdr.addEventListener('click', e => {
-      if (e.target.closest('[data-action]')) return;
-      const catId = hdr.dataset.catid;
-      const bodyEl = document.querySelector(`[data-catbody="${catId}"]`);
-      if (collapsedCats.has(catId)) {
-        collapsedCats.delete(catId);
-        hdr.classList.remove('collapsed');
-        bodyEl.classList.remove('collapsed');
-        bodyEl.style.maxHeight = bodyEl.scrollHeight + 'px';
-      } else {
-        collapsedCats.add(catId);
-        hdr.classList.add('collapsed');
-        bodyEl.style.maxHeight = bodyEl.scrollHeight + 'px';
-        requestAnimationFrame(() => { bodyEl.classList.add('collapsed'); bodyEl.style.maxHeight = '0px'; });
-      }
-    });
-  });
-  // Item actions
-  document.querySelectorAll('[data-action]').forEach(el => {
-    el.addEventListener('click', e => {
-      e.stopPropagation();
-      const {action, id, catid} = el.dataset;
-      if (action === 'edit-cat') { openEditModal('cat', catid); return; }
-      if (action === 'del-cat')  { openEditModal('cat', catid); 
-        // jump straight to confirm
-        setTimeout(() => document.getElementById('provEditDelete').click(), 50);
-        return;
-      }
-      if (action === 'edit-item') { openEditModal('item', id); return; }
-      if (action === 'del-item')  { openEditModal('item', id);
-        setTimeout(() => document.getElementById('provEditDelete').click(), 50);
-        return;
-      }
-      const item = PV.items.find(i => i.id === id);
-      if (!item) return;
-      if (action === 'hay') { item.hay = !item.hay; }
-      else if (action === 'inc') { item.qty++; }
-      else if (action === 'dec') { item.qty = Math.max(0, item.qty - 1); }
-      saveProv(); renderProvisions();
-    });
-  });
-}
+      <div id="bp-niveles-container"></div>
+  </div>
 
-// ── MODAL AGREGAR ─────────────────────────────
-function openProvModal() {
-  const sel = document.getElementById('provCatSelect');
-  sel.innerHTML = PV.categories.map(c => `<option value="${c.id}">${c.name}</option>`).join('');
-  document.getElementById('provItemInput').value = '';
-  document.getElementById('provNewCatInput').value = '';
-  document.getElementById('provNewCatWrap').style.display = 'none';
-  document.getElementById('provNewCatToggle').textContent = '+ Nueva categoría';
-  document.getElementById('provModalBg').classList.add('show');
-}
-function closeProvModal() {
-  document.getElementById('provModalBg').classList.remove('show');
-}
+  <!-- PANTALLA: Ciclos -->
+  <div id="screen-cycles" class="screen hidden">
+    <div class="cycles-header">
+      <button class="back-btn" onclick="navigate('menu')">← Volver</button>
+      <h2 class="screen-title">Ciclos</h2>
+    </div>
+    <div class="ciclo-actual">
+      <div class="ciclo-actual-info">
+        <span id="ciclo-numero" class="ciclo-actual-numero">Ciclo 1</span>
+        <span id="ciclo-periodo" class="ciclo-actual-fecha">Periodo: —</span>
+      </div>
+      <div class="ciclo-actual-stats">
+        <span id="ciclo-puntos-mono">🐵 0 Nenurios</span>
+        <span id="ciclo-puntos-oso">🐻 0 Nenurios</span>
+        <span id="ciclo-puntos">0 ⭐Nenurios Totales</span>
+        <span id="ciclo-nivel">Nivel 0</span>
+      </div>
+      <button class="finalizar-ciclo-btn" onclick="confirmarFinalizarCiclo()">Finalizar Ciclo</button>
+    </div>
+    <h3 class="ciclos-titulo-registro">Historial</h3>
+    <div id="ciclos-registro"></div>
+  </div>
 
-document.getElementById('provAddBtn').addEventListener('click', openProvModal);
-document.getElementById('provModalCancel').addEventListener('click', closeProvModal);
-document.getElementById('provModalBg').addEventListener('click', e => {
-  if (e.target === document.getElementById('provModalBg')) closeProvModal();
-});
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore-compat.js"></script>
 
-let newCatMode = false;
-document.getElementById('provNewCatToggle').addEventListener('click', () => {
-  newCatMode = !newCatMode;
-  document.getElementById('provNewCatWrap').style.display = newCatMode ? 'block' : 'none';
-  document.getElementById('provNewCatToggle').textContent = newCatMode ? '← Usar categoría existente' : '+ Nueva categoría';
-});
+  <!-- App -->
+  <script src="js/data.js"></script>
+  <script src="js/storage.js"></script>
+  <script src="js/players.js"></script>
+  <script src="js/app.js"></script>
+  <script src="js/missions.js"></script>
+  <script src="js/cycles.js"></script>
+  <script src="js/provisions.js"></script>
+  <script src="js/battlepass.js"></script>
+  <script src="js/firebase.js"></script>
 
-document.getElementById('provModalConfirm').addEventListener('click', () => {
-  const itemName = document.getElementById('provItemInput').value.trim();
-  if (!itemName) { document.getElementById('provItemInput').focus(); return; }
+  <!-- MODAL: Buff -->
+  <div id="modal-buff" class="modal-overlay hidden">
+    <div class="modal-contenido">
+      <div class="modal-titulo">🎉 ¡Buff conseguido! 🎉</div>
+      <div class="modal-buff-nombre">
+        <span id="modal-buff-nombre"></span>
+      </div>
+      <div class="modal-buff-puntos">
+        <span id="modal-buff-puntos"></span> ⭐ Nenurios
+      </div>
+      <button class="modal-btn-cerrar" onclick="cerrarModalBuff()">¡Genial!</button>
+    </div>
+  </div>
 
-  let catId;
-  if (newCatMode) {
-    const catName = document.getElementById('provNewCatInput').value.trim();
-    if (!catName) { document.getElementById('provNewCatInput').focus(); return; }
-    catId = 'c' + Date.now();
-    PV.categories.push({id: catId, name: catName});
-  } else {
-    catId = document.getElementById('provCatSelect').value;
-  }
+  <div id="toast-xp" class="toast-xp hidden">
+    <span id="toast-xp-texto">+0 pts</span>
+  </div>
 
-  const id = 'p' + Date.now();
-  PV.items.push({id, cat: catId, name: itemName, qty: 0, hay: false});
-  saveProv();
-  closeProvModal();
-  renderProvisions();
-});
+  <!-- MODAL: Confirmar finalizar ciclo -->
+  <div id="modal-finalizar-ciclo" class="modal-overlay hidden">
+    <div class="modal-contenido">
+      <div class="modal-titulo">⚠️ Finalizar Ciclo</div>
+      <p class="modal-texto">Se guardarán los puntos actuales y se reiniciarán todas las misiones. ¿Estás seguro?</p>
+      <div class="modal-btns">
+        <button class="modal-btn-secundario" onclick="cerrarModalFinalizarCiclo()">Cancelar</button>
+        <button class="modal-btn-primario" onclick="confirmarYFinalizar()">Finalizar</button>
+      </div>
+    </div>
+  </div>
 
-// ── MODAL EDITAR/ELIMINAR ─────────────────────
-let editCtx = null; // {type:'item'|'cat', id}
+  <!-- MODAL: Agregar provisión -->
+  <div class="prov-modal-fondo" id="prov-modal-agregar">
+    <div class="prov-modal">
+      <div class="prov-modal-titulo">Nueva Provisión</div>
+      <div class="prov-campo">
+        <label>Categoría</label>
+        <select id="prov-select-categoria"></select>
+      </div>
+      <div class="prov-campo">
+        <label>Provisión</label>
+        <input type="text" id="prov-input-nombre" placeholder="Nombre del artículo...">
+      </div>
+      <div class="prov-modal-botones">
+        <button class="prov-modal-btn cancelar" onclick="cerrarModalAgregar()">Cancelar</button>
+        <button class="prov-modal-btn confirmar" onclick="confirmarAgregar()">Agregar</button>
+      </div>
+    </div>
+  </div>
 
-function openEditModal(type, id) {
-  const isItem = type === 'item';
-  const target = isItem ? PV.items.find(i => i.id === id) : PV.categories.find(c => c.id === id);
-  if (!target) return;
-  editCtx = {type, id};
-  document.getElementById('provEditTitle').textContent = isItem ? 'Editar Provisión' : 'Editar Categoría';
-  document.getElementById('provEditLabel').textContent = isItem ? 'Nombre de la provisión' : 'Nombre de la categoría';
-  document.getElementById('provEditInput').value = target.name;
-  document.getElementById('provDelConfirm').classList.remove('show');
-  document.getElementById('provEditBtns').style.display = 'flex';
-  document.getElementById('provDelBtns').style.display = 'none';
-  document.getElementById('provEditModalBg').classList.add('show');
-  setTimeout(() => document.getElementById('provEditInput').focus(), 80);
-}
-function closeEditModal() {
-  document.getElementById('provEditModalBg').classList.remove('show');
-  editCtx = null;
-}
+  <!-- MODAL: Editar / eliminar provisión -->
+  <div class="prov-modal-fondo" id="prov-modal-editar">
+    <div class="prov-modal">
+      <div class="prov-modal-titulo" id="prov-editar-titulo">Editar</div>
+      <div class="prov-campo">
+        <label id="prov-editar-label">Nombre</label>
+        <input type="text" id="prov-input-editar" placeholder="">
+      </div>
+      <div class="prov-modal-botones" id="prov-editar-botones">
+        <button class="prov-modal-btn cancelar" onclick="cerrarModalEditar()">Cancelar</button>
+        <button class="prov-modal-btn eliminar" onclick="pedirConfirmacionEliminar()">🗑 Eliminar</button>
+        <button class="prov-modal-btn confirmar" onclick="confirmarEditar()">Guardar</button>
+      </div>
+      <div class="prov-modal-botones" id="prov-confirmar-eliminar-botones" style="display:none">
+        <button class="prov-modal-btn cancelar" onclick="cancelarEliminar()">← Cancelar</button>
+        <button class="prov-modal-btn peligro" onclick="confirmarEliminar()">Sí, eliminar</button>
+      </div>
+    </div>
+  </div>
 
-document.getElementById('provEditCancel').addEventListener('click', closeEditModal);
-document.getElementById('provEditModalBg').addEventListener('click', e => {
-  if (e.target === document.getElementById('provEditModalBg')) closeEditModal();
-});
+  <!-- MODAL: Agregar categoría -->
+  <div class="prov-modal-fondo" id="prov-modal-agregar-categoria">
+    <div class="prov-modal">
+      <div class="prov-modal-titulo">Nueva Categoría</div>
+      <div class="prov-campo">
+        <label>Icono (emoji)</label>
+        <input type="text" id="prov-cat-input-icono" placeholder="Ej: 🛒">
+      </div>
+      <div class="prov-campo">
+        <label>Nombre</label>
+        <input type="text" id="prov-cat-input-nombre" placeholder="Nombre de la categoría...">
+      </div>
+      <div class="prov-modal-botones">
+        <button class="prov-modal-btn cancelar" onclick="cerrarModalAgregarCategoria()">Cancelar</button>
+        <button class="prov-modal-btn confirmar" onclick="confirmarAgregarCategoria()">Agregar</button>
+      </div>
+    </div>
+  </div>
 
-document.getElementById('provEditSave').addEventListener('click', () => {
-  if (!editCtx) return;
-  const val = document.getElementById('provEditInput').value.trim();
-  if (!val) { document.getElementById('provEditInput').focus(); return; }
-  if (editCtx.type === 'item') {
-    const item = PV.items.find(i => i.id === editCtx.id);
-    if (item) item.name = val;
-  } else {
-    const cat = PV.categories.find(c => c.id === editCtx.id);
-    if (cat) cat.name = val;
-  }
-  saveProv(); closeEditModal(); renderProvisions();
-});
+  <!-- MODAL: Editar categoría -->
+  <div class="prov-modal-fondo" id="prov-modal-editar-categoria">
+    <div class="prov-modal">
+      <div class="prov-modal-titulo">Editar Categoría</div>
+      <div class="prov-campo">
+        <label>Icono (emoji)</label>
+        <input type="text" id="prov-edit-cat-icono" placeholder="Ej: 🛒">
+      </div>
+      <div class="prov-campo">
+        <label>Nombre</label>
+        <input type="text" id="prov-edit-cat-nombre" placeholder="Nombre de la categoría...">
+      </div>
+      <div class="prov-modal-botones">
+        <button class="prov-modal-btn cancelar" onclick="cerrarModalEditarCategoria()">Cancelar</button>
+        <button class="prov-modal-btn confirmar" onclick="confirmarEditarCategoria()">Guardar</button>
+      </div>
+    </div>
+  </div>
 
-document.getElementById('provEditDelete').addEventListener('click', () => {
-  if (!editCtx) return;
-  const isItem = editCtx.type === 'item';
-  const name = isItem
-    ? PV.items.find(i => i.id === editCtx.id)?.name
-    : PV.categories.find(c => c.id === editCtx.id)?.name;
-  const extra = !isItem ? ' y todas sus provisiones' : '';
-  document.getElementById('provDelConfirm').textContent = `¿Eliminar "${name}"${extra}?`;
-  document.getElementById('provDelConfirm').classList.add('show');
-  document.getElementById('provEditBtns').style.display = 'none';
-  document.getElementById('provDelBtns').style.display = 'flex';
-});
+  <!-- MODAL: Eliminar categoría -->
+  <div class="prov-modal-fondo" id="prov-modal-eliminar-categoria">
+    <div class="prov-modal">
+      <div class="prov-modal-titulo">Eliminar Categoría</div>
+      <p class="prov-modal-advertencia" id="prov-eliminar-cat-texto"></p>
+      <div class="prov-modal-botones">
+        <button class="prov-modal-btn cancelar" onclick="cerrarModalEliminarCategoria()">Cancelar</button>
+        <button class="prov-modal-btn peligro" onclick="confirmarEliminarCategoria()">Sí, eliminar</button>
+      </div>
+    </div>
+  </div>
+  
+<!-- MODAL: Confirmar canje de premio -->
+  <div id="modal-canjear" class="modal-overlay hidden">
+      <div class="modal-contenido">
+          <div class="modal-titulo">¿Quieres canjear este premio?</div>
+          <p class="modal-texto" id="modal-canjear-texto"></p>
+          <div class="modal-btns">
+              <button class="modal-btn-secundario" onclick="cerrarModalCanjear()">Cancelar</button>
+              <button class="modal-btn-primario" onclick="confirmarCanjear()">Canjear</button>
+          </div>
+      </div>
+  </div>
 
-document.getElementById('provDelNo').addEventListener('click', () => {
-  document.getElementById('provDelConfirm').classList.remove('show');
-  document.getElementById('provEditBtns').style.display = 'flex';
-  document.getElementById('provDelBtns').style.display = 'none';
-});
-
-document.getElementById('provDelYes').addEventListener('click', () => {
-  if (!editCtx) return;
-  if (editCtx.type === 'item') {
-    PV.items = PV.items.filter(i => i.id !== editCtx.id);
-  } else {
-    PV.items = PV.items.filter(i => i.cat !== editCtx.id);
-    PV.categories = PV.categories.filter(c => c.id !== editCtx.id);
-  }
-  saveProv(); closeEditModal(); renderProvisions();
-});
-
-// ── NAVEGACIÓN ────────────────────────────────
-document.getElementById('provBack').addEventListener('click', () => {
-  document.getElementById('provScreen').classList.remove('show');
-  document.getElementById('menuScreen').classList.add('show');
-});
-
-window.__provReady = renderProvisions;
-</script>
 </body>
 </html>

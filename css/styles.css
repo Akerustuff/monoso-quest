@@ -1,0 +1,1303 @@
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Rajdhani:wght@400;500;600;700&family=Crimson+Pro:ital,wght@0,300;0,400;0,600;1,300&display=swap');
+
+:root {
+    --bg: #080b10;
+    --surface: #0d1219;
+    --surface2: #111820;
+    --border: #1e2d3d;
+    --border2: #243444;
+    --gold: #c9943a;
+    --gold-l: #e8b96a;
+    --gold-glow: rgba(201, 148, 58, 0.22);
+    --text: #d4c9b8;
+    --text2: #8a9aaa;
+    --text3: #4a5a6a;
+    --mono: #7eb8e8;
+    --oso: #e8a87e;
+    --font-title: 'Cinzel', serif;
+    --font-ui: 'Rajdhani', sans-serif;
+    --font-body: 'Crimson Pro', serif;
+    --weekly: #b89ee8;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: var(--font-body);
+    background-color: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+}
+
+.hidden {
+    display: none !important;
+}
+
+.screen {
+    height: 100vh;
+    padding: 20px;
+    max-width: 520px;
+    margin: 0 auto;
+}
+
+/* ── Componentes Globales ── */
+
+.back-btn {                                                                                                                                                                                                              
+      background: transparent;                                                                                                                                                                                             
+      border: 1px solid var(--border2);
+      color: var(--text2);
+      font-family: var(--font-ui);
+      font-size: 0.85rem;
+      padding: 6px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      white-space: nowrap;
+  }
+
+/* ── Selección de jugador ── */
+
+#screen-player {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 24px;
+    padding: 24px;
+}
+
+.player-select-title {
+    font-family: var(--font-title);
+    font-size: 1.8rem;
+    color: var(--gold-l);
+    letter-spacing: 3px;
+    text-align: center;
+    text-shadow: 0 0 24px rgba(232, 185, 106, 0.4);
+}
+
+.player-select-subtitle {
+    font-family: var(--font-ui);
+    font-size: 0.85rem;
+    color: var(--text3);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    text-align: center;
+}
+
+.player-select-btns {
+    display: flex;
+    gap: 20px;
+}
+
+.player-select-btn {
+    width: 150px;
+    height: 150px;
+    border-radius: 20px;
+    border: 2px solid var(--border2);
+    background: var(--surface);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    cursor: pointer;
+    transition: all 0.25s;
+    user-select: none;
+}
+
+.player-select-btn:active {
+    transform: scale(0.94);
+}
+
+.player-select-icon {
+    font-size: 3.4rem;
+    pointer-events: none;
+}
+
+.player-select-name {
+    font-family: var(--font-title);
+    font-size: 1.1rem;
+    letter-spacing: 2px;
+    pointer-events: none;
+}
+
+.player-select-btn.mono-btn {
+    border-color: rgba(126, 184, 232, 0.3);
+    color: var(--mono);
+}
+
+.player-select-btn.oso-btn {
+    border-color: rgba(232, 168, 126, 0.3);
+    color: var(--oso);
+}
+
+/* ── Menú principal ── */
+
+.menu-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 32px;
+}
+
+.menu-options {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.menu-options button {
+    width: 100%;
+    padding: 18px;
+    border-radius: 14px;
+    border: 1px solid var(--border2);
+    background: var(--surface);
+    color: var(--text);
+    font-family: var(--font-ui);
+    font-size: 1rem;
+    font-weight: 700;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    cursor: pointer;
+    text-align: left;
+    transition: all 0.2s;
+}
+
+.menu-header button {
+      background: transparent;
+      border: 1px solid var(--border2);
+      color: var(--text2);
+      font-family: var(--font-ui);
+      font-size: 0.8rem;
+      letter-spacing: 1px;
+      padding: 6px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.2s;
+  }
+
+/* ── Misiones ── */
+
+.missions-header {
+      display: flex;
+      align-items: center;
+      padding: 1rem;
+      gap: 1rem;
+  }
+
+  .missions-header .screen-title {
+      flex: 1;
+      text-align: center;
+      font-family: 'Cinzel', serif;
+      color: var(--gold);
+      margin: 0;
+  }
+
+  .missions-tabs {
+      display: flex;
+      padding: 0 1rem;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+  }
+
+  .tab-btn {
+      flex: 1;
+      padding: 0.6rem;
+      background: transparent;
+      border: 1px solid var(--gold);
+      color: var(--gold);
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 600;
+      border-radius: 6px;
+      cursor: pointer;
+      opacity: 0.5;
+      transition: opacity 0.2s;
+  }
+
+  .tab-btn.active {
+      opacity: 1;
+      background: var(--gold);
+      color: #000;
+  }
+
+  #missions-container {
+      padding: 0 1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      overflow-y: auto;
+  }
+
+  #missions-container h3 {
+      font-family: var(--font-ui);
+      font-size: 0.75rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--text3);
+      margin-top: 1rem;
+      margin-bottom: 4px;
+  }
+
+  .mission-card {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 12px;
+      position: relative;
+      overflow: hidden;
+      cursor: default;
+      transition: all 0.18s;
+  }
+
+  .mission-card::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 2.5px;
+      background: var(--gold);
+  }
+
+  .mission-card.done {
+      opacity: 0.42;
+  }
+
+  .mission-card.done .mission-nombre {
+      text-decoration: line-through;
+  }
+
+  .mission-info {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+  }
+
+  .mission-nombre {
+      font-family: var(--font-ui);
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--text);
+      line-height: 1.3;
+  }
+
+  .mission-desc {
+      font-size: 0.8rem;
+      color: var(--text2);
+      font-style: italic;
+  }
+
+  .mission-puntos {
+      font-family: var(--font-ui);
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--gold);
+      flex-shrink: 0;
+      white-space: nowrap;
+      text-transform: lowercase;
+  }
+
+  .mission-check {
+      width: 22px;
+      height: 22px;
+      flex-shrink: 0;
+      border-radius: 6px;
+      border: 1.5px solid var(--border2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.75rem;
+      background: transparent;
+      cursor: pointer;
+      transition: all 0.18s;
+  }
+
+  .mission-card.done .mission-check {
+      background: var(--gold);
+      border-color: var(--gold);
+      color: #000;
+  }
+
+  /* ── Semanales grupales ── */
+
+  .grupo-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+      margin-bottom: 6px;
+  }
+  
+  .grupo-header {
+      padding: 11px 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      position: relative;
+  }
+
+  .grupo-header::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 2.5px;
+      background: var(--weekly);
+  }
+
+  .grupo-card.abierto .grupo-subtareas {
+      display: flex;
+  }
+  
+.grupo-card.abierto .grupo-chevron {
+      transform: rotate(90deg);
+  }
+
+  .grupo-info {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+  }
+
+  .grupo-nombre {
+      font-family: var(--font-ui);
+      font-weight: 700;
+      font-size: 1rem;
+      color: var(--text);
+      display: block;
+  }
+
+  .grupo-desc {
+      font-size: 0.78rem;
+      color: var(--text3);
+      font-style: italic;
+  }
+
+  .grupo-progreso {
+      font-family: var(--font-ui);
+      font-size: 0.78rem;
+      color: var(--text3);
+      flex-shrink: 0;
+      white-space: nowrap;
+  }
+
+  .grupo-progreso.completo {
+      color: var(--gold);
+  }
+
+  .grupo-chevron {
+      font-size: 0.82rem;
+      color: var(--text3);
+      transition: transform 0.22s;
+      flex-shrink: 0;
+  }
+
+  .grupo-buff {
+      margin: 0 12px 10px;
+      padding: 7px 10px;
+      border-radius: 8px;
+      background: rgba(201, 148, 58, 0.08);
+      border: 1px solid rgba(201, 148, 58, 0.2);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      opacity: 0.4;
+  }
+
+  .grupo-buff.buff-earned {
+      opacity: 1;
+  }
+
+  .grupo-buff-texto {
+      font-family: var(--font-ui);
+      font-size: 0.72rem;
+      color: var(--gold);
+      flex: 1;
+  }
+
+  .grupo-subtareas {
+      display: none;
+      flex-direction: column;
+      border-top: 1px solid var(--border);
+      background: rgba(0, 0, 0, 0.18);
+  }
+
+  .subtarea-card {
+      border-radius: 0;
+      border: none;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+      padding-left: 28px;
+  }
+
+  .subtarea-card::before {
+      background: var(--weekly);
+  }
+
+  .subtarea-card:last-child {
+      border-bottom: none;
+  }
+
+  /* ── Modal Buff ── */
+
+  .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.88);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 100;
+      padding: 24px;
+  }
+
+  .modal-contenido {
+      background: var(--surface2);
+      border: 1px solid var(--gold);
+      border-radius: 16px;
+      padding: 32px 24px;
+      text-align: center;
+      align-items: center;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      max-width: 320px;
+      width: 100%;
+  }
+
+  .modal-titulo {
+      font-family: var(--font-title);
+      font-size: 1.2rem;
+      color: var(--gold-l);
+      letter-spacing: 2px;
+  }
+
+  .modal-buff-nombre {
+      font-family: var(--font-ui);
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--text);
+  }
+
+  .modal-buff-puntos {
+      font-family: var(--font-ui);
+      font-size: 1rem;
+      color: var(--gold);
+      font-weight: 600;
+  }
+
+  .modal-btn-cerrar {
+      margin-top: 8px;
+      padding: 12px 24px;
+      background: var(--gold);
+      border: none;
+      border-radius: 10px;
+      font-family: var(--font-ui);
+      font-size: 1rem;
+      font-weight: 700;
+      color: #000;
+      cursor: pointer;
+      letter-spacing: 1px;
+  }
+
+  /* ── Toast XP ── */
+
+  .toast-xp {
+      position: fixed;
+      bottom: 80px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--gold);
+      color: #000;
+      font-family: var(--font-ui);
+      font-size: 1.1rem;
+      font-weight: 700;
+      padding: 10px 28px;
+      border-radius: 20px;
+      z-index: 200;
+      pointer-events: none;
+      animation: toastAppear 0.25s ease;
+  }
+
+  @keyframes toastAppear {
+      from { opacity: 0; transform: translateX(-50%) translateY(12px); }
+      to   { opacity: 1; transform: translateX(-50%) translateY(0); }
+  }
+
+  /* ── Ciclos ── */
+
+  .cycles-header {
+      display: flex;
+      align-items: center;
+      padding: 1rem;
+      gap: 1rem;
+      margin-bottom: 1rem;
+  }
+
+  .cycles-header .screen-title {
+      flex: 1;
+      text-align: center;
+      font-family: var(--font-title);
+      color: var(--gold);
+      margin: 0;
+  }
+
+  .ciclo-actual {
+      margin: 0 1rem 1.5rem;
+      padding: 16px;
+      background: var(--surface);
+      border: 1px solid var(--gold);
+      border-radius: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+  }
+
+  .ciclo-actual-info {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+  }
+
+  .ciclo-actual-numero {
+      font-family: var(--font-title);
+      font-size: 1.1rem;
+      color: var(--gold-l);
+      letter-spacing: 2px;
+  }
+
+  .ciclo-actual-fecha {
+      font-family: var(--font-ui);
+      font-size: 0.78rem;
+      color: var(--text3);
+  }
+
+  .ciclo-actual-stats {
+      display: flex;
+      gap: 12px;
+      font-family: var(--font-ui);
+      font-size: 0.85rem;
+      color: var(--text2);
+  }
+
+  .finalizar-ciclo-btn {
+      width: 100%;
+      padding: 12px;
+      background: transparent;
+      border: 1px solid var(--oso);
+      border-radius: 10px;
+      color: var(--oso);
+      font-family: var(--font-ui);
+      font-size: 0.9rem;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all 0.2s;
+  }
+
+  .ciclos-titulo-registro {
+      font-family: var(--font-ui);
+      font-size: 0.75rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--text3);
+      padding: 0 1rem;
+      margin-bottom: 8px;
+  }
+
+  #ciclos-registro {
+      padding: 0 1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+  }
+
+  .ciclo-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+  }
+
+  .ciclo-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+  }
+
+  .ciclo-card-numero {
+      font-family: var(--font-title);
+      font-size: 0.95rem;
+      color: var(--gold);
+  }
+
+  .ciclo-card-periodo {
+      font-family: var(--font-ui);
+      font-size: 0.72rem;
+      color: var(--text3);
+  }
+
+  .ciclo-card-stats {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      font-family: var(--font-ui);
+      font-size: 0.82rem;
+      color: var(--text2);
+  }
+
+  .ciclos-vacio {
+      font-family: var(--font-body);
+      font-size: 0.9rem;
+      color: var(--text3);
+      font-style: italic;
+      padding: 0 1rem;
+  }
+
+  /* ── Modal compartido ── */
+
+  .modal-texto {
+      font-family: var(--font-body);
+      font-size: 0.95rem;
+      color: var(--text2);
+      text-align: center;
+      line-height: 1.5;
+  }
+
+  .modal-btns {
+      display: flex;
+      gap: 10px;
+      width: 100%;
+  }
+
+  .modal-btn-secundario {
+      flex: 1;
+      padding: 12px;
+      background: transparent;
+      border: 1px solid var(--border2);
+      border-radius: 10px;
+      font-family: var(--font-ui);
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--text2);
+      cursor: pointer;
+      letter-spacing: 1px;
+  }
+
+  .modal-btn-primario {
+      flex: 1;
+      padding: 12px;
+      background: var(--gold);
+      border: none;
+      border-radius: 10px;
+      font-family: var(--font-ui);
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: #000;
+      cursor: pointer;
+      letter-spacing: 1px;
+  }
+
+  /* ── Provisiones ── */
+
+  .prov-header {
+      display: flex;
+      align-items: center;
+      padding: 1rem;
+      gap: 1rem;
+      flex-shrink: 0;
+  }
+
+  .prov-header-titulo {
+      flex: 1;
+      font-family: var(--font-title);
+      font-size: 1.1rem;
+      color: var(--gold-l);
+      letter-spacing: 2px;
+      text-align: center;
+  }
+
+  #screen-provisions {
+      display: flex;
+      flex-direction: column;
+      padding: 0;
+  }
+
+  .prov-body {
+      flex: 1;
+      overflow-y: auto;
+      padding: 0 14px 80px;
+  }
+
+  .prov-cat-header {
+      font-family: var(--font-ui);
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--gold);
+      padding: 10px 0 6px;
+      margin-top: 8px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      user-select: none;
+  }
+
+  .prov-cat-icono {
+      font-size: 0.9rem;
+  }
+
+  .prov-cat-nombre {
+      flex: 1;
+  } 
+
+  .prov-cat-chevron {
+      font-size: 0.75rem;
+      color: var(--text3);
+      transition: transform 0.22s;
+      transform: rotate(90deg);
+  }
+
+  .prov-cat-header.collapsed .prov-cat-chevron {
+      transform: rotate(0deg);
+  }
+
+  .prov-cat-body {
+      overflow: hidden;
+      transition: max-height 0.25s ease;
+  }
+
+  .prov-cat-body.collapsed {
+      max-height: 0 !important;
+  }
+
+  .prov-tabla {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 4px;
+  }
+
+  .prov-tabla th {
+      font-family: var(--font-ui);
+      font-size: 0.62rem;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--text3);
+      padding: 5px 8px 5px 4px;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+  }
+
+  .prov-tabla th.th-cantidad { text-align: center; width: 80px; }
+  .th-acciones { text-align: center; width: 70px; }
+
+  .prov-fila {
+      border-bottom: 1px solid rgba(30, 45, 61, 0.6);
+  }
+
+  .prov-celda {
+      padding: 8px 8px 8px 4px;
+      font-family: var(--font-body);
+      font-size: 0.88rem;
+      color: var(--text);
+  }
+
+  .prov-celda-cantidad { text-align: center; padding: 6px 4px; }
+
+  .prov-cantidad-wrap {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+  }
+
+  .prov-cantidad-valor {
+      font-family: var(--font-ui);
+      font-weight: 700;
+      font-size: 0.95rem;
+      min-width: 22px;
+      text-align: center;
+      color: var(--text);
+  }
+
+  .prov-cantidad-btn {
+      width: 22px;
+      height: 22px;
+      border-radius: 6px;
+      border: 1px solid var(--border2);
+      background: var(--surface2);
+      color: var(--text2);
+      font-size: 0.9rem;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      line-height: 1;
+  }
+
+  .prov-btn-agregar {
+      position: fixed;
+      bottom: 22px;
+      right: 18px;
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--gold), #a0722a);
+      border: none;
+      color: #000;
+      font-size: 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      box-shadow: 0 4px 16px rgba(201, 148, 58, 0.4);
+      z-index: 50;
+  }
+
+  /* ── Modales de Provisiones ── */
+
+  .prov-modal-fondo {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.7);
+      z-index: 900;
+      display: none;
+      align-items: flex-end;
+      justify-content: center;
+  }
+
+  .prov-modal-fondo.visible {
+      display: flex;
+  }
+
+  .prov-modal {
+      background: var(--surface);
+      border: 1px solid var(--border2);
+      border-radius: 20px 20px 0 0;
+      padding: 20px 18px 32px;
+      width: 100%;
+      max-width: 520px;
+  }
+
+  .prov-modal-titulo {
+      font-family: var(--font-title);
+      font-size: 1rem;
+      color: var(--gold-l);
+      letter-spacing: 2px;
+      margin-bottom: 16px;
+      text-align: center;
+  }
+
+  .prov-campo {
+      margin-bottom: 12px;
+  }
+
+  .prov-campo label {
+      font-family: var(--font-ui);
+      font-size: 0.72rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--text3);
+      display: block;
+      margin-bottom: 4px;
+  }
+
+  .prov-campo input,
+  .prov-campo select {
+      width: 100%;
+      background: var(--surface2);
+      border: 1px solid var(--border2);
+      border-radius: 8px;
+      padding: 10px 12px;
+      color: var(--text);
+      font-family: var(--font-body);
+      font-size: 0.95rem;
+      outline: none;
+      -webkit-appearance: none;
+  }
+
+  .prov-campo input:focus,
+  .prov-campo select:focus {
+      border-color: var(--gold);
+  }
+
+  .prov-toggle-nueva-cat {
+      font-family: var(--font-ui);
+      font-size: 0.68rem;
+      color: var(--gold);
+      letter-spacing: 1px;
+      cursor: pointer;
+      text-decoration: underline;
+  }
+
+  .prov-modal-botones {
+      display: flex;
+      gap: 10px;
+      margin-top: 16px;
+  }
+
+  .prov-modal-btn {
+      flex: 1;
+      padding: 12px;
+      border-radius: 10px;
+      border: none;
+      font-family: var(--font-ui);
+      font-size: 0.88rem;
+      font-weight: 700;
+      letter-spacing: 1px;
+      cursor: pointer;
+  }
+
+  .prov-modal-btn.cancelar {
+      background: var(--surface2);
+      color: var(--text2);
+      border: 1px solid var(--border);
+  }
+
+  .prov-modal-btn.confirmar {
+      background: linear-gradient(135deg, var(--gold), #a0722a);
+      color: #000;
+  }
+
+  .prov-modal-btn.eliminar {
+      background: transparent;
+      color: #e05555;
+      border: 1px solid rgba(160, 40, 40, 0.4);
+  }
+
+  .prov-modal-btn.peligro {
+      background: linear-gradient(135deg, #a02828, #6b1515);
+      color: #fff;
+  }
+
+  .prov-celda-acciones {
+      text-align: right;
+      padding: 4px 4px 4px 0;
+      white-space: nowrap;
+  }
+
+  .prov-btn-accion {
+      width: 26px;
+      height: 26px;
+      border-radius: 6px;
+      border: 1px solid var(--border2);
+      background: var(--surface2);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 0.75rem;
+  }
+
+  .prov-btn-accion.editar { color: var(--gold); }
+  .prov-btn-accion.eliminar { color: #e05555; }
+
+  /* ── FAB Menu Provisiones ── */
+
+  .prov-fab-menu {
+      position: fixed;
+      bottom: 82px;
+      right: 18px;
+      flex-direction: column;
+      gap: 8px;
+      align-items: flex-end;
+      display: none;
+  }
+
+  .prov-fab-menu.visible {
+      display: flex;
+  }
+
+  .prov-fab-opcion {
+      background: var(--surface2);
+      border: 1px solid var(--border2);
+      color: var(--text);
+      font-family: var(--font-ui);
+      font-size: 0.85rem;
+      font-weight: 600;
+      padding: 10px 16px;
+      border-radius: 20px;
+      cursor: pointer;
+      white-space: nowrap;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+  }
+
+  .prov-cat-acciones {                                                                                                                                                                                                     
+      display: flex;
+      gap: 4px;
+      margin-right: 8px;
+  }
+
+  .prov-modal-advertencia {
+      font-family: var(--font-body);
+      font-size: 0.9rem;
+      color: var(--text2);
+      text-align: center;
+      margin-bottom: 8px;
+      line-height: 1.5;
+  }
+
+  /* ── Battle Pass ── */
+
+  #screen-battlepass {
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+  }
+
+  .bp-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+  }
+
+  .bp-nivel-badge {
+      font-family: var(--font-ui);
+      font-size: 0.75rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--gold);
+      background: rgba(201, 148, 58, 0.1);
+      border: 1px solid rgba(201, 148, 58, 0.25);
+      padding: 4px 10px;
+      border-radius: 20px;
+      white-space: nowrap;
+  }
+
+  .bp-puntos-panel {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: var(--surface);
+      border: 1px solid var(--border2);
+      border-radius: 14px;
+      padding: 14px;
+  }
+
+  .bp-jugador {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+  }
+
+  .bp-jugador-emoji { font-size: 1.4rem; }
+
+  .bp-jugador-label {
+      font-family: var(--font-ui);
+      font-size: 0.68rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--text3);
+  }
+
+  .bp-total {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+  }
+
+  #bp-xp-total, #bp-puntos-total {
+      font-family: var(--font-title);
+      font-size: 1.6rem;
+      color: var(--gold-l);
+  }
+
+  .bp-total-label {
+      font-family: var(--font-ui);
+      font-size: 0.72rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--text3);
+  }
+
+  .bp-nenurios-label {
+      font-family: var(--font-ui);
+      font-size: 0.78rem;
+      color: var(--text2);
+  }
+
+  /* Tarjetas de nivel */
+
+  .bp-nivel-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+  }
+
+  .bp-nivel-card.desbloqueado {
+      border-color: var(--gold);
+      background: rgba(201, 148, 58, 0.05);
+  }
+
+  .bp-nivel-card.siguiente {
+      border-color: var(--gold);
+      animation: bp-pulse 2.5s ease-in-out infinite;
+  }
+
+  .bp-nivel-card.bloqueado {
+      opacity: 0.45;
+  }
+
+  @keyframes bp-pulse {
+      0%, 100% { box-shadow: 0 0 8px rgba(201, 148, 58, 0.2); }
+      50%       { box-shadow: 0 0 18px rgba(201, 148, 58, 0.5); }
+  }
+
+  .bp-nivel-card-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+  }
+
+  .bp-nivel-icono { font-size: 1.6rem; }
+
+  .bp-nivel-info {
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+  }
+
+  .bp-nivel-num {
+      font-family: var(--font-ui);
+      font-size: 0.7rem;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--text3);
+  }
+
+  .bp-nivel-nombre {
+      font-family: var(--font-title);
+      font-size: 0.95rem;
+      color: var(--gold-l);
+  }
+
+  .bp-nivel-xp-req {
+      font-family: var(--font-ui);
+      font-size: 0.8rem;
+      color: var(--text2);
+      white-space: nowrap;
+  }
+
+  .bp-barra-track {
+      height: 6px;
+      background: var(--border);
+      border-radius: 10px;
+      overflow: hidden;
+  }
+
+  .bp-barra-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--gold), var(--gold-l));
+      border-radius: 10px;
+      transition: width 0.4s ease;
+  }
+
+  .bp-nivel-progreso-txt {
+      font-family: var(--font-ui);
+      font-size: 0.75rem;
+      letter-spacing: 1px;
+      color: var(--text3);
+      text-align: right;
+  }
+
+  .bp-premios-lista {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      border-top: 1px solid var(--border);
+      padding-top: 10px;
+  }
+
+  .bp-premio {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+  }
+
+  .bp-premio-emoji { font-size: 1rem; }
+
+  .bp-premio-nombre {
+      font-family: var(--font-body);
+      font-size: 0.9rem;
+      color: var(--text);
+      flex: 1;
+  }
+
+  .bp-premio-costo {
+      font-family: var(--font-ui);
+      font-size: 0.78rem;
+      color: var(--gold);
+      white-space: nowrap;
+  }
+  
+  #bp-niveles-container {                                                                                                                                                                                       display: flex;                                                                                                                                                                                      
+      display: flex;                                                                                                                                                                                      
+      flex-direction: column;                                                                                                                                                                             
+      gap: 18px; 
+  }
+
+.bp-btn-canjear {
+      font-family: var(--font-ui);
+      font-size: 0.72rem;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: var(--gold);
+      background: rgba(201, 148, 58, 0.1);
+      border: 1px solid rgba(201, 148, 58, 0.3);
+      padding: 4px 10px;
+      border-radius: 8px;
+      cursor: pointer;
+      white-space: nowrap;
+  }
+
+  .bp-btn-canjear:disabled {
+      opacity: 0.35;
+      cursor: not-allowed;
+  }
+
+  .bp-premio-canjeado {
+      font-size: 1rem;
+  }
+
+  #bp-puntos-total {                                                                                                                                                                                            font-family: var(--font-title);                                                                                                                                                                     
+      font-size: 1.6rem;                                                                                                                                                                                  
+      color: var(--gold-l);
+  }
+
+  .bp-total-fila {
+      display: flex;
+      gap: 16px;
+  }
+
+  .bp-total-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+  }
