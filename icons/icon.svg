@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <!-- Fondo oscuro con bordes redondeados -->
+  <rect width="512" height="512" rx="80" fill="#080b10"/>
+  <!-- Escudo -->
+  <path d="M256 80 L390 148 L390 285 Q390 392 256 448 Q122 392 122 285 L122 148 Z"
+        fill="#0d1219" stroke="#c9943a" stroke-width="14"/>
+  <!-- Letras CQ -->
+  <text x="256" y="315"
+        text-anchor="middle"
+        font-size="148"
+        font-family="Georgia, serif"
+        fill="#c9943a"
+        font-weight="bold">CQ</text>
+</svg>
