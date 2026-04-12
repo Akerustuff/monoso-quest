@@ -2,14 +2,14 @@
   "name": "Cacos Quest",
   "short_name": "Cacos Quest",
   "description": "App gamificada de tareas del hogar para Mono y Oso",
-  "start_url": "/",
+  "start_url": "./",
   "display": "standalone",
   "background_color": "#080b10",
   "theme_color": "#c9943a",
   "orientation": "portrait",
   "icons": [
     {
-      "src": "/icons/icon.svg",
+      "src": "./icons/icon.svg",
       "sizes": "any",
       "type": "image/svg+xml",
       "purpose": "any maskable"
