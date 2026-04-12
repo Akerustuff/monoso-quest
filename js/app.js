@@ -38,6 +38,17 @@
     document.getElementById('player-name').textContent = player.emoji + ' ' + player.name;
   }
 
+  function toggleMenuJugador() {
+    document.getElementById('menu-jugador-dropdown').classList.toggle('visible');
+  }
+
+  document.addEventListener('click', function(e) {
+    const wrap = document.querySelector('.menu-jugador-wrap');
+    if (wrap && !wrap.contains(e.target)) {
+      document.getElementById('menu-jugador-dropdown').classList.remove('visible');
+    }
+  });
+
   // Arranque: se ejecuta cuando carga la app
   // La navegación inicial la maneja auth.js después de verificar el login
   window.onload = function () {

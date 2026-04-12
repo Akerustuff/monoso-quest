@@ -184,6 +184,99 @@ body {
     margin-bottom: 32px;
 }
 
+.menu-logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.menu-logo-img {
+    width: 36px;
+    height: 36px;
+}
+
+.menu-logo-texto {
+    font-family: var(--font-title);
+    font-size: 1rem;
+    color: var(--gold);
+    letter-spacing: 0.08em;
+}
+
+.menu-jugador-wrap {
+    position: relative;
+}
+
+.menu-jugador-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--surface);
+    border: 1px solid var(--border2);
+    color: var(--text);
+    font-family: var(--font-ui);
+    font-size: 0.95rem;
+    font-weight: 600;
+    padding: 7px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: border-color 0.2s;
+}
+
+.menu-jugador-btn:hover {
+    border-color: var(--gold);
+}
+
+.menu-jugador-dropdown {
+    display: none;
+    position: absolute;
+    top: calc(100% + 6px);
+    right: 0;
+    background: var(--surface2);
+    border: 1px solid var(--border2);
+    border-radius: 10px;
+    overflow: hidden;
+    min-width: 180px;
+    z-index: 50;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+}
+
+.menu-jugador-dropdown.visible {
+    display: block;
+}
+
+.menu-dropdown-item {
+    display: block;
+    width: 100%;
+    padding: 11px 16px;
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid var(--border);
+    color: var(--text);
+    font-family: var(--font-ui);
+    font-size: 0.9rem;
+    font-weight: 500;
+    text-align: left;
+    cursor: pointer;
+    transition: background 0.15s;
+}
+
+.menu-dropdown-item:last-child {
+    border-bottom: none;
+}
+
+.menu-dropdown-item:hover:not(:disabled) {
+    background: var(--surface);
+}
+
+.menu-dropdown-deshabilitado {
+    color: var(--text3);
+    cursor: default;
+}
+
+.menu-dropdown-peligro {
+    color: #c96060;
+}
+
 .menu-options {
     display: flex;
     flex-direction: column;
@@ -207,18 +300,6 @@ body {
     transition: all 0.2s;
 }
 
-.menu-header button {
-      background: transparent;
-      border: 1px solid var(--border2);
-      color: var(--text2);
-      font-family: var(--font-ui);
-      font-size: 0.8rem;
-      letter-spacing: 1px;
-      padding: 6px 12px;
-      border-radius: 6px;
-      cursor: pointer;
-      transition: all 0.2s;
-  }
 
 /* ── Misiones ── */
 
@@ -757,6 +838,10 @@ body {
       display: flex;
       align-items: center;
       padding: 1rem;
+      position: sticky;
+      top: 0;
+      background-color: var(--bg);
+      z-index: 10;
       gap: 1rem;
       flex-shrink: 0;
   }
@@ -850,6 +935,16 @@ body {
 
   .prov-fila {
       border-bottom: 1px solid rgba(30, 45, 61, 0.6);
+  }
+
+  .prov-fila--stock-bajo {
+      background-color: rgba(180, 130, 20, 0.12);
+      border-bottom-color: rgba(180, 130, 20, 0.3);
+  }
+
+  .prov-fila--sin-stock {
+      background-color: rgba(160, 40, 40, 0.15);
+      border-bottom-color: rgba(160, 40, 40, 0.35);
   }
 
   .prov-celda {

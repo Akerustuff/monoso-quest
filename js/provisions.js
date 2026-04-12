@@ -25,7 +25,7 @@ function renderizarProvisiones() {
       let html = '';
 
       datos.categorias.forEach(cat => {
-          const items = datos.items.filter(item => item.categoria === cat.id);
+          const items = datos.items.filter(item => item.categoria === cat.id).sort((a, b) => a.nombre.localeCompare(b.nombre, 'es'));
 
           html += `
               <div class="prov-cat-header" data-cat-id="${cat.id}">                                                                                                                                                                    
@@ -48,7 +48,7 @@ function renderizarProvisiones() {
                       </thead>
                       <tbody>
                           ${items.map(item => `
-                              <tr class="prov-fila">
+                              <tr class="prov-fila${item.cantidad === 0 ? ' prov-fila--sin-stock' : item.cantidad === 1 ? ' prov-fila--stock-bajo' : ''}">
                                   <td class="prov-celda" onclick="abrirModalEditar('${item.id}')">${item.nombre}</td>
                                   <td class="prov-celda-cantidad">
                                       <div class="prov-cantidad-wrap">
