@@ -191,13 +191,14 @@ function renderizarMisiones() {
 
     if (card.classList.contains('done')) {
         estado[id] = true;
+        guardarEstado(key, estado);
         sumarPuntos(puntos);
         mostrarToastXP(puntos);
     } else {
         delete estado[id];
+        guardarEstado(key, estado);
         sumarPuntos(-puntos);
     }
-    guardarEstado(key, estado);
    
     if (card.classList.contains('subtarea-card')) {
       actualizarGrupo(card);
