@@ -11,6 +11,10 @@ function getKeyDiarias(){
     return 'estado_diarias_' + fechaHoy();
 }
 
+function getKeyDiariasPersonales() {
+    return 'estado_diarias_pers_' + Players.current + '_' + fechaHoy();
+}
+
 function getKeySemanales(){
     const hoy = new Date();
     const diasDesdeMonday = (hoy.getDay() + 6) % 7;
@@ -21,6 +25,10 @@ function getKeySemanales(){
 
 function getKeyMensuales() {
     return 'estado_mensuales_' + fechaHoy().slice(0, 7);
+}
+
+function getKeyMensualesPersonales() {
+    return 'estado_mensuales_pers_' + Players.current + '_' + fechaHoy().slice(0, 7);
 }
 
 function cargarEstado(key){
@@ -116,17 +124,19 @@ function renderizarMisiones() {
     let html = '';
 
     if (tabActual === 'diarias') {
-        const key = getKeyDiarias();
-        const estado = cargarEstado(key);    
+        const keyPersonales = getKeyDiariasPersonales();
+        const keyHogar = getKeyDiarias();
+        const estadoPersonales = cargarEstado(keyPersonales);
+        const estadoHogar = cargarEstado(keyHogar);
 
-        html+= '<h3>Personales</h3>';
+        html += '<h3>Personales</h3>';
         MISIONES_DIARIAS_PERSONALES.forEach(mision => {
-            html += buildMisionCard(mision, key, estado);
+            html += buildMisionCard(mision, keyPersonales, estadoPersonales);
         });
 
         html += '<h3>Hogar</h3>';
         MISIONES_DIARIAS_HOGAR.forEach(mision => {
-            html += buildMisionCard(mision, key, estado);
+            html += buildMisionCard(mision, keyHogar, estadoHogar);
         });
     }
 
@@ -149,23 +159,27 @@ function renderizarMisiones() {
     }
 
     if (tabActual === 'mensuales') {
-        const key = getKeyMensuales();
-        const estado = cargarEstado(key);
+        const keyHogar = getKeyMensuales();
+        const keyPersonales = getKeyMensualesPersonales();
+        const estadoHogar = cargarEstado(keyHogar);
+        const estadoPersonales = cargarEstado(keyPersonales);
         const jugador = Players.current;
-    
+
         html += '<h3>Hogar</h3>';
-        MISIONES_MENSUALES 
+        MISIONES_MENSUALES
             .filter(m => m.jugador === null)
             .forEach(mision => {
-                html += buildMisionCard(mision, key, estado);
+                html += buildMisionCard(mision, keyHogar, estadoHogar);
             });
 
         html += '<h3>Personales</h3>';
         MISIONES_MENSUALES
             .filter(m => m.jugador === jugador)
             .forEach(mision => {
-                html += buildMisionCard(mision, key, estado);
+                html += buildMisionCard(mision, keyPersonales, estadoPersonales);
             });
+
+        html += '<button class="btn-reset-misiones" onclick="confirmarResetMisiones()">↺ Reiniciar misiones y puntos</button>';
     }
 
     contenedor.innerHTML = html;
@@ -264,6 +278,30 @@ console.log('hechas:', hechas, 'total:', total, 'completo:', completo);
 
   function cerrarModalBuff() {
     document.getElementById('modal-buff').classList.add('hidden');
+  }
+
+  function confirmarResetMisiones() {
+    document.getElementById('modal-reset-misiones').classList.remove('hidden');
+  }
+
+  function cerrarModalResetMisiones() {
+    document.getElementById('modal-reset-misiones').classList.add('hidden');
+  }
+
+  function ejecutarResetMisiones() {
+    Storage.save(getKeyDiarias(), {});
+    Storage.save('estado_diarias_pers_mono_' + fechaHoy(), {});
+    Storage.save('estado_diarias_pers_oso_' + fechaHoy(), {});
+    Storage.save(getKeySemanales(), {});
+    Storage.save(getKeyMensuales(), {});
+    Storage.save('estado_mensuales_pers_mono_' + fechaHoy().slice(0, 7), {});
+    Storage.save('estado_mensuales_pers_oso_' + fechaHoy().slice(0, 7), {});
+    Storage.save('puntos_mono', 0);
+    Storage.save('puntos_oso', 0);
+    Storage.save('xp_mono', 0);
+    Storage.save('xp_oso', 0);
+    cerrarModalResetMisiones();
+    renderizarMisiones();
   }
   
    let toastTimer = null;

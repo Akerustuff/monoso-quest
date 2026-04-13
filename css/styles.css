@@ -465,6 +465,27 @@ body {
       color: #000;
   }
 
+  .btn-reset-misiones {
+      display: block;
+      width: 100%;
+      margin-top: 24px;
+      padding: 12px;
+      background: transparent;
+      border: 1px solid rgba(160, 40, 40, 0.4);
+      border-radius: 10px;
+      color: #c96060;
+      font-family: var(--font-ui);
+      font-size: 0.85rem;
+      font-weight: 600;
+      letter-spacing: 1px;
+      cursor: pointer;
+      transition: background 0.2s;
+  }
+
+  .btn-reset-misiones:hover {
+      background: rgba(160, 40, 40, 0.1);
+  }
+
   /* ── Semanales grupales ── */
 
   .grupo-card {

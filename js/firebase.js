@@ -17,6 +17,7 @@ const docEstado      = db.collection('cacos-quest').doc('estado');
 const docProvisiones = db.collection('cacos-quest').doc('provisiones');
 
 let _actualizandoDesdeFirebase = false;
+const _escriturasPendientes = new Set();
 
 // ── Interceptar Storage.save ───────────────────────────────────────────────
 const _guardarOriginal = Storage.save.bind(Storage);
@@ -24,12 +25,16 @@ Storage.save = function(key, value) {
   _guardarOriginal(key, value);
   if (_actualizandoDesdeFirebase) return;
 
+  _escriturasPendientes.add(key);
+
   if (key === 'provisiones') {
     docProvisiones.set(value, { merge: true })
-      .catch(err => console.warn('[Firebase] Error al guardar provisiones:', err));
+      .then(() => _escriturasPendientes.delete(key))
+      .catch(err => { _escriturasPendientes.delete(key); console.warn('[Firebase] Error al guardar provisiones:', err); });
   } else {
     docEstado.set({ [key]: value }, { merge: true })
-      .catch(err => console.warn('[Firebase] Error al guardar "' + key + '":', err));
+      .then(() => _escriturasPendientes.delete(key))
+      .catch(err => { _escriturasPendientes.delete(key); console.warn('[Firebase] Error al guardar "' + key + '":', err); });
   }
 };
 
@@ -44,6 +49,7 @@ function configurarListenerFirebase() {
     let huboCambios = false;
 
     Object.keys(datos).forEach(function(key) {
+      if (_escriturasPendientes.has(key)) return;
       const valorLocal  = localStorage.getItem(key);
       const valorRemoto = JSON.stringify(datos[key]);
       if (valorLocal !== valorRemoto) {
