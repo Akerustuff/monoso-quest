@@ -1,6 +1,7 @@
 // js/missions.js
 
 let tabActual = 'diarias';
+let gruposAbiertos = new Set();
 
  function fechaHoy(){
     return new Date().toISOString().slice(0,10); //Crea una fecha, la transforma en String y regresa solo los 10 primeros caracteres "2026-04-01"
@@ -87,8 +88,9 @@ function buildGrupoCard(grupo, key, estado) {
           `;
     }).join('');
     return `
-          <div class="grupo-card ${completo ? 'grupo-completo' : ''}" 
-                data-buff="${grupo.buff}" 
+          <div class="grupo-card ${completo ? 'grupo-completo' : ''}"
+                data-grupo-id="${grupo.id}"
+                data-buff="${grupo.buff}"
                 data-puntos-buff="${grupo.puntosBuffCompleto}">
                 <div class="grupo-header" onclick="toggleGrupo(this.closest('.grupo-card'))">
                     <div class="grupo-info">
@@ -167,6 +169,12 @@ function renderizarMisiones() {
     }
 
     contenedor.innerHTML = html;
+
+    gruposAbiertos.forEach(function(grupoId) {
+        const card = contenedor.querySelector(`[data-grupo-id="${grupoId}"]`);
+        if (card) card.classList.add('abierto');
+    });
+
     actualizarDisplayPuntos();
   }
 
@@ -199,6 +207,12 @@ function renderizarMisiones() {
 
  function toggleGrupo(grupoCard) {
       grupoCard.classList.toggle('abierto');
+      const grupoId = grupoCard.dataset.grupoId;
+      if (grupoCard.classList.contains('abierto')) {
+          gruposAbiertos.add(grupoId);
+      } else {
+          gruposAbiertos.delete(grupoId);
+      }
   }
 
   function actualizarGrupo(subtareaCard) {

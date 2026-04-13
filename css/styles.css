@@ -301,6 +301,13 @@ body {
 }
 
 
+#screen-missions, #screen-cycles {
+    display: flex;
+    flex-direction: column;
+    padding: 0;
+    overflow-y: auto;
+}
+
 /* ── Misiones ── */
 
 .missions-header {
@@ -308,6 +315,10 @@ body {
       align-items: center;
       padding: 1rem;
       gap: 1rem;
+      position: sticky;
+      top: 0;
+      background-color: var(--bg);
+      z-index: 10;
   }
 
   .missions-header .screen-title {
@@ -662,6 +673,10 @@ body {
       padding: 1rem;
       gap: 1rem;
       margin-bottom: 1rem;
+      position: sticky;
+      top: 0;
+      background-color: var(--bg);
+      z-index: 10;
   }
 
   .cycles-header .screen-title {
@@ -1203,6 +1218,10 @@ body {
       align-items: center;
       justify-content: space-between;
       gap: 8px;
+      position: sticky;
+      top: 0;
+      background-color: var(--bg);
+      z-index: 10;
   }
 
   .bp-nivel-badge {
