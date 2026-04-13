@@ -55,6 +55,15 @@ body {
     letter-spacing: 0.1em;
 }
 
+.login-version {
+    font-family: var(--font-ui);
+    font-size: 0.7rem;
+    color: var(--text3);
+    text-align: center;
+    letter-spacing: 2px;
+    margin-bottom: 1.5rem;
+}
+
 .login-subtitulo {
     font-family: var(--font-ui);
     color: var(--text2);
