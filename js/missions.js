@@ -5,13 +5,8 @@ let gruposAbiertos = new Set();
 
  function fechaHoy(){
     const ahora = new Date();
-    if (ahora.getHours() < 5) {
-        ahora.setDate(ahora.getDate() - 1);
-    }
-    const year  = ahora.getFullYear();
-    const month = String(ahora.getMonth() + 1).padStart(2, '0');
-    const day   = String(ahora.getDate()).padStart(2, '0');
-    return `${year}-${month}-${day}`;
+    ahora.setHours(ahora.getHours() - 5);
+    return ahora.toISOString().slice(0, 10);
   }
 
 function getKeyDiarias(){
