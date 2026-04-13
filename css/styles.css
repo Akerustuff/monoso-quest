@@ -202,6 +202,14 @@ body {
     letter-spacing: 0.08em;
 }
 
+.menu-logo-version {
+    font-family: var(--font-ui);
+    font-size: 0.65rem;
+    color: var(--text3);
+    align-self: flex-end;
+    margin-bottom: 1px;
+}
+
 .menu-jugador-wrap {
     position: relative;
 }
