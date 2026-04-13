@@ -78,7 +78,9 @@ function renderizarCiclos() {
     document.getElementById('ciclo-puntos-mono-valor').textContent = '🐵 ' + puntosMono;
     document.getElementById('ciclo-puntos-oso-valor').textContent = '🐻 ' + puntosOso;
     document.getElementById('ciclo-puntos-valor').textContent = '💰 ' + puntosConjuntos;
-    document.getElementById('ciclo-nivel-valor').textContent = nivelActual;
+    document.getElementById('ciclo-nivel-badge').textContent = nivelActual === 0
+        ? 'Sin nivel'
+        : NIVELES_BATTLE_PASS[nivelActual - 1].icono + ' ' + NIVELES_BATTLE_PASS[nivelActual - 1].nombre;
     
     let html = '';
       if (registro.length === 0) {

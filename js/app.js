@@ -20,6 +20,9 @@
     if (screen === 'battlepass') {
       renderizarBattlepass();
     }
+    if (screen === 'registro') {                                                                                                                                                                            
+      cambiarTabRegistro('completadas');
+  }
   }
 
   function selectPlayer(playerId) {
@@ -53,5 +56,11 @@
   // La navegación inicial la maneja auth.js después de verificar el login
   window.onload = function () {
     verificarCambioMes();
+    document.querySelectorAll('.screen').forEach(function(screen) {
+      const footer = document.createElement('div');
+      footer.className = 'footer-global';
+      footer.textContent = 'Hecho por el 🐻 con amor ♥️';
+      screen.appendChild(footer);
+    });
   };
 

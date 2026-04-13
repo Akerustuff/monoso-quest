@@ -5,8 +5,11 @@ let gruposAbiertos = new Set();
 
  function fechaHoy(){
     const ahora = new Date();
-    ahora.setHours(ahora.getHours() - 5);
-    return ahora.toISOString().slice(0, 10);
+    ahora.setTime(ahora.getTime() - 5 * 60 * 60 * 1000);
+    const year = ahora.getFullYear();
+    const month = String(ahora.getMonth() + 1).padStart(2, '0');
+    const day = String(ahora.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
   }
 
 function getKeyDiarias(){
@@ -67,7 +70,7 @@ function buildMisionCard(mision, key, estado) {
     const done = estado[mision.id] ? 'done' : '';
     const checkmark = estado[mision.id] ? '✓' : '';
     return `
-        <div class="mission-card ${done}" data-id=${mision.id} data-key="${key}" data-puntos="${mision.puntos}">
+        <div class="mission-card ${done}" data-id=${mision.id} data-key="${key}" data-puntos="${mision.puntos}" data-compartida="${mision.compartida || false}">
             <div class="mission-info">
     <span class="mission-nombre">${mision.nombre}</span>
                   <span class="mission-desc">${mision.desc}</span>
@@ -204,18 +207,31 @@ function renderizarMisiones() {
 
     const estado = cargarEstado(key);
     const puntos = parseInt(card.dataset.puntos);
+    const esCompartida = card.dataset.compartida === 'true';
 
     const esSubtarea = card.classList.contains('subtarea-card');
+    const esHogarKey = (key.startsWith('estado_diarias_') && !key.includes('_pers_')) ||                                                                                                                    
+                     (key.startsWith('estado_mensuales_') && !key.includes('_pers_'));
+    const esSemanalesNoCompartida = key.startsWith('estado_semanales_') && card.dataset.compartida !== 'true';                                                                                              
+    estado[id] = (esSubtarea || esHogarKey || esSemanalesNoCompartida) ? Players.current : true;
 
     if (card.classList.contains('done')) {
-        estado[id] = esSubtarea ? Players.current : true;
+        estado[id] = (esSubtarea || esHogarKey || esSemanalesNoCompartida) ? Players.current : true;
         guardarEstado(key, estado);
-        sumarPuntos(puntos);
+        if (esCompartida) {
+            sumarPuntosAmbosJugadores(puntos);
+        }else {
+            sumarPuntos(puntos);
+        } 
         mostrarToastXP(puntos);
     } else {
         delete estado[id];
         guardarEstado(key, estado);
-        sumarPuntos(-puntos);
+        if (esCompartida) {
+            sumarPuntosAmbosJugadores(-puntos);
+        }else {
+            sumarPuntos(-puntos);
+        }
     }
 
     if (esSubtarea) {
@@ -346,7 +362,8 @@ function renderizarMisiones() {
 
   function mostrarToastXP(puntos) {
     const toast = document.getElementById('toast-xp');
-    document.getElementById('toast-xp-texto').textContent = '+' + puntos + ' Nenurios';
+    const prefijo = puntos >= 0 ? '+' : '';
+    document.getElementById('toast-xp-texto').textContent = prefijo + puntos + ' Nenurios';
     toast.classList.remove('hidden');
 
     clearTimeout(toastTimer);

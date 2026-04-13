@@ -737,13 +737,18 @@ body {
   .ciclo-actual-fecha {
       font-family: var(--font-ui);
       font-size: 0.78rem;
-      color: var(--text3);
+      color: var(--text2);
   }
 
   .ciclo-puntos-total {
       display: flex;
       flex-direction: column;
-      align-items: center;
+      align-items: flex-start;
+      gap: 2px;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 8px 12px;
       line-height: 1.2;
   }
 
@@ -752,11 +757,13 @@ body {
       color: var(--text3);
   }
 
+
   .ciclo-actual-stats {
-      display: flex;
-      gap: 12px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
       font-family: var(--font-ui);
-      font-size: 0.85rem;
+      font-size: 0.9rem;
       color: var(--text2);
   }
 
@@ -797,16 +804,18 @@ body {
       background: var(--surface);
       border: 1px solid var(--border);
       border-radius: 10px;
-      padding: 12px;
+      padding: 14px;
       display: flex;
       flex-direction: column;
-      gap: 8px;
+      gap: 10px;
   }
 
   .ciclo-card-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--border);
   }
 
   .ciclo-card-numero {
@@ -817,17 +826,24 @@ body {
 
   .ciclo-card-periodo {
       font-family: var(--font-ui);
-      font-size: 0.72rem;
-      color: var(--text3);
+      font-size: 0.78rem;
+      color: var(--text2);
   }
 
   .ciclo-card-stats {
-      display: flex;
-      gap: 12px;
-      flex-wrap: wrap;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
       font-family: var(--font-ui);
-      font-size: 0.82rem;
+      font-size: 0.85rem;
       color: var(--text2);
+  }
+
+  .ciclo-card-stats span {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 6px 10px;
   }
 
   .ciclos-vacio {
@@ -1492,4 +1508,95 @@ body {
       flex-direction: column;
       align-items: center;
       gap: 2px;
+  }
+
+  /* ── REGISTRO ─────────────────────────────── */                                                                                                                                                       
+  .registro-fecha-grupo {                                                                                                                                                                                 
+      margin: 0 1rem 1.2rem;                                                                                                                                                                              
+  }
+
+  .registro-fecha-titulo {
+      font-family: var(--font-title);
+      font-size: 0.85rem;
+      color: var(--gold);
+      letter-spacing: 1px;
+      padding: 6px 0 6px 4px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 6px;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+  }
+
+  .registro-mision-card {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 10px;
+      background: var(--surface);
+      border-radius: 8px;
+      margin-bottom: 8px;
+      font-family: var(--font-ui);
+  }
+
+  .registro-mision-nombre {
+      font-size: 0.82rem;
+      color: var(--text2);
+  }
+
+  .registro-mision-card.no-completada {
+      opacity: 0.6;
+      border-left: 2px solid #e05252;
+  }
+
+  .registro-mision-info {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+  }
+
+  .registro-mision-grupo {
+      font-size: 0.72rem;
+      color: var(--text3);
+  }
+
+  .registro-mision-acciones {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-shrink: 0;
+  }
+
+  .registro-mision-puntos {
+      font-size: 0.78rem;
+      color: var(--gold);
+      white-space: nowrap;
+      margin-left: 8px;
+  }
+
+  .registro-fecha-chevron {
+      font-size: 1.2rem;
+      color: var(--gold);
+      transition: transform 0.2s;
+  }
+
+  .registro-fecha-grupo.abierto .registro-fecha-chevron {
+      transform: rotate(90deg);
+  }
+
+  .registro-fecha-grupo .registro-mision-card {
+      display: none;
+  }
+
+  .registro-fecha-grupo.abierto .registro-mision-card {
+      display: flex;
+  }
+
+  .footer-global {
+      text-align: center;
+      padding: 10px 16px;
+      font-family: var(--font-ui);
+      font-size: 0.8rem;
+      color: var(--text3);
   }

@@ -18,7 +18,7 @@ const MISIONES_DIARIAS_HOGAR = [
     { id: 'vasos_alacena', nombre: 'El Sereno del Cristal', desc: 'Dejar todos los vasos en desuso en la alacena', puntos: 2 },
     { id: 'limpiar_mesones', nombre: 'Restauración de los Mesones', desc: 'Limpiar los mesones de la cocina', puntos: 5 },
     { id: 'ropa_del_suelo', nombre: 'El Suelo es Lava', desc: 'No dejar ropa en el suelo al final del día', puntos: 2 },
-    { id: 'guardar_almuerzo', nombre: 'Preparar provicsiones monunas', desc: 'Guardar el almuerzo de mono para el día siguiente', puntos: 1 }
+    { id: 'guardar_almuerzo', nombre: 'Preparar provisiones monunas', desc: 'Guardar el almuerzo de mono para el día siguiente', puntos: 1 }
 
 ]
 
@@ -117,9 +117,9 @@ const MISIONES_SEMANALES_SUELTAS = [
       { id: 'limpiar_recibidor', nombre: 'Despeje de la Senda del Viajero', desc: 'Limpiar recibidor y pasillo', puntos: 30, jugador: null },
       { id: 'limpiar_logia', nombre: 'Expedición a la Logia Olvidada', desc: 'Limpiar la logia', puntos: 30, jugador: null },
       { id: 'limpiar_terraza', nombre: 'Conquista de la Atalaya Externa', desc: 'Limpiar la terraza', puntos: 30, jugador: null },
-      { id: 'planificar_comidas', nombre: 'Estrategia de Suministros del Reino', desc: 'Planificar comidas de la semana', puntos: 30, jugador: null },
-      { id: 'actualizar_compras', nombre: 'Censo de Provisiones Necesarias', desc: 'Actualizar lista de compras', puntos: 30, jugador: null },
-      { id: 'hacer_mercado', nombre: 'Incursión en el Mercado de los Tesoros', desc: 'Hacer mercado el día de oferta', puntos: 40, jugador: null },
+      { id: 'planificar_comidas', nombre: 'Estrategia de Suministros del Reino', desc: 'Planificar comidas de la semana', puntos: 30, jugador: null, compartida: true },
+      { id: 'actualizar_compras', nombre: 'Censo de Provisiones Necesarias', desc: 'Actualizar lista de compras', puntos: 30, jugador: null, compartida: true },
+      { id: 'hacer_mercado', nombre: 'Incursión en el Mercado de los Tesoros', desc: 'Hacer mercado el día de oferta', puntos: 40, jugador: null, compartida: true },
       { id: 'cocinar_almuerzo_1', nombre: 'Gran Alquimia del Banquete Fase I', desc: 'Cocinar almuerzo 1', puntos: 25, jugador: null },
       { id: 'cocinar_almuerzo_2', nombre: 'Gran Alquimia del Banquete Fase II', desc: 'Cocinar almuerzo 2', puntos: 25, jugador: null },
       { id: 'cocinar_almuerzo_3', nombre: 'Gran Alquimia del Banquete Fase III', desc: 'Cocinar almuerzo 3', puntos: 25, jugador: null },

@@ -51,7 +51,7 @@
       <div class="menu-jugador-wrap">
         <button class="menu-jugador-btn" id="player-name" onclick="toggleMenuJugador()"></button>
         <div class="menu-jugador-dropdown" id="menu-jugador-dropdown">
-          <button class="menu-dropdown-item menu-dropdown-deshabilitado" disabled>📜 Registro</button>
+          <button class="menu-dropdown-item" onclick="navigate('registro')">📜 Registro</button>
           <button class="menu-dropdown-item" onclick="changePlayer()">🔄 Cambiar jugador</button>
           <button class="menu-dropdown-item menu-dropdown-peligro" onclick="cerrarSesion()">🚪 Cerrar sesión</button>
         </div>
@@ -148,13 +148,28 @@
         <span id="ciclo-puntos-mono" class="ciclo-puntos-total"><span id="ciclo-puntos-mono-valor">🐵 0</span><span class="ciclo-puntos-label">Nenurios</span></span>
         <span id="ciclo-puntos-oso" class="ciclo-puntos-total"><span id="ciclo-puntos-oso-valor">🐻 0</span><span class="ciclo-puntos-label">Nenurios</span></span>
         <span id="ciclo-puntos" class="ciclo-puntos-total"><span id="ciclo-puntos-valor">💰 0</span><span class="ciclo-puntos-label">Nenurios Totales</span></span>
-        <span id="ciclo-nivel" class="ciclo-puntos-total"><span id="ciclo-nivel-valor">0</span><span class="ciclo-puntos-label">Nivel</span></span>
+        <span class="ciclo-puntos-total"><span id="ciclo-nivel-badge" class="bp-nivel-badge">Sin nivel</span></span>
       </div>
       <button class="finalizar-ciclo-btn" onclick="confirmarFinalizarCiclo()">Finalizar Ciclo</button>
     </div>
     <h3 class="ciclos-titulo-registro">Historial</h3>
     <div id="ciclos-registro"></div>
   </div>
+
+  <!-- PANTALLA: Registro -->
+  <div id="screen-registro" class="screen hidden">
+    <div class="missions-header">
+      <button class="back-btn" onclick="navigate('menu')">‹</button>
+      <h2 class="screen-title">Registro</h2>
+    </div>
+    <div class="missions-tabs">
+      <button class="tab-btn active" onclick="cambiarTabRegistro('completadas')">Completadas</button>
+      <button class="tab-btn" onclick="cambiarTabRegistro('no_completadas')">No Completadas</button>
+    </div>
+    <div id="registro-container"></div>
+  </div>
+
+  
 
   <!-- Firebase -->
   <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-app-compat.js"></script>
@@ -170,8 +185,10 @@
   <script src="js/cycles.js"></script>
   <script src="js/provisions.js"></script>
   <script src="js/battlepass.js"></script>
+  <script src="js/registro.js"></script>
   <script src="js/firebase.js"></script>
   <script src="js/auth.js"></script>
+  
   <script>
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('sw.js');
