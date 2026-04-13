@@ -4,7 +4,14 @@ let tabActual = 'diarias';
 let gruposAbiertos = new Set();
 
  function fechaHoy(){
-    return new Date().toISOString().slice(0,10); //Crea una fecha, la transforma en String y regresa solo los 10 primeros caracteres "2026-04-01"
+    const ahora = new Date();
+    if (ahora.getHours() < 5) {
+        ahora.setDate(ahora.getDate() - 1);
+    }
+    const year  = ahora.getFullYear();
+    const month = String(ahora.getMonth() + 1).padStart(2, '0');
+    const day   = String(ahora.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
   }
 
 function getKeyDiarias(){
