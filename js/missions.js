@@ -203,8 +203,10 @@ function renderizarMisiones() {
     const estado = cargarEstado(key);
     const puntos = parseInt(card.dataset.puntos);
 
+    const esSubtarea = card.classList.contains('subtarea-card');
+
     if (card.classList.contains('done')) {
-        estado[id] = true;
+        estado[id] = esSubtarea ? Players.current : true;
         guardarEstado(key, estado);
         sumarPuntos(puntos);
         mostrarToastXP(puntos);
@@ -213,8 +215,8 @@ function renderizarMisiones() {
         guardarEstado(key, estado);
         sumarPuntos(-puntos);
     }
-   
-    if (card.classList.contains('subtarea-card')) {
+
+    if (esSubtarea) {
       actualizarGrupo(card);
     }
     actualizarDisplayPuntos();
@@ -234,7 +236,10 @@ function renderizarMisiones() {
       const grupoCard = subtareaCard.closest('.grupo-card');
       if (!grupoCard) return;
 
-      const total = grupoCard.querySelectorAll('.subtarea-card').length;
+      const key = subtareaCard.dataset.key;
+      const estado = cargarEstado(key);
+      const subtareaCards = grupoCard.querySelectorAll('.subtarea-card');
+      const total = subtareaCards.length;
       const hechas = grupoCard.querySelectorAll('.subtarea-card.done').length;
 
       grupoCard.querySelector('.grupo-progreso').textContent = `${hechas}/${total}`;
@@ -243,12 +248,22 @@ function renderizarMisiones() {
       grupoCard.classList.toggle('grupo-completo', completo);
       grupoCard.querySelector('.grupo-buff').classList.toggle('buff-earned', completo);
 
-      
-console.log('hechas:', hechas, 'total:', total, 'completo:', completo);
       if (completo) {
-        const buff = grupoCard.dataset.Buff;
+        const jugadoresParticipantes = new Set();
+        subtareaCards.forEach(function(card) {
+            const jugador = estado[card.dataset.id];
+            if (jugador) jugadoresParticipantes.add(jugador);
+        });
+
+        const buff = grupoCard.dataset.buff;
         const puntosBuff = parseInt(grupoCard.dataset.puntosBuff);
-        sumarPuntos(puntosBuff);
+
+        if (jugadoresParticipantes.size > 1) {
+            sumarPuntosAmbosJugadores(puntosBuff);
+        } else {
+            const jugador = [...jugadoresParticipantes][0] || Players.current;
+            sumarPuntosJugador(jugador, puntosBuff);
+        }
         mostrarModalBuff(buff, puntosBuff);
       }
   }
@@ -263,6 +278,19 @@ console.log('hechas:', hechas, 'total:', total, 'completo:', completo);
 
     const xpActual = Storage.load('xp_' + Players.current) || 0;
     Storage.save('xp_' + Players.current, xpActual + cantidad);
+  }
+
+  function sumarPuntosJugador(jugador, cantidad) {
+    const puntos = Storage.load('puntos_' + jugador) || 0;
+    Storage.save('puntos_' + jugador, puntos + cantidad);
+    const xp = Storage.load('xp_' + jugador) || 0;
+    Storage.save('xp_' + jugador, xp + cantidad);
+  }
+
+  function sumarPuntosAmbosJugadores(total) {
+    const mitad = Math.ceil(total / 2);
+    sumarPuntosJugador('mono', mitad);
+    sumarPuntosJugador('oso', mitad);
   }
 
   function actualizarDisplayPuntos() {
