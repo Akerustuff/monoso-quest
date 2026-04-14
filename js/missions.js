@@ -21,11 +21,14 @@ function getKeyDiariasPersonales() {
 }
 
 function getKeySemanales(){
-    const hoy = new Date();
-    const diasDesdeMonday = (hoy.getDay() + 6) % 7;
-    const lunes = new Date(hoy);
-    lunes.setDate(hoy.getDate() - diasDesdeMonday);
-    return 'estado_semanales_' + lunes.toISOString().slice(0, 10);
+    const ahora = new Date();
+    ahora.setTime(ahora.getTime() - 5 * 60 * 60 * 1000);
+    const diasDesdeMonday = (ahora.getDay() + 6) % 7;
+    ahora.setDate(ahora.getDate() - diasDesdeMonday);
+    const year = ahora.getFullYear();
+    const month = String(ahora.getMonth() + 1).padStart(2, '0');
+    const day = String(ahora.getDate()).padStart(2, '0');
+    return 'estado_semanales_' + year + '-' + month + '-' + day;
 }
 
 function getKeyMensuales() {

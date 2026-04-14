@@ -64,15 +64,13 @@ function fechaAyer() {
 }
 
 function getKeySemanaAnterior() {
-    const hoy = new Date();
-    const diasDesdeMonday = (hoy.getDay() + 6) % 7;
-    const lunesEstaSemana = new Date(hoy);
-    lunesEstaSemana.setDate(hoy.getDate() - diasDesdeMonday);
-    const lunesSemanaAnterior = new Date(lunesEstaSemana);
-    lunesSemanaAnterior.setDate(lunesEstaSemana.getDate() - 7);
-    const y = lunesSemanaAnterior.getFullYear();
-    const m = String(lunesSemanaAnterior.getMonth() + 1).padStart(2, '0');
-    const d = String(lunesSemanaAnterior.getDate()).padStart(2, '0');
+    const ahora = new Date();
+    ahora.setTime(ahora.getTime() - 5 * 60 * 60 * 1000);
+    const diasDesdeMonday = (ahora.getDay() + 6) % 7;
+    ahora.setDate(ahora.getDate() - diasDesdeMonday - 7);
+    const y = ahora.getFullYear();
+    const m = String(ahora.getMonth() + 1).padStart(2, '0');
+    const d = String(ahora.getDate()).padStart(2, '0');
     return `${y}-${m}-${d}`;
 }
 
