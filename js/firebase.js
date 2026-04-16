@@ -31,7 +31,8 @@ Storage.save = function(key, value) {
     docProvisiones.set(value, { merge: true })
       .then(() => _escriturasPendientes.delete(key))
       .catch(err => { _escriturasPendientes.delete(key); console.warn('[Firebase] Error al guardar provisiones:', err); });
-  } else {
+  } else if (key !== 'session') {
+    // 'session' es local por dispositivo, no se sincroniza con Firebase
     docEstado.set({ [key]: value }, { merge: true })
       .then(() => _escriturasPendientes.delete(key))
       .catch(err => { _escriturasPendientes.delete(key); console.warn('[Firebase] Error al guardar "' + key + '":', err); });
@@ -49,6 +50,7 @@ function configurarListenerFirebase() {
     let huboCambios = false;
 
     Object.keys(datos).forEach(function(key) {
+      if (key === 'session') return; // 'session' es local por dispositivo, no se sobreescribe desde Firebase
       if (_escriturasPendientes.has(key)) return;
       const valorLocal  = localStorage.getItem(key);
       const valorRemoto = JSON.stringify(datos[key]);
@@ -113,7 +115,8 @@ async function inicializarFirebase() {
       const datosLocales = {};
       for (let i = 0; i < localStorage.length; i++) {
         const key = localStorage.key(i);
-        if (key !== 'provisiones') {
+        if (key !== 'provisiones' && key !== 'session') {
+          // 'session' es local por dispositivo, no se sube a Firebase
           const valor = Storage.load(key);
           if (valor !== null) datosLocales[key] = valor;
         }
