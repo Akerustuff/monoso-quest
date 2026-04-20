@@ -1,6 +1,6 @@
 // sw.js — Service Worker de Cacos Quest
 
-const NOMBRE_CACHE = 'cacos-quest-v2.3';
+const NOMBRE_CACHE = 'cacos-quest-v2.4';
 
 const ARCHIVOS_A_CACHEAR = [
   './',

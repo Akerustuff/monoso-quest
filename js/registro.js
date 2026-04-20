@@ -97,7 +97,8 @@ function buscarMision(id) {
         ...MISIONES_DIARIAS_HOGAR,
         ...MISIONES_SEMANALES_SUELTAS,
         ...MISIONES_SEMANALES_GRUPALES.flatMap(g => g.subtareas),
-        ...MISIONES_MENSUALES
+        ...MISIONES_MENSUALES,
+        ...cargarMisionesCustom()
     ];
     return todas.find(m => m.id === id);
 }
@@ -333,6 +334,35 @@ function obtenerMisionesNoCompletadas() {                                       
       // Sueltas no completadas la semana pasada
       MISIONES_SEMANALES_SUELTAS
           .filter(m => m.jugador === null || m.jugador === jugador)
+          .forEach(mision => {
+              if (!estadoSemanales[mision.id]) {
+                  resultado.push({ id: mision.id, nombre: mision.nombre, puntos: mision.puntos, tipo: 'semanal_suelta', key: keySemanales, compartida: mision.compartida || false });
+              }
+          });
+
+      const misionesCustom = cargarMisionesCustom();
+
+      // Custom diarias personales no completadas ayer
+      misionesCustom
+          .filter(m => m.tipo === 'diaria_personal' && (m.jugador === null || m.jugador === jugador))
+          .forEach(mision => {
+              if (!estadoDiariasPersonales[mision.id]) {
+                  resultado.push({ id: mision.id, nombre: mision.nombre, puntos: mision.puntos, tipo: 'diaria_personal', key: keyDiariasPersonales, compartida: mision.compartida || false });
+              }
+          });
+
+      // Custom diarias hogar no completadas ayer
+      misionesCustom
+          .filter(m => m.tipo === 'diaria_hogar' && (m.jugador === null || m.jugador === jugador))
+          .forEach(mision => {
+              if (!estadoDiariasHogar[mision.id]) {
+                  resultado.push({ id: mision.id, nombre: mision.nombre, puntos: mision.puntos, tipo: 'diaria_hogar', key: keyDiariasHogar, compartida: mision.compartida || false });
+              }
+          });
+
+      // Custom sueltas no completadas la semana pasada
+      misionesCustom
+          .filter(m => m.tipo === 'semanal_suelta' && (m.jugador === null || m.jugador === jugador))
           .forEach(mision => {
               if (!estadoSemanales[mision.id]) {
                   resultado.push({ id: mision.id, nombre: mision.nombre, puntos: mision.puntos, tipo: 'semanal_suelta', key: keySemanales, compartida: mision.compartida || false });
