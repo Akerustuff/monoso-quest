@@ -1283,7 +1283,7 @@ body {
 
   .prov-btn-agregar {
       position: fixed;
-      bottom: 22px;
+      bottom: 80px;
       right: 18px;
       width: 52px;
       height: 52px;
@@ -1442,7 +1442,7 @@ body {
 
   .prov-fab-menu {
       position: fixed;
-      bottom: 82px;
+      bottom: 140px;
       right: 18px;
       flex-direction: column;
       gap: 8px;
