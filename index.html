@@ -17,7 +17,7 @@
   <!-- PANTALLA: Login -->
   <div id="screen-login" class="screen hidden">
     <div class="login-titulo">Cacos Quest</div>
-    <div class="login-version">v2.4</div>
+    <div class="login-version">v2.5</div>
     <div class="login-subtitulo">Inicia sesión para continuar</div>
     <button class="login-btn-google" onclick="loginConGoogle()">
       <span>🔑</span> Entrar con Google
@@ -46,7 +46,7 @@
       <div class="menu-logo">
         <img class="menu-logo-img" src="icons/icon.svg" alt="Cacos Quest">
         <span class="menu-logo-texto">Cacos Quest</span>
-        <span class="menu-logo-version">v2.4</span>
+        <span class="menu-logo-version">v2.5</span>
       </div>
       <div class="menu-jugador-wrap">
         <button class="menu-jugador-btn" onclick="toggleMenuJugador()"></button>
@@ -62,6 +62,7 @@
       <button onclick="navigate('provisions')">🛒 Provisiones</button>
       <button onclick="navigate('battlepass')">🏆 Pase de Viaje</button>
       <button onclick="navigate('cycles')">🌖 Ciclos</button>
+      <button onclick="navigate('presupuesto')">💰 Presupuesto</button>
     </div>
   </div>
 
@@ -72,7 +73,7 @@
       <div class="menu-logo">
         <img class="menu-logo-img" src="icons/icon.svg" alt="Cacos Quest">
         <span class="menu-logo-texto">Cacos Quest</span>
-        <span class="menu-logo-version">v2.4</span>
+        <span class="menu-logo-version">v2.5</span>
       </div>
       <div class="menu-jugador-wrap">
         <button class="menu-jugador-btn" onclick="toggleMenuJugador()"></button>
@@ -197,7 +198,28 @@
     <div id="registro-container"></div>
   </div>
 
-  
+  <!-- PANTALLA: Presupuesto -->
+  <div id="screen-presupuesto" class="screen hidden">
+    <div class="prov-header">
+      <button class="back-btn" onclick="navigate('menu')">‹</button>
+      <div class="prov-header-titulo">💰 Presupuesto</div>
+    </div>
+
+    <div class="presupuesto-resumen" id="presupuesto-resumen">
+      <!-- Resumen total del mes se renderiza aquí con JS -->
+    </div>
+
+    <div class="presupuesto-body" id="presupuesto-body">
+      <!-- Categorías y gastos se renderizan aquí con JS -->
+    </div>
+
+    <div class="prov-fab-menu" id="presupuesto-fab-menu">
+      <button class="prov-fab-opcion" onclick="abrirModalAgregarCategoriaPres()">🗂 Categoría</button>
+      <button class="prov-fab-opcion" onclick="abrirModalAgregarSubcategoriaPres()">🏷 Subcategoría</button>
+      <button class="prov-fab-opcion" onclick="abrirModalAgregarGasto()">💸 Gasto</button>
+    </div>
+    <button class="prov-btn-agregar" onclick="toggleFabMenuPres()">＋</button>
+  </div>
 
   <!-- Firebase -->
   <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-app-compat.js"></script>
@@ -214,6 +236,7 @@
   <script src="js/provisions.js"></script>
   <script src="js/battlepass.js"></script>
   <script src="js/registro.js"></script>
+  <script src="js/presupuesto.js"></script>
   <script src="js/firebase.js"></script>
   <script src="js/auth.js"></script>
   
@@ -405,6 +428,129 @@
               <button class="modal-btn-primario" onclick="confirmarCanjear()">Canjear</button>
           </div>
       </div>
+  </div>
+
+<!-- MODALES: Presupuesto -->
+
+  <!-- Agregar categoría -->
+  <div class="prov-modal-fondo" id="modal-agregar-categoria-pres">
+    <div class="prov-modal">
+      <div class="prov-modal-titulo">Nueva Categoría</div>
+      <div class="prov-campo">
+        <label>Icono (emoji)</label>
+        <input type="text" id="pres-cat-input-icono" placeholder="Ej: 🍕">
+      </div>
+      <div class="prov-campo">
+        <label>Nombre</label>
+        <input type="text" id="pres-cat-input-nombre" placeholder="Ej: Comida">
+      </div>
+      <div class="prov-modal-botones">
+        <button class="prov-modal-btn cancelar" onclick="cerrarModalAgregarCategoriaPres()">Cancelar</button>
+        <button class="prov-modal-btn confirmar" onclick="confirmarAgregarCategoriaPres()">Agregar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Editar / eliminar categoría -->
+  <div class="prov-modal-fondo" id="modal-editar-categoria-pres">
+    <div class="prov-modal">
+      <div class="prov-modal-titulo">Editar Categoría</div>
+      <div class="prov-campo">
+        <label>Icono (emoji)</label>
+        <input type="text" id="pres-edit-cat-icono" placeholder="Ej: 🍕">
+      </div>
+      <div class="prov-campo">
+        <label>Nombre</label>
+        <input type="text" id="pres-edit-cat-nombre" placeholder="Nombre de la categoría...">
+      </div>
+      <div class="prov-modal-botones" id="pres-edit-cat-botones">
+        <button class="prov-modal-btn cancelar" onclick="cerrarModalEditarCategoriaPres()">Cancelar</button>
+        <button class="prov-modal-btn eliminar" onclick="pedirConfirmacionEliminarCategoriaPres()">🗑 Eliminar</button>
+        <button class="prov-modal-btn confirmar" onclick="confirmarEditarCategoriaPres()">Guardar</button>
+      </div>
+      <div class="prov-modal-botones" id="pres-confirmar-eliminar-cat-botones" style="display:none">
+        <button class="prov-modal-btn cancelar" onclick="cancelarEliminarCategoriaPres()">← Cancelar</button>
+        <button class="prov-modal-btn peligro" onclick="confirmarEliminarCategoriaPres()">Sí, eliminar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Agregar gasto -->
+  <div class="prov-modal-fondo" id="modal-agregar-gasto">
+    <div class="prov-modal">
+      <div class="prov-modal-titulo">Nuevo Gasto</div>
+      <div class="prov-campo">
+        <label>Categoría</label>
+        <select id="pres-gasto-select-categoria" onchange="actualizarSubcategoriasGasto()"></select>
+      </div>
+      <div class="prov-campo">
+        <label>Subcategoría</label>
+        <select id="pres-gasto-select-subcategoria"></select>
+      </div>
+      <div class="prov-campo">
+        <label>Título</label>
+        <input type="text" id="pres-gasto-input-titulo" placeholder="Ej: Supermercado Jumbo">
+      </div>
+      <div class="prov-campo">
+        <label>Monto ($)</label>
+        <input type="number" id="pres-gasto-input-monto" placeholder="Ej: 50000" min="1">
+      </div>
+      <div class="prov-modal-botones">
+        <button class="prov-modal-btn cancelar" onclick="cerrarModalAgregarGasto()">Cancelar</button>
+        <button class="prov-modal-btn confirmar" onclick="confirmarAgregarGasto()">Agregar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Agregar subcategoría -->
+  <div class="prov-modal-fondo" id="modal-agregar-subcategoria-pres">
+    <div class="prov-modal">
+      <div class="prov-modal-titulo">Nueva Subcategoría</div>
+      <div class="prov-campo">
+        <label>Categoría</label>
+        <select id="pres-subcat-select-categoria"></select>
+      </div>
+      <div class="prov-campo">
+        <label>Nombre</label>
+        <input type="text" id="pres-subcat-input-nombre" placeholder="Ej: Carne de vacuno">
+      </div>
+      <div class="prov-campo">
+        <label>Presupuesto mensual ($)</label>
+        <input type="number" id="pres-subcat-input-presupuesto" placeholder="Ej: 80000" min="1">
+      </div>
+      <div class="prov-modal-botones">
+        <button class="prov-modal-btn cancelar" onclick="cerrarModalAgregarSubcategoriaPres()">Cancelar</button>
+        <button class="prov-modal-btn confirmar" onclick="confirmarAgregarSubcategoriaPres()">Agregar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Editar subcategoría -->
+  <div class="prov-modal-fondo" id="modal-editar-subcategoria-pres">
+    <div class="prov-modal">
+      <div class="prov-modal-titulo">Editar Subcategoría</div>
+      <div class="prov-campo">
+        <label>Icono (emoji)</label>
+        <input type="text" id="pres-edit-subcat-icono" placeholder="Ej: 🛒">
+      </div>
+      <div class="prov-campo">
+        <label>Nombre</label>
+        <input type="text" id="pres-edit-subcat-nombre" placeholder="Nombre...">
+      </div>
+      <div class="prov-campo">
+        <label>Presupuesto mensual ($)</label>
+        <input type="number" id="pres-edit-subcat-presupuesto" placeholder="Ej: 80000" min="0">
+      </div>
+      <div class="prov-modal-botones" id="pres-edit-subcat-botones">
+        <button class="prov-modal-btn cancelar" onclick="cerrarModalEditarSubcategoriaPres()">Cancelar</button>
+        <button class="prov-modal-btn eliminar" onclick="pedirConfirmacionEliminarSubcategoriaPres()">🗑 Eliminar</button>
+        <button class="prov-modal-btn confirmar" onclick="confirmarEditarSubcategoriaPres()">Guardar</button>
+      </div>
+      <div class="prov-modal-botones" id="pres-confirmar-eliminar-subcat-botones" style="display:none">
+        <button class="prov-modal-btn cancelar" onclick="cancelarEliminarSubcategoriaPres()">← Cancelar</button>
+        <button class="prov-modal-btn peligro" onclick="confirmarEliminarSubcategoriaPres()">Sí, eliminar</button>
+      </div>
+    </div>
   </div>
 
 </body>

@@ -1688,3 +1688,258 @@ body {
       font-size: 0.8rem;
       color: var(--text3);
   }
+
+  /* ── Presupuesto ─────────────────────────────── */
+
+  .presupuesto-resumen {
+    margin: 0 0 1rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1rem;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .presupuesto-resumen::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 2.5px;
+    background: var(--gold);
+  }
+
+  .presupuesto-resumen-titulo {
+    font-family: var(--font-title);
+    color: var(--gold);
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  .presupuesto-resumen-monto {
+    font-family: var(--font-ui);
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--text);
+    margin: 0.25rem 0;
+  }
+
+  .presupuesto-resumen-sub {
+    font-size: 0.82rem;
+    color: var(--text2);
+  }
+
+  .presupuesto-body {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    padding-bottom: 6rem;
+  }
+
+  .pres-categoria {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .pres-categoria::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 2.5px;
+    background: var(--gold);
+  }
+
+  .pres-categoria-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 12px 12px 16px;
+    cursor: pointer;
+  }
+
+  .pres-categoria-icono {
+    font-size: 1.2rem;
+    flex-shrink: 0;
+  }
+
+  .pres-categoria-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+  }
+
+  .pres-categoria-nombre {
+    font-family: var(--font-ui);
+    font-weight: 700;
+    font-size: 1rem;
+    color: var(--text);
+  }
+
+  .pres-categoria-montos {
+    font-family: var(--font-ui);
+    font-size: 0.78rem;
+    color: var(--text2);
+  }
+
+  .pres-categoria-flecha {
+    font-size: 0.85rem;
+    color: var(--text2);
+    transition: transform 0.2s;
+    flex-shrink: 0;
+  }
+
+  .pres-categoria.abierta .pres-categoria-flecha {
+    transform: rotate(180deg);
+  }
+
+  .pres-barra-wrap {
+    padding: 0 12px 10px 16px;
+  }
+
+  .pres-barra-fondo {
+    background: var(--border2);
+    border-radius: 999px;
+    height: 5px;
+    overflow: hidden;
+  }
+
+  .pres-barra-relleno {
+    height: 100%;
+    border-radius: 999px;
+    background: var(--gold);
+    transition: width 0.3s ease;
+  }
+
+  .pres-barra-relleno.peligro {
+    background: #e05c5c;
+  }
+
+  .pres-gastos-lista {
+    display: none;
+    flex-direction: column;
+    border-top: 1px solid var(--border);
+  }
+
+  .pres-categoria.abierta .pres-gastos-lista {
+    display: flex;
+  }
+
+  .pres-gasto-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 9px 12px 9px 16px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .pres-gasto-item:last-child {
+    border-bottom: none;
+  }
+
+  .pres-gasto-jugador {
+    font-size: 1rem;
+    flex-shrink: 0;
+  }
+
+  .pres-gasto-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+    min-width: 0;
+  }
+
+  .pres-gasto-titulo {
+    font-family: var(--font-ui);
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--text);
+  }
+
+  .pres-gasto-monto {
+    font-family: var(--font-ui);
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--gold);
+    flex-shrink: 0;
+  }
+
+  .pres-gasto-btn-eliminar {
+    background: none;
+    border: none;
+    color: var(--text2);
+    font-size: 1rem;
+    cursor: pointer;
+    padding: 0 0.15rem;
+    flex-shrink: 0;
+  }
+
+  .pres-subcat-seccion {
+    border-top: 1px solid var(--border);
+    background: var(--surface2);
+  }
+
+  .pres-subcat-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px 4px 16px;
+    cursor: pointer;
+  }
+
+  .pres-subcat-nombre {
+    flex: 1;
+    font-family: var(--font-title);
+    font-size: 0.72rem;
+    color: var(--gold);
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+  }
+
+  .pres-subcat-montos {
+    font-family: var(--font-ui);
+    font-size: 0.75rem;
+    color: var(--text2);
+  }
+
+  .pres-subcat-flecha {
+    font-size: 0.75rem;
+    color: var(--text2);
+    transition: transform 0.2s;
+    flex-shrink: 0;
+  }
+
+  .pres-subcat-seccion.abierta .pres-subcat-flecha {
+    transform: rotate(180deg);
+  }
+
+  .pres-subcat-seccion .pres-barra-wrap {
+    padding: 0 12px 8px 16px;
+  }
+
+  .pres-subcat-gastos {
+    display: none;
+    flex-direction: column;
+  }
+
+  .pres-subcat-gastos.abierta {
+    display: flex;
+  }
+
+  .pres-subcat-seccion .pres-gasto-item {
+    padding-left: 24px;
+    background: transparent;
+  }
+
+  .pres-sin-gastos {
+    padding: 0.5rem 1rem 0.75rem 24px;
+    font-size: 0.82rem;
+    color: var(--text2);
+    font-style: italic;
+  }

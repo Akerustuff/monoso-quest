@@ -22,7 +22,10 @@
     }
     if (screen === 'registro') {                                                                                                                                                                            
       cambiarTabRegistro('completadas');
-  }
+    }
+    if (screen === 'presupuesto') {
+      renderizarPresupuesto();
+    }
   }
 
   function selectPlayer(playerId) {

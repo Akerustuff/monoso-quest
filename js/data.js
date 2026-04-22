@@ -287,3 +287,60 @@ const MISIONES_SEMANALES_SUELTAS = [
     { id: 'f35', categoria: 'c7', nombre: 'Rupatadina',                      hay: false, cantidad: 0 }
     ]
   };
+
+  const PRESUPUESTO_DEFAULT = {
+    categorias: [
+      { id: 'pcat_hogar',           nombre: 'Gastos del Hogar',        icono: '🏠' },
+      { id: 'pcat_tdcs',            nombre: 'TDCs y Préstamos',        icono: '💳' },
+      { id: 'pcat_suscripciones',   nombre: 'Suscripciones y Seguros', icono: '📱' },
+      { id: 'pcat_entretenimiento', nombre: 'Entretenimiento y Ocio',  icono: '🎉' },
+      { id: 'pcat_compras',         nombre: 'Compras',                 icono: '🛍️' },
+      { id: 'pcat_salud',           nombre: 'Salud',                   icono: '💊' },
+      { id: 'pcat_familia',         nombre: 'Familia',                 icono: '👨‍👩‍👧' },
+      { id: 'pcat_transporte',      nombre: 'Transporte',              icono: '🚌' },
+      { id: 'pcat_inversion',       nombre: 'Inversión y Ahorro',      icono: '📈' },
+    ],
+    subcategorias: [
+      { id: 'psub_arriendo',           categoriaId: 'pcat_hogar',           icono: '🏘️',  nombre: 'Arriendo',             presupuesto: 0 },
+      { id: 'psub_internet',           categoriaId: 'pcat_hogar',           icono: '📡',  nombre: 'Internet',             presupuesto: 0 },
+      { id: 'psub_electricidad',       categoriaId: 'pcat_hogar',           icono: '⚡',  nombre: 'Electricidad',         presupuesto: 0 },
+      { id: 'psub_agua',               categoriaId: 'pcat_hogar',           icono: '💧',  nombre: 'Agua',                 presupuesto: 0 },
+      { id: 'psub_telefonos',          categoriaId: 'pcat_hogar',           icono: '📱',  nombre: 'Teléfonos',            presupuesto: 0 },
+      { id: 'psub_supermercado',       categoriaId: 'pcat_hogar',           icono: '🛒',  nombre: 'Supermercado',         presupuesto: 0 },
+
+      { id: 'psub_tdc_bci',            categoriaId: 'pcat_tdcs',            icono: '💳',  nombre: 'TDC BCI Signature',    presupuesto: 0 },
+      { id: 'psub_tdc_falabella_oso',  categoriaId: 'pcat_tdcs',            icono: '💳',  nombre: 'TDC Falabella Oso',    presupuesto: 0 },
+      { id: 'psub_tdc_falabella_mono', categoriaId: 'pcat_tdcs',            icono: '💳',  nombre: 'TDC Falabella Mono',   presupuesto: 0 },
+      { id: 'psub_tdc_cencosud',       categoriaId: 'pcat_tdcs',            icono: '💳',  nombre: 'TDC Cencosud',         presupuesto: 0 },
+      { id: 'psub_tdc_santander',      categoriaId: 'pcat_tdcs',            icono: '💳',  nombre: 'TDC Santander',        presupuesto: 0 },
+      { id: 'psub_prestamo_santander', categoriaId: 'pcat_tdcs',            icono: '🏦',  nombre: 'Préstamo Santander',   presupuesto: 0 },
+      { id: 'psub_prestamo_cencosud',  categoriaId: 'pcat_tdcs',            icono: '🏦',  nombre: 'Préstamo Cencosud',    presupuesto: 0 },
+
+      { id: 'psub_seguros',            categoriaId: 'pcat_suscripciones',   icono: '🛡️',  nombre: 'Seguros',              presupuesto: 0 },
+      { id: 'psub_suscripciones',      categoriaId: 'pcat_suscripciones',   icono: '📺',  nombre: 'Suscripciones',        presupuesto: 0 },
+
+      { id: 'psub_salidas',            categoriaId: 'pcat_entretenimiento', icono: '🎭',  nombre: 'Salidas',              presupuesto: 0 },
+      { id: 'psub_restaurantes',       categoriaId: 'pcat_entretenimiento', icono: '🍽️',  nombre: 'Restaurantes',         presupuesto: 0 },
+      { id: 'psub_deportes',           categoriaId: 'pcat_entretenimiento', icono: '🏋️',  nombre: 'Deportes & Gym',       presupuesto: 0 },
+      { id: 'psub_hobbies_entr',       categoriaId: 'pcat_entretenimiento', icono: '🎨',  nombre: 'Hobbies',              presupuesto: 0 },
+
+      { id: 'psub_compras_hogar',      categoriaId: 'pcat_compras',         icono: '🏠',  nombre: 'Hogar',                presupuesto: 0 },
+      { id: 'psub_guardarropa',        categoriaId: 'pcat_compras',         icono: '👕',  nombre: 'Guardarropa',          presupuesto: 0 },
+      { id: 'psub_juegos',             categoriaId: 'pcat_compras',         icono: '🎮',  nombre: 'Juegos & Hobbies',     presupuesto: 0 },
+      { id: 'psub_regalos',            categoriaId: 'pcat_compras',         icono: '🎁',  nombre: 'Regalos',              presupuesto: 0 },
+      { id: 'psub_personales_mono',    categoriaId: 'pcat_compras',         icono: '🐵',  nombre: 'Personales 🐵',        presupuesto: 0 },
+      { id: 'psub_personales_oso',     categoriaId: 'pcat_compras',         icono: '🐻',  nombre: 'Personales 🐻',        presupuesto: 0 },
+
+      { id: 'psub_medico',             categoriaId: 'pcat_salud',           icono: '🩺',  nombre: 'Médico',               presupuesto: 0 },
+      { id: 'psub_medicamentos',       categoriaId: 'pcat_salud',           icono: '💊',  nombre: 'Medicamentos',         presupuesto: 0 },
+      { id: 'psub_skincare',           categoriaId: 'pcat_salud',           icono: '🧴',  nombre: 'Skincare & Aseo',      presupuesto: 0 },
+
+      { id: 'psub_remesas',            categoriaId: 'pcat_familia',         icono: '💸',  nombre: 'Remesas familiares',   presupuesto: 0 },
+
+      { id: 'psub_transporte_pub',     categoriaId: 'pcat_transporte',      icono: '🚌',  nombre: 'Transporte público',   presupuesto: 0 },
+      { id: 'psub_transporte_otros',   categoriaId: 'pcat_transporte',      icono: '🚗',  nombre: 'Otros transportes',    presupuesto: 0 },
+
+      { id: 'psub_inversion',          categoriaId: 'pcat_inversion',       icono: '📈',  nombre: 'Inversión',            presupuesto: 0 },
+      { id: 'psub_ahorro',             categoriaId: 'pcat_inversion',       icono: '🏦',  nombre: 'Ahorro',               presupuesto: 0 },
+    ]
+  };
