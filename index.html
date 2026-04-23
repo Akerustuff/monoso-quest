@@ -27,7 +27,7 @@
   <!-- PANTALLA: Login -->
   <div id="screen-login" class="screen hidden">
     <div class="login-titulo">Cacos Quest</div>
-    <div class="login-version">v3.6</div>
+    <div class="login-version">v3.7</div>
     <div class="login-subtitulo">Inicia sesión para continuar</div>
     <button class="login-btn-google" onclick="loginConGoogle()">
       <span>🔑</span> Entrar con Google
@@ -81,7 +81,7 @@
       <div class="menu-logo">
         <img class="menu-logo-img" src="icons/icon.svg" alt="Cacos Quest">
         <span class="menu-logo-texto">Cacos Quest</span>
-        <span class="menu-logo-version">v3.6</span>
+        <span class="menu-logo-version">v3.7</span>
       </div>
       <div class="menu-jugador-wrap">
         <button class="menu-jugador-btn" onclick="toggleMenuJugador()"></button>
@@ -122,7 +122,7 @@
       <div class="menu-logo">
         <img class="menu-logo-img" src="icons/icon.svg" alt="Cacos Quest">
         <span class="menu-logo-texto">Cacos Quest</span>
-        <span class="menu-logo-version">v3.6</span>
+        <span class="menu-logo-version">v3.7</span>
       </div>
       <div class="menu-jugador-wrap">
         <button class="menu-jugador-btn" onclick="toggleMenuJugador()"></button>
@@ -154,7 +154,7 @@
         <div class="menu-logo">
           <img class="menu-logo-img" src="icons/icon.svg" alt="Cacos Quest">
           <span class="menu-logo-texto">Cacos Quest</span>
-          <span class="menu-logo-version">v3.6</span>
+          <span class="menu-logo-version">v3.7</span>
         </div>
         <div class="menu-jugador-wrap">
           <button class="menu-jugador-btn" onclick="toggleMenuJugador()"></button>
@@ -207,7 +207,7 @@
       <div class="menu-logo">
         <img class="menu-logo-img" src="icons/icon.svg" alt="Cacos Quest">
         <span class="menu-logo-texto">Cacos Quest</span>
-        <span class="menu-logo-version">v3.6</span>
+        <span class="menu-logo-version">v3.7</span>
       </div>
       <div class="menu-jugador-wrap">
         <button class="menu-jugador-btn" onclick="toggleMenuJugador()"></button>
@@ -261,7 +261,7 @@
       <div class="menu-logo">
         <img class="menu-logo-img" src="icons/icon.svg" alt="Cacos Quest">
         <span class="menu-logo-texto">Cacos Quest</span>
-        <span class="menu-logo-version">v3.6</span>
+        <span class="menu-logo-version">v3.7</span>
       </div>
       <div class="menu-jugador-wrap">
         <button class="menu-jugador-btn" onclick="toggleMenuJugador()"></button>
@@ -283,6 +283,8 @@
     <div class="presupuesto-resumen" id="presupuesto-resumen">
       <!-- Resumen total del mes se renderiza aquí con JS -->
     </div>
+
+    <div id="presupuesto-ingresos"></div>
 
     <div class="presupuesto-body" id="presupuesto-body">
       <!-- Categorías y gastos se renderizan aquí con JS -->
@@ -530,6 +532,25 @@
               <button class="modal-btn-primario" onclick="confirmarCanjear()">Canjear</button>
           </div>
       </div>
+  </div>
+
+<!-- MODAL: Agregar ingreso -->
+  <div class="prov-modal-fondo" id="modal-agregar-ingreso">
+    <div class="prov-modal">
+      <div class="prov-modal-titulo" id="ingreso-modal-titulo">Nuevo Ingreso</div>
+      <div class="prov-campo">
+        <label>Fuente</label>
+        <input type="text" id="ingreso-input-titulo" placeholder="Ej: Sueldo, Freelance...">
+      </div>
+      <div class="prov-campo">
+        <label>Monto</label>
+        <input type="number" id="ingreso-input-monto" placeholder="0" min="0">
+      </div>
+      <div class="prov-modal-botones">
+        <button class="prov-modal-btn cancelar" onclick="cerrarModalAgregarIngreso()">Cancelar</button>
+        <button class="prov-modal-btn confirmar" onclick="confirmarAgregarIngreso()">Agregar</button>
+      </div>
+    </div>
   </div>
 
 <!-- MODALES: Presupuesto -->

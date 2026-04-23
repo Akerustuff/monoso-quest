@@ -1893,6 +1893,10 @@ body {
     background: var(--gold);
   }
 
+  .pres-categoria--necesidades::before { background: #4caf7d; }
+  .pres-categoria--deuda::before       { background: #5b8edb; }
+  .pres-categoria--estilo::before      { background: #c47ed4; }
+
   .pres-categoria-header {
     display: flex;
     align-items: center;
@@ -2081,6 +2085,123 @@ body {
     font-size: 0.82rem;
     color: var(--text2);
     font-style: italic;
+  }
+
+  /* ── Ingresos ────────────────────────────────── */
+
+  .pres-ingresos-seccion {
+    margin: 0 16px 12px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .pres-ingresos-titulo {
+    font-family: var(--font-ui);
+    font-size: 0.72rem;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--text3);
+    padding: 10px 14px 6px;
+  }
+
+  .pres-ingreso-fila {
+    border-top: 1px solid var(--border);
+  }
+
+  .pres-ingreso-header {
+    display: flex;
+    align-items: center;
+    padding: 8px 14px 4px;
+    gap: 8px;
+  }
+
+  .pres-barra-segmentada {
+    display: flex;
+    overflow: hidden;
+  }
+
+  .pres-barra-seg {
+    height: 100%;
+  }
+
+  .pres-barra-seg--necesidades { background: #4caf7d; }
+  .pres-barra-seg--deuda       { background: #5b8edb; }
+  .pres-barra-seg--estilo      { background: #c47ed4; }
+
+  .pres-ingreso-fila .pres-ingreso-header {
+    cursor: pointer;
+  }
+
+  .pres-ingreso-fila .pres-categoria-flecha {
+    font-size: 0.85rem;
+    color: var(--text2);
+    transition: transform 0.2s;
+    flex-shrink: 0;
+  }
+
+  .pres-ingreso-fila.abierto .pres-categoria-flecha {
+    transform: rotate(180deg);
+  }
+
+  .pres-ingreso-panel {
+    display: none;
+    flex-direction: column;
+  }
+
+  .pres-ingresos-seccion.abierta .pres-ingreso-panel {
+    display: flex;
+  }
+
+  .pres-ingresos-seccion.abierta .pres-categoria-flecha {
+    transform: rotate(180deg);
+  }
+
+  .pres-ingreso-rubros {
+    border-top: 1px solid var(--border);
+  }
+
+  .pres-ingreso-item {
+    display: flex;
+    align-items: center;
+    padding: 8px 14px 8px 14px;
+    gap: 8px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .pres-ingreso-item:last-child {
+    border-bottom: none;
+  }
+
+  .pres-ingreso-item-icono {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .pres-ingreso-item-icono--necesidades { background: #4caf7d; }
+  .pres-ingreso-item-icono--deuda       { background: #5b8edb; }
+  .pres-ingreso-item-icono--estilo      { background: #c47ed4; }
+
+  .pres-ingreso-item-nombre {
+    flex: 1;
+    font-family: var(--font-ui);
+    font-size: 0.88rem;
+    color: var(--text);
+  }
+
+  .pres-ingreso-item-montos {
+    font-family: var(--font-ui);
+    font-size: 0.82rem;
+    color: #4caf7d;
+    text-align: right;
+  }
+
+  .pres-ingreso-item-montos.excede {
+    color: #e05c5c;
   }
 
   /* ── Configuración ───────────────────────────── */

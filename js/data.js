@@ -292,7 +292,8 @@ const MISIONES_SEMANALES_SUELTAS = [
     categorias: [
       { id: 'pcat_hogar',           nombre: 'Gastos del Hogar',        icono: '🏠' },
       { id: 'pcat_tdcs',            nombre: 'TDCs y Préstamos',        icono: '💳' },
-      { id: 'pcat_suscripciones',   nombre: 'Suscripciones y Seguros', icono: '📱' },
+      { id: 'pcat_suscripciones',   nombre: 'Suscripciones',           icono: '📱' },
+      { id: 'pcat_seguros',         nombre: 'Seguros',                 icono: '🛡️' },
       { id: 'pcat_entretenimiento', nombre: 'Entretenimiento y Ocio',  icono: '🎉' },
       { id: 'pcat_compras',         nombre: 'Compras',                 icono: '🛍️' },
       { id: 'pcat_salud',           nombre: 'Salud',                   icono: '💊' },
@@ -316,8 +317,11 @@ const MISIONES_SEMANALES_SUELTAS = [
       { id: 'psub_prestamo_santander', categoriaId: 'pcat_tdcs',            icono: '🏦',  nombre: 'Préstamo Santander',   presupuesto: 0 },
       { id: 'psub_prestamo_cencosud',  categoriaId: 'pcat_tdcs',            icono: '🏦',  nombre: 'Préstamo Cencosud',    presupuesto: 0 },
 
-      { id: 'psub_seguros',            categoriaId: 'pcat_suscripciones',   icono: '🛡️',  nombre: 'Seguros',              presupuesto: 0 },
-      { id: 'psub_suscripciones',      categoriaId: 'pcat_suscripciones',   icono: '📺',  nombre: 'Suscripciones',        presupuesto: 0 },
+      { id: 'psub_suscrip_ocio',        categoriaId: 'pcat_suscripciones',   icono: '🎬',  nombre: 'Ocio',                 presupuesto: 0 },
+      { id: 'psub_suscrip_utilidad',   categoriaId: 'pcat_suscripciones',   icono: '🔧',  nombre: 'Utilidad',             presupuesto: 0 },
+
+      { id: 'psub_seguros_mono',       categoriaId: 'pcat_seguros',         icono: '🐵',  nombre: 'Seguros Mono',         presupuesto: 0 },
+      { id: 'psub_seguros_oso',        categoriaId: 'pcat_seguros',         icono: '🐻',  nombre: 'Seguros Oso',          presupuesto: 0 },
 
       { id: 'psub_salidas',            categoriaId: 'pcat_entretenimiento', icono: '🎭',  nombre: 'Salidas',              presupuesto: 0 },
       { id: 'psub_restaurantes',       categoriaId: 'pcat_entretenimiento', icono: '🍽️',  nombre: 'Restaurantes',         presupuesto: 0 },
